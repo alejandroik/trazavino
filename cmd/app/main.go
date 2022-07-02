@@ -13,8 +13,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	app, shutdown := service.NewApplication(ctx)
-	defer shutdown()
+	app := service.NewApplication(ctx)
 
 	ports.NewHttpServer(app)
 

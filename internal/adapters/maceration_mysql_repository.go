@@ -4,9 +4,19 @@ import (
 	"context"
 
 	"github.com/alejandroik/trazavino-api/internal/domain/maceration"
+	"gorm.io/gorm"
 )
 
+type MacerationModel struct {
+	ProcessModel
+}
+
 type MacerationMysqlRepository struct {
+	db *gorm.DB
+}
+
+func NewMacerationMysqlRepository(db *gorm.DB) *MacerationMysqlRepository {
+	return &MacerationMysqlRepository{db: db}
 }
 
 func (r MacerationMysqlRepository) AddMaceration(ctx context.Context, m *maceration.Maceration) error {
