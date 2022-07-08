@@ -14,13 +14,24 @@ type Reception struct {
 	sugar     int64
 }
 
-//TODO implement NewReception
-func NewReception() (*Reception, error) {
-	return &Reception{}, nil
+func NewReception(
+	//truck vy.Truck,
+	//vineyard vy.Vineyard,
+	//grapeType vy.GrapeType,
+	weight int64,
+	sugar int64) (*Reception, error) {
+	return &Reception{
+		weight: weight,
+		sugar:  sugar}, nil
 }
 
-func UnmarshallReceptionFromDatabase() (*Reception, error) {
-	r, err := NewReception()
+func UnmarshallReceptionFromDatabase(
+	//truck vy.Truck,
+	//vineyard vy.Vineyard,
+	//grapeType vy.GrapeType,
+	weight int64,
+	sugar int64) (*Reception, error) {
+	r, err := NewReception(weight, sugar)
 	if err != nil {
 		return nil, err
 	}
@@ -28,8 +39,16 @@ func UnmarshallReceptionFromDatabase() (*Reception, error) {
 	return r, nil
 }
 
+func (r Reception) Truck() vy.Truck {
+	return r.truck
+}
+
 func (r Reception) Vineyard() vy.Vineyard {
 	return r.vineyard
+}
+
+func (r Reception) GrapeType() vy.GrapeType {
+	return r.grapeType
 }
 
 func (r Reception) Weight() int64 {

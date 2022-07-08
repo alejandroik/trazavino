@@ -1,4 +1,4 @@
-package adapters
+package mysql
 
 import (
 	"context"
@@ -8,7 +8,8 @@ import (
 )
 
 type MacerationModel struct {
-	ProcessModel
+	gorm.Model
+	ProcessID uint
 }
 
 type MacerationMysqlRepository struct {
