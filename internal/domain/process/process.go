@@ -63,14 +63,22 @@ func (p Process) Temperature() int {
 
 func UnmarshallProcessFromDatabase(
 	id uint,
-	startDate time.Time,
-	endDate time.Time,
+	startDate *time.Time,
+	endDate *time.Time,
 	hash string,
 	transaction string,
 	ptype string,
 	temperature int,
 ) (*Process, error) {
-	p, err := NewProcess(id, startDate, endDate, hash, transaction, ptype, temperature)
+	var sd, ed time.Time
+	if startDate != nil {
+		sd = *startDate
+	}
+	if endDate != nil {
+		ed = *endDate
+	}
+
+	p, err := NewProcess(id, sd, ed, hash, transaction, ptype, temperature)
 	if err != nil {
 		return nil, err
 	}

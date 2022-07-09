@@ -53,9 +53,9 @@ func (r ProcessMysqlRepository) GetAllProcesses() ([]*process.Process, error) {
 }
 
 func addProcess(db *gorm.DB, pm *ProcessModel) error {
-	result := db.Create(pm)
-	if result.Error != nil {
-		return result.Error
+	err := db.Create(pm).Error
+	if err != nil {
+		return err
 	}
 
 	return nil
@@ -75,5 +75,5 @@ func addProcess(db *gorm.DB, pm *ProcessModel) error {
 //}
 
 func unmarshallProcess(pm ProcessModel) (*process.Process, error) {
-	return process.UnmarshallProcessFromDatabase(pm.ID, *pm.StartDate, *pm.EndDate, pm.Ptype, pm.Hash, pm.Transaction, pm.Temperature)
+	return process.UnmarshallProcessFromDatabase(pm.ID, pm.StartDate, pm.EndDate, pm.Ptype, pm.Hash, pm.Transaction, pm.Temperature)
 }

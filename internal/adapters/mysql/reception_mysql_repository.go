@@ -7,6 +7,7 @@ import (
 	"github.com/alejandroik/trazavino-api/internal/domain/process"
 	"github.com/alejandroik/trazavino-api/internal/domain/reception"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ReceptionModel struct {
@@ -38,27 +39,25 @@ func NewReceptionMysqlRepository(db *gorm.DB) *ReceptionMysqlRepository {
 }
 
 func (r ReceptionMysqlRepository) AddReception(ctx context.Context, rc *reception.Reception) error {
-	t := time.Now()
-	pm := ProcessModel{
-		StartDate: &t,
-		Ptype:     process.Reception.String(),
-	}
-	err := addProcess(r.db, &pm)
-	if err != nil {
-		return err
-	}
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		t := time.Now()
+		pm := ProcessModel{StartDate: &t, Ptype: process.Reception.String()}
+		if err := addProcess(tx, &pm); err != nil {
+			return err
+		}
 
-	rm := r.marshallReception(rc, pm)
-	result := r.db.Create(&rm)
-	if result.Error != nil {
-		return result.Error
-	}
-	return nil
+		rm := r.marshallReception(rc, pm)
+		if err := r.db.Create(&rm).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
 }
 
 func (r ReceptionMysqlRepository) GetReception(ctx context.Context, receptionId int64) (*reception.Reception, error) {
 	rm := ReceptionModel{}
-	result := r.db.First(&rm, receptionId)
+	result := r.db.Preload(clause.Associations).First(&rm, receptionId)
 	if result.Error != nil {
 		return nil, result.Error
 	}
@@ -74,7 +73,13 @@ func (r ReceptionMysqlRepository) GetAllReceptions() ([]*reception.Reception, er
 	return nil, nil
 }
 
-func (r ReceptionMysqlRepository) UpdateReception(ctx context.Context, receptionId int64, updateFn func(ctx context.Context, rc *reception.Reception) (*reception.Reception, error)) {
+func (r ReceptionMysqlRepository) UpdateReception(ctx context.Context, receptionId int64, updateFn func(ctx context.Context, rc *reception.Reception) (*reception.Reception, error)) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		//if err := tx.Model()
+
+		//db.Model(&user).Updates(User{Name: "hello", Age: 18, Active: false})
+		return nil
+	})
 }
 
 func (r ReceptionMysqlRepository) marshallReception(rc *reception.Reception, process ProcessModel) ReceptionModel {
@@ -89,5 +94,9 @@ func (r ReceptionMysqlRepository) marshallReception(rc *reception.Reception, pro
 }
 
 func (r ReceptionMysqlRepository) unmarshallReception(rm ReceptionModel) (*reception.Reception, error) {
-	return reception.UnmarshallReceptionFromDatabase(rm.Weight, rm.Sugar)
+	p, err := unmarshallProcess(rm.Process)
+	if err != nil {
+		return nil, err
+	}
+	return reception.UnmarshallReceptionFromDatabase(p, rm.Weight, rm.Sugar)
 }

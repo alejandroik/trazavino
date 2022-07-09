@@ -6,6 +6,7 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/alejandroik/trazavino-api/internal/domain/process"
 	"github.com/alejandroik/trazavino-api/internal/domain/reception"
 	gosql "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
@@ -17,7 +18,7 @@ func TestReceptionMysqlRepository_AddReception(t *testing.T) {
 		Addr:      fmt.Sprintf("%v:%v", "localhost", "3306"),
 		DBName:    "trazavino",
 		User:      "root",
-		Passwd:    "root",
+		Passwd:    "",
 		ParseTime: true,
 	}
 	mysqlDb, err := gorm.Open(mysql.Open(cfg.FormatDSN()), &gorm.Config{})
@@ -27,7 +28,7 @@ func TestReceptionMysqlRepository_AddReception(t *testing.T) {
 
 	mysqlDb.AutoMigrate(&ProcessModel{}, &ReceptionModel{})
 
-	rec, _ := reception.NewReception(5, 10)
+	rec, _ := reception.NewReception(process.Process{}, 5, 10)
 
 	type fields struct {
 		db *gorm.DB
@@ -55,21 +56,15 @@ func TestReceptionMysqlRepository_AddReception(t *testing.T) {
 			r := ReceptionMysqlRepository{
 				db: tt.fields.db,
 			}
-			if err := r.AddReception(tt.args.ctx, tt.args.rc); (err != nil) != tt.wantErr {
+			rm, err := r.AddReception(tt.args.ctx, tt.args.rc)
+			if (err != nil) != tt.wantErr {
 				t.Errorf("AddReception() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			rm := &ReceptionModel{}
-			result := r.db.First(rm)
-			if result.Error != nil {
+			rec, err := r.GetReception(context.Background(), int64(rm.ID))
+			if err != nil {
 				t.Error(err)
 			}
-			t.Log(rm)
-			pm := &ProcessModel{}
-			result = r.db.First(pm)
-			if result.Error != nil {
-				t.Error(err)
-			}
-			t.Log(pm)
+			t.Log(rec)
 		})
 	}
 }
