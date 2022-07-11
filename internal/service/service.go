@@ -3,9 +3,8 @@ package service
 import (
 	"context"
 
-	"github.com/alejandroik/trazavino-api/internal/adapters/gorm"
+	"github.com/alejandroik/trazavino-api/internal/adapters/sqlc"
 	"github.com/alejandroik/trazavino-api/internal/app"
-	"github.com/alejandroik/trazavino-api/internal/app/command"
 )
 
 // TODO implement
@@ -14,18 +13,18 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 }
 
 func newApplication(ctx context.Context) app.Application {
-	db, err := gorm.NewMysqlConnection()
+	db, err := sqlc.NewMysqlConnection()
 	if err != nil {
 		panic(err)
 	}
 
-	_ = gorm.NewProcessMysqlRepository(db)
-	receptionRepository := gorm.NewReceptionMysqlRepository(db)
-	_ = gorm.NewMacerationMysqlRepository(db)
+	_ = sqlc.NewProcessMysqlRepository(db)
+	//receptionRepository := sqlc.NewReceptionMysqlRepository(db)
+	//_ = sqlc.NewMacerationMysqlRepository(db)
 
 	return app.Application{
 		Commands: app.Commands{
-			RegisterReception: command.NewRegisterReceptionHandler(receptionRepository),
+			//RegisterReception: command.NewRegisterReceptionHandler(receptionRepository),
 		},
 	}
 }

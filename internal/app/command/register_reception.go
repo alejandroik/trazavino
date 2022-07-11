@@ -3,7 +3,7 @@ package command
 import (
 	"context"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/reception"
+	"github.com/alejandroik/trazavino-api/internal/domain/repository"
 )
 
 type RegisterReception struct {
@@ -12,10 +12,10 @@ type RegisterReception struct {
 type RegisterReceptionHandler Handler[RegisterReception]
 
 type registerReceptionHandler struct {
-	repository reception.Repository
+	repository repository.ReceptionRepository
 }
 
-func NewRegisterReceptionHandler(repository reception.Repository) RegisterReceptionHandler {
+func NewRegisterReceptionHandler(repository repository.ReceptionRepository) RegisterReceptionHandler {
 	return registerReceptionHandler{repository: repository}
 }
 

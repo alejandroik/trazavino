@@ -14,8 +14,8 @@ type ProcessModel struct {
 	EndDate     *time.Time
 	Hash        string
 	Transaction string
-	Ptype       string
-	Temperature int
+	PType       string
+	PreviousID  int
 }
 
 func (ProcessModel) TableName() string {
@@ -67,13 +67,13 @@ func addProcess(db *gorm.DB, pm *ProcessModel) error {
 //		EndDate:     pr.EndDate(),
 //		Hash:        pr.Hash(),
 //		Transaction: pr.Transaction(),
-//		Ptype:       pr.Ptype(),
-//		Temperature: pr.Temperature(),
+//		PType:       pr.PType(),
+//		PreviousId: pr.PreviousId(),
 //	}
 //
 //	return pm
 //}
 
 func unmarshalProcess(pm ProcessModel) (*entity.Process, error) {
-	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate, pm.Ptype, pm.Hash, pm.Transaction, pm.Temperature)
+	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate, pm.PType, pm.Hash, pm.Transaction, pm.PreviousID)
 }

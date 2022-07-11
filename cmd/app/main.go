@@ -13,7 +13,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	app := service.NewApplication(ctx)
+	app, _ := service.NewApplication(ctx)
 
 	ports.NewHttpServer(app)
 

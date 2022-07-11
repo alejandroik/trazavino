@@ -88,7 +88,7 @@ func (r ReceptionMysqlRepository) marshallReception(rc *entity.Reception) Recept
 	rm := ReceptionModel{
 		Process: ProcessModel{
 			StartDate: &t,
-			Ptype:     entity.TypeReception.String(),
+			PType:     entity.TypeReception.String(),
 		},
 		TruckID: uint(rc.Truck().ID()),
 		Weight:  rc.Weight(),
@@ -99,7 +99,7 @@ func (r ReceptionMysqlRepository) marshallReception(rc *entity.Reception) Recept
 }
 
 func (r ReceptionMysqlRepository) unmarshallReception(rm ReceptionModel) (*entity.Reception, error) {
-	process, err := entity.UnmarshalProcessFromDatabase(int(rm.Process.ID), rm.Process.StartDate, rm.Process.EndDate, rm.Process.Ptype, rm.Process.Hash, rm.Process.Transaction, rm.Process.Temperature)
+	process, err := entity.UnmarshalProcessFromDatabase(int(rm.Process.ID), rm.Process.StartDate, rm.Process.EndDate, rm.Process.PType, rm.Process.Hash, rm.Process.Transaction, rm.Process.PreviousID)
 	if err != nil {
 		return nil, err
 	}

@@ -10,8 +10,8 @@ type Process struct {
 	endDate     time.Time
 	hash        string
 	transaction string
-	ptype       string
-	temperature int
+	pType       string
+	previousId  int
 }
 
 func NewProcess(
@@ -20,16 +20,16 @@ func NewProcess(
 	endDate time.Time,
 	hash string,
 	transaction string,
-	ptype string,
-	temperature int) (*Process, error) {
+	pType string,
+	previousId int) (*Process, error) {
 	return &Process{
 		id:          id,
 		startDate:   startDate,
 		endDate:     endDate,
 		hash:        hash,
 		transaction: transaction,
-		ptype:       ptype,
-		temperature: temperature,
+		pType:       pType,
+		previousId:  previousId,
 	}, nil
 }
 
@@ -54,11 +54,11 @@ func (p Process) Transaction() string {
 }
 
 func (p Process) Ptype() string {
-	return p.ptype
+	return p.pType
 }
 
-func (p Process) Temperature() int {
-	return p.temperature
+func (p Process) PreviousId() int {
+	return p.previousId
 }
 
 func UnmarshalProcessFromDatabase(
@@ -68,7 +68,7 @@ func UnmarshalProcessFromDatabase(
 	hash string,
 	transaction string,
 	ptype string,
-	temperature int,
+	previousId int,
 ) (*Process, error) {
 	var sd, ed time.Time
 	if startDate != nil {
@@ -78,7 +78,7 @@ func UnmarshalProcessFromDatabase(
 		ed = *endDate
 	}
 
-	p, err := NewProcess(id, sd, ed, hash, transaction, ptype, temperature)
+	p, err := NewProcess(id, sd, ed, hash, transaction, ptype, previousId)
 	if err != nil {
 		return nil, err
 	}
