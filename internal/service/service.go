@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/alejandroik/trazavino-api/internal/adapters/mysql"
+	"github.com/alejandroik/trazavino-api/internal/adapters/gorm"
 	"github.com/alejandroik/trazavino-api/internal/app"
 	"github.com/alejandroik/trazavino-api/internal/app/command"
 )
@@ -14,14 +14,14 @@ func NewApplication(ctx context.Context) (app.Application, func()) {
 }
 
 func newApplication(ctx context.Context) app.Application {
-	db, err := mysql.NewMysqlConnection()
+	db, err := gorm.NewMysqlConnection()
 	if err != nil {
 		panic(err)
 	}
 
-	_ = mysql.NewProcessMysqlRepository(db)
-	receptionRepository := mysql.NewReceptionMysqlRepository(db)
-	_ = mysql.NewMacerationMysqlRepository(db)
+	_ = gorm.NewProcessMysqlRepository(db)
+	receptionRepository := gorm.NewReceptionMysqlRepository(db)
+	_ = gorm.NewMacerationMysqlRepository(db)
 
 	return app.Application{
 		Commands: app.Commands{

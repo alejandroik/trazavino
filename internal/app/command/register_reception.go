@@ -20,6 +20,10 @@ func NewRegisterReceptionHandler(repository reception.Repository) RegisterRecept
 }
 
 func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterReception) error {
+	//rc, err := reception.NewReception()
+	//if err != nil {
+	//	return nil
+	//}
 
 	return nil
 }
