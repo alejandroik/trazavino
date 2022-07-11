@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/process"
+	"github.com/alejandroik/trazavino-api/internal/domain/entity"
 	"gorm.io/gorm"
 )
 
@@ -34,13 +34,13 @@ func NewProcessMysqlRepository(db *gorm.DB) *ProcessMysqlRepository {
 	return &ProcessMysqlRepository{db: db}
 }
 
-func (r ProcessMysqlRepository) GetProcess(ctx context.Context, processId uint) (*process.Process, error) {
+func (r ProcessMysqlRepository) GetProcess(ctx context.Context, processId uint) (*entity.Process, error) {
 	pm := ProcessModel{}
 	result := r.db.First(&pm, processId)
 	if result.Error != nil {
 		return nil, result.Error
 	}
-	pr, err := unmarshallProcess(pm)
+	pr, err := unmarshalProcess(pm)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (r ProcessMysqlRepository) GetProcess(ctx context.Context, processId uint) 
 	return pr, nil
 }
 
-func (r ProcessMysqlRepository) GetAllProcesses() ([]*process.Process, error) {
+func (r ProcessMysqlRepository) GetAllProcesses() ([]*entity.Process, error) {
 	return nil, nil
 }
 
@@ -74,6 +74,6 @@ func addProcess(db *gorm.DB, pm *ProcessModel) error {
 //	return pm
 //}
 
-func unmarshallProcess(pm ProcessModel) (*process.Process, error) {
-	return process.UnmarshallProcessFromDatabase(pm.ID, pm.StartDate, pm.EndDate, pm.Ptype, pm.Hash, pm.Transaction, pm.Temperature)
+func unmarshalProcess(pm ProcessModel) (*entity.Process, error) {
+	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate, pm.Ptype, pm.Hash, pm.Transaction, pm.Temperature)
 }

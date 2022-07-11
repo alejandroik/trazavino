@@ -1,11 +1,11 @@
-package process
+package entity
 
 import (
 	"time"
 )
 
 type Process struct {
-	id          uint
+	id          int
 	startDate   time.Time
 	endDate     time.Time
 	hash        string
@@ -15,7 +15,7 @@ type Process struct {
 }
 
 func NewProcess(
-	id uint,
+	id int,
 	startDate time.Time,
 	endDate time.Time,
 	hash string,
@@ -33,7 +33,7 @@ func NewProcess(
 	}, nil
 }
 
-func (p Process) Id() uint {
+func (p Process) Id() int {
 	return p.id
 }
 
@@ -61,8 +61,8 @@ func (p Process) Temperature() int {
 	return p.temperature
 }
 
-func UnmarshallProcessFromDatabase(
-	id uint,
+func UnmarshalProcessFromDatabase(
+	id int,
 	startDate *time.Time,
 	endDate *time.Time,
 	hash string,
