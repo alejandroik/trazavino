@@ -36,7 +36,7 @@ func TestReceptionMysqlRepository_AddReception(t *testing.T) {
 	}
 	t.Log("Added truck: ", savedTruck)
 
-	rec, _ := entity.NewReception(savedTruck, 5, 10)
+	rec, _ := entity.NewReception(nil, savedTruck, 5, 10)
 	rr := NewReceptionMysqlRepository(db)
 	savedRec, err := rr.AddReception(ctx, rec)
 	if err != nil {

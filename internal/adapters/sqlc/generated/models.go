@@ -13,7 +13,7 @@ type Process struct {
 	ID          int64
 	StartDate   time.Time
 	EndDate     time.Time
-	Hash        string
+	Hash        sql.NullString
 	PType       string
 	Transaction string
 	PreviousID  sql.NullInt64

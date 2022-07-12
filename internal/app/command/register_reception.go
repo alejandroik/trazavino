@@ -12,11 +12,15 @@ type RegisterReception struct {
 type RegisterReceptionHandler Handler[RegisterReception]
 
 type registerReceptionHandler struct {
-	repository repository.ReceptionRepository
+	processRepository   repository.ProcessRepository
+	receptionRepository repository.ReceptionRepository
 }
 
-func NewRegisterReceptionHandler(repository repository.ReceptionRepository) RegisterReceptionHandler {
-	return registerReceptionHandler{repository: repository}
+func NewRegisterReceptionHandler(processRepository repository.ProcessRepository, receptionRepository repository.ReceptionRepository) RegisterReceptionHandler {
+	return registerReceptionHandler{
+		processRepository:   processRepository,
+		receptionRepository: receptionRepository,
+	}
 }
 
 func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterReception) error {

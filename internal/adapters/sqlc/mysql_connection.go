@@ -11,10 +11,11 @@ import (
 
 func NewMysqlConnection() (*sqlx.DB, error) {
 	cfg := &gosql.Config{
-		Addr:   fmt.Sprintf("%v:%v", os.Getenv("DB_HOST"), os.Getenv("DB_PORT")),
-		DBName: os.Getenv("DB_NAME"),
-		User:   os.Getenv("DB_USER"),
-		Passwd: os.Getenv("DB_PASSWORD"),
+		Addr:      fmt.Sprintf("%v:%v", os.Getenv("DB_HOST"), os.Getenv("DB_PORT")),
+		DBName:    os.Getenv("DB_NAME"),
+		User:      os.Getenv("DB_USER"),
+		Passwd:    os.Getenv("DB_PASSWORD"),
+		ParseTime: true,
 	}
 	db, err := sqlx.Connect("mysql", cfg.FormatDSN())
 	if err != nil {

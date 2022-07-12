@@ -15,6 +15,16 @@ type Process struct {
 }
 
 func NewProcess(
+	startDate time.Time,
+	endDate time.Time,
+	hash string,
+	transaction string,
+	pType string,
+	previousId int) (*Process, error) {
+	return newProcess(0, startDate, endDate, hash, transaction, pType, previousId)
+}
+
+func newProcess(
 	id int,
 	startDate time.Time,
 	endDate time.Time,
@@ -78,7 +88,7 @@ func UnmarshalProcessFromDatabase(
 		ed = *endDate
 	}
 
-	p, err := NewProcess(id, sd, ed, hash, transaction, ptype, previousId)
+	p, err := newProcess(id, sd, ed, hash, transaction, ptype, previousId)
 	if err != nil {
 		return nil, err
 	}

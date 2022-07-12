@@ -10,13 +10,14 @@ type Reception struct {
 }
 
 func NewReception(
+	process *Process,
 	truck *Truck,
 	//vineyard vy.Vineyard,
 	//grapeType vy.GrapeType,
 	weight int,
 	sugar int) (*Reception, error) {
 	return newReception(
-		nil, truck, nil, nil, weight, sugar)
+		process, truck, nil, nil, weight, sugar)
 }
 
 func newReception(
@@ -49,6 +50,10 @@ func UnmarshalReceptionFromDatabase(
 	}
 
 	return r, nil
+}
+
+func (r Reception) Process() *Process {
+	return r.process
 }
 
 func (r Reception) Truck() *Truck {
