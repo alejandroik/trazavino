@@ -4,11 +4,11 @@ type GrapeType struct {
 	baseEntity
 }
 
-func NewGrapeType(id int, name string) (*GrapeType, error) {
+func NewGrapeType(id int64, name string) (*GrapeType, error) {
 	return &GrapeType{baseEntity{id: id, name: name}}, nil
 }
 
-func (t GrapeType) ID() int {
+func (t GrapeType) ID() int64 {
 	return t.id
 }
 

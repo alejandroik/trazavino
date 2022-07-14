@@ -4,15 +4,15 @@ type Truck struct {
 	baseEntity
 }
 
-func NewTruck(id int, name string) (*Truck, error) {
+func NewTruck(id int64, name string) (*Truck, error) {
 	return &Truck{baseEntity{id: id, name: name}}, nil
 }
 
-func UnmarshalTruckFromDatabase(id int, name string) (*Truck, error) {
+func UnmarshalTruckFromDatabase(id int64, name string) (*Truck, error) {
 	return NewTruck(id, name)
 }
 
-func (t Truck) ID() int {
+func (t Truck) ID() int64 {
 	return t.id
 }
 
