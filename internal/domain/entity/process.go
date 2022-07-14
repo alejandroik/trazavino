@@ -5,33 +5,23 @@ import (
 )
 
 type Process struct {
-	id          int
+	id          int64
 	startDate   time.Time
 	endDate     time.Time
 	hash        string
 	transaction string
 	pType       string
-	previousId  int
+	previousId  int64
 }
 
 func NewProcess(
+	id int64,
 	startDate time.Time,
 	endDate time.Time,
 	hash string,
 	transaction string,
 	pType string,
-	previousId int) (*Process, error) {
-	return newProcess(0, startDate, endDate, hash, transaction, pType, previousId)
-}
-
-func newProcess(
-	id int,
-	startDate time.Time,
-	endDate time.Time,
-	hash string,
-	transaction string,
-	pType string,
-	previousId int) (*Process, error) {
+	previousId int64) (*Process, error) {
 	return &Process{
 		id:          id,
 		startDate:   startDate,
@@ -43,7 +33,7 @@ func newProcess(
 	}, nil
 }
 
-func (p Process) Id() int {
+func (p Process) ID() int64 {
 	return p.id
 }
 
@@ -67,20 +57,20 @@ func (p Process) Ptype() string {
 	return p.pType
 }
 
-func (p Process) PreviousId() int {
+func (p Process) PreviousID() int64 {
 	return p.previousId
 }
 
 func UnmarshalProcessFromDatabase(
-	id int,
+	id int64,
 	startDate time.Time,
 	endDate time.Time,
 	hash string,
 	transaction string,
 	ptype string,
-	previousId int,
+	previousId int64,
 ) (*Process, error) {
-	p, err := newProcess(id, startDate, endDate, hash, transaction, ptype, previousId)
+	p, err := NewProcess(id, startDate, endDate, hash, transaction, ptype, previousId)
 	if err != nil {
 		return nil, err
 	}

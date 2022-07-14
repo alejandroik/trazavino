@@ -29,10 +29,13 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	q := generated.New(tx)
 
 	_, err = q.AddReception(ctx, generated.AddReceptionParams{
-		ID:        int64(rc.Process().Id()),
-		CreatedAt: time.Now(),
-		Weight:    int32(rc.Weight()),
-		Sugar:     int32(rc.Sugar()),
+		ID:          rc.ID(),
+		CreatedAt:   time.Now(),
+		Weight:      rc.Weight(),
+		Sugar:       rc.Sugar(),
+		TruckID:     rc.TruckID(),
+		VineyardID:  rc.VineyardID(),
+		GrapeTypeID: rc.GrapeTypeID(),
 	})
 	if err != nil {
 		tx.Rollback()
@@ -42,14 +45,29 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	return rc, tx.Commit()
 }
 
-func (r ReceptionRepository) GetReception(ctx context.Context, receptionId int) (*entity.Reception, error) {
-	return nil, nil
+func (r ReceptionRepository) GetReception(ctx context.Context, id int64) (*entity.Reception, error) {
+	q := generated.New(r.db)
+	rm, err := q.GetReception(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+
+	reception, err := unmarshalReception(rm)
+	if err != nil {
+		return nil, err
+	}
+
+	return reception, nil
 }
 
 func (r ReceptionRepository) GetAllReceptions() ([]*entity.Reception, error) {
 	return nil, nil
 }
 
-func (r ReceptionRepository) UpdateReception(ctx context.Context, receptionId int, updateFn func(ctx context.Context, rc *entity.Reception) (*entity.Reception, error)) error {
+func (r ReceptionRepository) UpdateReception(ctx context.Context, receptionId int64, updateFn func(ctx context.Context, rc *entity.Reception) (*entity.Reception, error)) error {
 	return nil
+}
+
+func unmarshalReception(rm generated.Reception) (*entity.Reception, error) {
+	return entity.UnmarshalReceptionFromDatabase(rm.ID, rm.TruckID, rm.VineyardID, rm.GrapeTypeID, rm.Weight, rm.Sugar)
 }

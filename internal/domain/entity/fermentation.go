@@ -1,7 +1,7 @@
 package entity
 
 type Fermentation struct {
-	process   Process
-	warehouse Warehouse
-	tank      Tank
+	id          int64
+	warehouseId int64
+	tankId      int64
 }

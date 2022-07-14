@@ -62,5 +62,5 @@ func addProcess(db *gorm.DB, pm *ProcessModel) error {
 }
 
 func unmarshalProcess(pm ProcessModel) (*entity.Process, error) {
-	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate, pm.PType, pm.Hash, pm.Transaction, pm.PreviousID)
+	return entity.UnmarshalProcessFromDatabase(int64(pm.ID), pm.StartDate, pm.EndDate, pm.PType, pm.Hash, pm.Transaction, int64(pm.PreviousID))
 }

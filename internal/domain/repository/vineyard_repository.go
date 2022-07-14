@@ -8,5 +8,5 @@ import (
 
 type VineyardReception interface {
 	AddVineyard(ctx context.Context, vineyard *entity.Vineyard) error
-	GetVineyard(ctx context.Context, vineyardId int) (*entity.Vineyard, error)
+	GetVineyard(ctx context.Context, vineyardId int64) (*entity.Vineyard, error)
 }

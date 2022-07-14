@@ -1,7 +1,7 @@
 package entity
 
 type Maceration struct {
-	process   Process
-	reception Reception
-	warehouse Warehouse
+	id          int64
+	receptionId int64
+	warehouseId int64
 }

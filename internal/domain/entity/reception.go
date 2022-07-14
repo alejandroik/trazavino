@@ -1,77 +1,66 @@
 package entity
 
 type Reception struct {
-	process   *Process
-	truck     *Truck
-	vineyard  *Vineyard
-	grapeType *GrapeType
-	weight    int
-	sugar     int
+	id          int64
+	truckId     int64
+	vineyardId  int64
+	grapeTypeId int64
+	weight      int32
+	sugar       int32
 }
 
 func NewReception(
-	process *Process,
-	truck *Truck,
-	//vineyard vy.Vineyard,
-	//grapeType vy.GrapeType,
-	weight int,
-	sugar int) (*Reception, error) {
-	return newReception(
-		process, truck, nil, nil, weight, sugar)
-}
-
-func newReception(
-	process *Process,
-	truck *Truck,
-	vineyard *Vineyard,
-	grapeType *GrapeType,
-	weight int,
-	sugar int) (*Reception, error) {
+	id int64,
+	truckId int64,
+	vineyardId int64,
+	grapeTypeId int64,
+	weight int32,
+	sugar int32) (*Reception, error) {
 	return &Reception{
-		process:   process,
-		truck:     truck,
-		vineyard:  vineyard,
-		grapeType: grapeType,
-		weight:    weight,
-		sugar:     sugar,
+		id:          id,
+		truckId:     truckId,
+		vineyardId:  vineyardId,
+		grapeTypeId: grapeTypeId,
+		weight:      weight,
+		sugar:       sugar,
 	}, nil
 }
 
+func (r Reception) ID() int64 {
+	return r.id
+}
+
+func (r Reception) TruckID() int64 {
+	return r.truckId
+}
+
+func (r Reception) VineyardID() int64 {
+	return r.vineyardId
+}
+
+func (r Reception) GrapeTypeID() int64 {
+	return r.grapeTypeId
+}
+
+func (r Reception) Weight() int32 {
+	return r.weight
+}
+
+func (r Reception) Sugar() int32 {
+	return r.sugar
+}
+
 func UnmarshalReceptionFromDatabase(
-	process *Process,
-	truck *Truck,
-	//vineyard vy.Vineyard,
-	//grapeType vy.GrapeType,
-	weight int,
-	sugar int) (*Reception, error) {
-	r, err := newReception(process, truck, nil, nil, weight, sugar)
+	id int64,
+	truckId int64,
+	vineyardId int64,
+	grapeTypeId int64,
+	weight int32,
+	sugar int32) (*Reception, error) {
+	r, err := NewReception(id, truckId, vineyardId, grapeTypeId, weight, sugar)
 	if err != nil {
 		return nil, err
 	}
 
 	return r, nil
-}
-
-func (r Reception) Process() *Process {
-	return r.process
-}
-
-func (r Reception) Truck() *Truck {
-	return r.truck
-}
-
-func (r Reception) Vineyard() *Vineyard {
-	return r.vineyard
-}
-
-func (r Reception) GrapeType() *GrapeType {
-	return r.grapeType
-}
-
-func (r Reception) Weight() int {
-	return r.weight
-}
-
-func (r Reception) Sugar() int {
-	return r.sugar
 }

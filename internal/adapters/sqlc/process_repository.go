@@ -23,9 +23,9 @@ func NewProcessRepository(db *sqlx.DB) *ProcessRepository {
 	return &ProcessRepository{db: db}
 }
 
-func (r ProcessRepository) GetProcess(ctx context.Context, id uint) (*entity.Process, error) {
+func (r ProcessRepository) GetProcess(ctx context.Context, id int64) (*entity.Process, error) {
 	q := generated.New(r.db)
-	pm, err := q.GetProcess(ctx, int64(id))
+	pm, err := q.GetProcess(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -84,9 +84,9 @@ func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Proce
 	}
 
 	var previousID sql.NullInt64
-	if process.PreviousId() > 0 {
+	if process.PreviousID() > 0 {
 		previousID = sql.NullInt64{
-			Int64: int64(process.PreviousId()),
+			Int64: process.PreviousID(),
 			Valid: true,
 		}
 	}
@@ -110,5 +110,5 @@ func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Proce
 }
 
 func unmarshalProcess(pm generated.Process) (*entity.Process, error) {
-	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate.Time, pm.PType, pm.Hash.String, pm.Transaction.String, int(pm.PreviousID.Int64))
+	return entity.UnmarshalProcessFromDatabase(pm.ID, pm.StartDate, pm.EndDate.Time, pm.PType, pm.Hash.String, pm.Transaction.String, pm.PreviousID.Int64)
 }

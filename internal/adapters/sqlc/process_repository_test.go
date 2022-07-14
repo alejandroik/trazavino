@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
+	"github.com/alejandroik/trazavino-api/internal/domain/entity/enum/process_type"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -18,7 +19,7 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pr, _ := entity.NewProcess(time.Now(), time.Time{}, "", "", entity.TypeReception.String(), 0)
+	pr, _ := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Reception.String(), 0)
 	ctx := context.Background()
 
 	repo := NewProcessRepository(db)
@@ -28,7 +29,7 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(process)
 
-	rec, _ := entity.NewReception(process, nil, 5, 5)
+	rec, _ := entity.NewReception(process.ID(), 0, 0, 0, 5, 5)
 	recRepo := NewReceptionRepository(db)
 	reception, err := recRepo.AddReception(ctx, rec)
 	if err != nil {

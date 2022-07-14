@@ -5,12 +5,16 @@ import (
 	"time"
 
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
+	"github.com/alejandroik/trazavino-api/internal/domain/entity/enum/process_type"
 	"github.com/alejandroik/trazavino-api/internal/domain/repository"
 )
 
 type RegisterReception struct {
-	Weight int
-	Sugar  int
+	Weight      int32
+	Sugar       int32
+	TruckID     int64
+	VineyardID  int64
+	GrapeTypeID int64
 }
 
 type RegisterReceptionHandler Handler[RegisterReception]
@@ -35,7 +39,7 @@ func NewRegisterReceptionHandler(processRepository repository.ProcessRepository,
 }
 
 func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterReception) error {
-	pr, err := entity.NewProcess(time.Now(), time.Time{}, "", "", entity.TypeReception.String(), 0)
+	pr, err := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Reception.String(), 0)
 	if err != nil {
 		return err
 	}
@@ -44,7 +48,7 @@ func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterRecept
 		return err
 	}
 
-	rc, err := entity.NewReception(insertedProcess, nil, cmd.Weight, cmd.Sugar)
+	rc, err := entity.NewReception(insertedProcess.ID(), cmd.TruckID, cmd.VineyardID, cmd.GrapeTypeID, cmd.Weight, cmd.Sugar)
 	if err != nil {
 		return err
 	}

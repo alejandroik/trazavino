@@ -1,8 +1,8 @@
 package entity
 
 type Bottling struct {
-	process   Process
-	cellar    Cellar
-	bottleQty int
-	wine      Wine
+	id        int64
+	cellarId  int64
+	bottleQty int32
+	wineId    int64
 }

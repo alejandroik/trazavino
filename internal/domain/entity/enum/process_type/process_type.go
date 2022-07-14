@@ -1,26 +1,26 @@
-package entity
+package process_type
 
 type Ptype int64
 
 const (
-	TypeReception Ptype = iota
-	TypeMaceration
-	TypeFermentation
-	TypeAgeing
-	TypeBottling
+	Reception Ptype = iota
+	Maceration
+	Fermentation
+	Ageing
+	Bottling
 )
 
 func (p Ptype) String() string {
 	switch p {
-	case TypeReception:
+	case Reception:
 		return "reception"
-	case TypeMaceration:
+	case Maceration:
 		return "maceration"
-	case TypeFermentation:
+	case Fermentation:
 		return "fermentation"
-	case TypeAgeing:
+	case Ageing:
 		return "ageing"
-	case TypeBottling:
+	case Bottling:
 		return "bottling"
 	default:
 		return "unknown"

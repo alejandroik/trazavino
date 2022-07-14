@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
+	"github.com/alejandroik/trazavino-api/internal/domain/entity/enum/process_type"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -84,28 +85,19 @@ func (r ReceptionMysqlRepository) UpdateReception(ctx context.Context, reception
 }
 
 func (r ReceptionMysqlRepository) marshallReception(rc *entity.Reception) ReceptionModel {
-	t := time.Now()
 	rm := ReceptionModel{
 		Process: ProcessModel{
-			StartDate: &t,
-			PType:     entity.TypeReception.String(),
+			StartDate: time.Now(),
+			PType:     process_type.Reception.String(),
 		},
-		TruckID: uint(rc.Truck().ID()),
-		Weight:  rc.Weight(),
-		Sugar:   rc.Sugar(),
+		TruckID: uint(rc.TruckID()),
+		Weight:  int(rc.Weight()),
+		Sugar:   int(rc.Sugar()),
 	}
 
 	return rm
 }
 
 func (r ReceptionMysqlRepository) unmarshallReception(rm ReceptionModel) (*entity.Reception, error) {
-	process, err := entity.UnmarshalProcessFromDatabase(int(rm.Process.ID), rm.Process.StartDate, rm.Process.EndDate, rm.Process.PType, rm.Process.Hash, rm.Process.Transaction, rm.Process.PreviousID)
-	if err != nil {
-		return nil, err
-	}
-	truck, err := entity.UnmarshalTruckFromDatabase(int(rm.Truck.ID), rm.Truck.Name)
-	if err != nil {
-		return nil, err
-	}
-	return entity.UnmarshalReceptionFromDatabase(process, truck, rm.Weight, rm.Sugar)
+	return entity.UnmarshalReceptionFromDatabase(int64(rm.Process.ID), int64(rm.TruckID), 0, 0, int32(rm.Weight), int32(rm.Sugar))
 }

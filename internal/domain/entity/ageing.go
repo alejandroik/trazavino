@@ -1,8 +1,8 @@
 package entity
 
 type Ageing struct {
-	process  Process
-	tank     Tank
-	cellar   Cellar
-	humidity int
+	id       int64
+	tankId   int64
+	cellarId int64
+	humidity int32
 }
