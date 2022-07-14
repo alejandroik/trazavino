@@ -12,15 +12,18 @@ import (
 )
 
 const addReception = `-- name: AddReception :execresult
-INSERT INTO reception (id, created_at, weight, sugar)
-VALUES ($1, $2, $3, $4)
+INSERT INTO reception (id, created_at, weight, sugar, truck_id, vineyard_id, grape_type_id)
+VALUES ($1, $2, $3, $4, $5, $6, $7)
 `
 
 type AddReceptionParams struct {
-	ID        int64
-	CreatedAt time.Time
-	Weight    int32
-	Sugar     int32
+	ID          int64
+	CreatedAt   time.Time
+	Weight      int32
+	Sugar       int32
+	TruckID     int64
+	VineyardID  int64
+	GrapeTypeID int64
 }
 
 func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (sql.Result, error) {
@@ -29,11 +32,14 @@ func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (sql
 		arg.CreatedAt,
 		arg.Weight,
 		arg.Sugar,
+		arg.TruckID,
+		arg.VineyardID,
+		arg.GrapeTypeID,
 	)
 }
 
 const getReception = `-- name: GetReception :one
-SELECT id, created_at, updated_at, deleted_at, weight, sugar
+SELECT id, created_at, updated_at, deleted_at, weight, sugar, truck_id, vineyard_id, grape_type_id
 FROM reception
 WHERE id = $1
 LIMIT 1
@@ -49,6 +55,9 @@ func (q *Queries) GetReception(ctx context.Context, id int64) (Reception, error)
 		&i.DeletedAt,
 		&i.Weight,
 		&i.Sugar,
+		&i.TruckID,
+		&i.VineyardID,
+		&i.GrapeTypeID,
 	)
 	return i, err
 }

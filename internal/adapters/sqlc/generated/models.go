@@ -9,6 +9,112 @@ import (
 	"time"
 )
 
+type Ageing struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	TankID    int64
+	CaskID    int64
+}
+
+type Bottle struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+}
+
+type Bottling struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	CaskID    int64
+	BottleQty int32
+	WineID    int64
+}
+
+type BottlingBottle struct {
+	BottlingID int64
+	BottleID   int64
+}
+
+type Cask struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+	CType     string
+	IsEmpty   bool
+}
+
+type Cellar struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+}
+
+type CellarCask struct {
+	CellarID int64
+	CaskID   int64
+}
+
+type CellarTank struct {
+	CellarID int64
+	TankID   int64
+}
+
+type CellarTruck struct {
+	CellarID int64
+	TruckID  int64
+}
+
+type CellarVineyard struct {
+	CellarID   int64
+	VineyardID int64
+}
+
+type CellarWarehouse struct {
+	CellarID    int64
+	WarehouseID int64
+}
+
+type CellarWine struct {
+	CellarID int64
+	WineID   int64
+}
+
+type Fermentation struct {
+	ID          int64
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime
+	DeletedAt   sql.NullTime
+	WarehouseID int64
+	TankID      int64
+}
+
+type GrapeType struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+}
+
+type Maceration struct {
+	ID          int64
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime
+	DeletedAt   sql.NullTime
+	ReceptionID int64
+	WarehouseID int64
+}
+
 type Process struct {
 	ID          int64
 	CreatedAt   time.Time
@@ -23,10 +129,60 @@ type Process struct {
 }
 
 type Reception struct {
+	ID          int64
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime
+	DeletedAt   sql.NullTime
+	Weight      int32
+	Sugar       int32
+	TruckID     int64
+	VineyardID  int64
+	GrapeTypeID int64
+}
+
+type Tank struct {
 	ID        int64
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
-	Weight    int32
-	Sugar     int32
+	Name      string
+	IsEmpty   bool
+}
+
+type Truck struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+}
+
+type Vineyard struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+}
+
+type VineyardGrapeType struct {
+	VineyardID  int64
+	GrapeTypeID int64
+}
+
+type Warehouse struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
+	IsEmpty   bool
+}
+
+type Wine struct {
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Name      string
 }

@@ -20,7 +20,7 @@ func NewPostgresConnection() (*sqlx.DB, error) {
 	)
 	db, err := sqlx.Connect("postgres", connStr)
 	if err != nil {
-		return nil, errors.Wrap(err, "cannot connect to MySQL")
+		return nil, errors.Wrap(err, "cannot connect to db")
 	}
 
 	return db, nil

@@ -149,60 +149,60 @@ CREATE TABLE process
 CREATE TABLE reception
 (
     id            bigint PRIMARY KEY references process (id),
-    created_at    timestamp NOT NULL,
+    created_at    timestamp                         NOT NULL,
     updated_at    timestamp,
     deleted_at    timestamp,
-    weight        integer   NOT NULL,
-    sugar         integer   NOT NULL,
-    truck_id      bigint references truck (id),
-    vineyard_id   bigint references vineyard (id),
-    grape_type_id bigint references grape_type (id)
+    weight        integer                           NOT NULL,
+    sugar         integer                           NOT NULL,
+    truck_id      bigint references truck (id)      NOT NULL,
+    vineyard_id   bigint references vineyard (id)   NOT NULL,
+    grape_type_id bigint references grape_type (id) NOT NULL
 );
 
 CREATE TABLE maceration
 (
     id           bigint PRIMARY KEY references process (id),
-    created_at   timestamp NOT NULL,
+    created_at   timestamp                        NOT NULL,
     updated_at   timestamp,
     deleted_at   timestamp,
-    reception_id bigint references reception (id),
-    warehouse_id bigint references warehouse (id)
+    reception_id bigint references reception (id) NOT NULL,
+    warehouse_id bigint references warehouse (id) NOT NULL
 );
 
 CREATE TABLE fermentation
 (
     id           bigint PRIMARY KEY references process (id),
-    created_at   timestamp NOT NULL,
+    created_at   timestamp                        NOT NULL,
     updated_at   timestamp,
     deleted_at   timestamp,
-    warehouse_id bigint references warehouse (id),
-    tank_id      bigint references tank (id)
+    warehouse_id bigint references warehouse (id) NOT NULL,
+    tank_id      bigint references tank (id)      NOT NULL
 );
 
 CREATE TABLE ageing
 (
     id         bigint PRIMARY KEY references process (id),
-    created_at timestamp NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    tank_id    bigint references tank (id),
-    cask_id    bigint references cask (id)
+    tank_id    bigint references tank (id) NOT NULL,
+    cask_id    bigint references cask (id) NOT NULL
 );
 
 CREATE TABLE bottling
 (
     id         bigint PRIMARY KEY references process (id),
-    created_at timestamp NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    cask_id    bigint references cask (id),
-    bottle_qty integer   NOT NULL NOT NULL,
-    wine_id    bigint references wine (id)
+    cask_id    bigint references cask (id) NOT NULL,
+    bottle_qty integer                     NOT NULL,
+    wine_id    bigint references wine (id) NOT NULL
 );
 
 CREATE TABLE bottling_bottle
 (
     bottling_id bigint references bottling (id),
-    bottle_id bigint references bottle (id),
+    bottle_id   bigint references bottle (id),
     PRIMARY KEY (bottling_id, bottle_id)
 );
