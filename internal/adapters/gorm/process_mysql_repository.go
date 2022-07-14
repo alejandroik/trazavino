@@ -10,8 +10,8 @@ import (
 
 type ProcessModel struct {
 	gorm.Model
-	StartDate   *time.Time
-	EndDate     *time.Time
+	StartDate   time.Time
+	EndDate     time.Time
 	Hash        string
 	Transaction string
 	PType       string
@@ -60,19 +60,6 @@ func addProcess(db *gorm.DB, pm *ProcessModel) error {
 
 	return nil
 }
-
-//func marshallProcess(pr process.Process) ProcessModel {
-//	pm := ProcessModel{
-//		StartDate:   pr.StartDate(),
-//		EndDate:     pr.EndDate(),
-//		Hash:        pr.Hash(),
-//		Transaction: pr.Transaction(),
-//		PType:       pr.PType(),
-//		PreviousId: pr.PreviousId(),
-//	}
-//
-//	return pm
-//}
 
 func unmarshalProcess(pm ProcessModel) (*entity.Process, error) {
 	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate, pm.PType, pm.Hash, pm.Transaction, pm.PreviousID)

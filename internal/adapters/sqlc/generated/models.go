@@ -11,16 +11,22 @@ import (
 
 type Process struct {
 	ID          int64
+	CreatedAt   time.Time
+	UpdatedAt   sql.NullTime
+	DeletedAt   sql.NullTime
 	StartDate   time.Time
-	EndDate     time.Time
+	EndDate     sql.NullTime
 	Hash        sql.NullString
 	PType       string
-	Transaction string
+	Transaction sql.NullString
 	PreviousID  sql.NullInt64
 }
 
 type Reception struct {
-	ID     int64
-	Weight int32
-	Sugar  int32
+	ID        int64
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	Weight    int32
+	Sugar     int32
 }

@@ -1,6 +1,6 @@
 version: 1
 packages:
   - path: "internal/adapters/sqlc/generated"
-    engine: "mysql"
+    engine: "postgresql"
     schema: "schema/schema.sql"
     queries: "schema/queries"

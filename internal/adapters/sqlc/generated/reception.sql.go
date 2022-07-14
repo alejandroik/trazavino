@@ -8,33 +8,47 @@ package generated
 import (
 	"context"
 	"database/sql"
+	"time"
 )
 
 const addReception = `-- name: AddReception :execresult
-INSERT INTO reception (id, weight, sugar)
-VALUES (?, ?, ?)
+INSERT INTO reception (id, created_at, weight, sugar)
+VALUES ($1, $2, $3, $4)
 `
 
 type AddReceptionParams struct {
-	ID     int64
-	Weight int32
-	Sugar  int32
+	ID        int64
+	CreatedAt time.Time
+	Weight    int32
+	Sugar     int32
 }
 
 func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, addReception, arg.ID, arg.Weight, arg.Sugar)
+	return q.db.ExecContext(ctx, addReception,
+		arg.ID,
+		arg.CreatedAt,
+		arg.Weight,
+		arg.Sugar,
+	)
 }
 
 const getReception = `-- name: GetReception :one
-SELECT id, weight, sugar
+SELECT id, created_at, updated_at, deleted_at, weight, sugar
 FROM reception
-WHERE id = ?
+WHERE id = $1
 LIMIT 1
 `
 
 func (q *Queries) GetReception(ctx context.Context, id int64) (Reception, error) {
 	row := q.db.QueryRowContext(ctx, getReception, id)
 	var i Reception
-	err := row.Scan(&i.ID, &i.Weight, &i.Sugar)
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Weight,
+		&i.Sugar,
+	)
 	return i, err
 }

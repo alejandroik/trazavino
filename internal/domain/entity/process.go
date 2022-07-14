@@ -73,22 +73,14 @@ func (p Process) PreviousId() int {
 
 func UnmarshalProcessFromDatabase(
 	id int,
-	startDate *time.Time,
-	endDate *time.Time,
+	startDate time.Time,
+	endDate time.Time,
 	hash string,
 	transaction string,
 	ptype string,
 	previousId int,
 ) (*Process, error) {
-	var sd, ed time.Time
-	if startDate != nil {
-		sd = *startDate
-	}
-	if endDate != nil {
-		ed = *endDate
-	}
-
-	p, err := newProcess(id, sd, ed, hash, transaction, ptype, previousId)
+	p, err := newProcess(id, startDate, endDate, hash, transaction, ptype, previousId)
 	if err != nil {
 		return nil, err
 	}

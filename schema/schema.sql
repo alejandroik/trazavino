@@ -1,21 +1,23 @@
 CREATE TABLE process
 (
-    `id`          bigint                          NOT NULL AUTO_INCREMENT,
-    `start_date`  datetime                        NOT NULL,
-    `end_date`    datetime                        NOT NULL,
-    `hash`        varchar(100) CHARACTER SET utf8 NULL,
-    `p_type`      char(20) CHARACTER SET utf8     NOT NULL,
-    `transaction` varchar(100) CHARACTER SET utf8 NOT NULL,
-    `previous_id` bigint DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `UPROCESS` (`hash`)
+    id          bigserial PRIMARY KEY,
+    created_at  timestamp    NOT NULL,
+    updated_at  timestamp,
+    deleted_at  timestamp,
+    start_date  timestamp    NOT NULL,
+    end_date    timestamp,
+    hash        varchar(100) UNIQUE,
+    p_type      varchar(20)  NOT NULL,
+    transaction varchar(100),
+    previous_id bigint
 );
 
 CREATE TABLE reception
 (
-    `id`     bigint   NOT NULL,
-    `weight` smallint NOT NULL,
-    `sugar`  smallint NOT NULL,
-    PRIMARY KEY (`id`),
-    CONSTRAINT `IRECEPTION` FOREIGN KEY (`id`) REFERENCES `process` (`id`)
+    id         bigserial PRIMARY KEY references process (id),
+    created_at timestamp NOT NULL,
+    updated_at timestamp,
+    deleted_at timestamp,
+    weight     integer   NOT NULL,
+    sugar      integer   NOT NULL
 );

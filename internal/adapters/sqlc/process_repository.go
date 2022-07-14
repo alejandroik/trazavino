@@ -3,6 +3,7 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/alejandroik/trazavino-api/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
@@ -10,19 +11,19 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-type ProcessMysqlRepository struct {
+type ProcessRepository struct {
 	db *sqlx.DB
 }
 
-func NewProcessMysqlRepository(db *sqlx.DB) *ProcessMysqlRepository {
+func NewProcessRepository(db *sqlx.DB) *ProcessRepository {
 	if db == nil {
 		panic("missing db")
 	}
 
-	return &ProcessMysqlRepository{db: db}
+	return &ProcessRepository{db: db}
 }
 
-func (r ProcessMysqlRepository) GetProcess(ctx context.Context, id uint) (*entity.Process, error) {
+func (r ProcessRepository) GetProcess(ctx context.Context, id uint) (*entity.Process, error) {
 	q := generated.New(r.db)
 	pm, err := q.GetProcess(ctx, int64(id))
 	if err != nil {
@@ -37,18 +38,19 @@ func (r ProcessMysqlRepository) GetProcess(ctx context.Context, id uint) (*entit
 	return process, nil
 }
 
-func (r ProcessMysqlRepository) GetAllProcesses() ([]*entity.Process, error) {
+func (r ProcessRepository) GetAllProcesses() ([]*entity.Process, error) {
 	return nil, nil
 }
 
-func (r ProcessMysqlRepository) AddProcess(ctx context.Context, process *entity.Process) (*entity.Process, error) {
+func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Process) (*entity.Process, error) {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, err
 	}
 	q := generated.New(tx)
 
-	result, err := q.AddProcess(ctx, generated.AddProcessParams{
+	insertedId, err := q.AddProcess(ctx, generated.AddProcessParams{
+		CreatedAt: time.Now(),
 		StartDate: process.StartDate(),
 		PType:     process.Ptype(),
 	})
@@ -57,15 +59,26 @@ func (r ProcessMysqlRepository) AddProcess(ctx context.Context, process *entity.
 		return nil, err
 	}
 
-	insertedId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
+	var endDate sql.NullTime
+	if !process.EndDate().IsZero() {
+		endDate = sql.NullTime{
+			Time:  process.EndDate(),
+			Valid: true,
+		}
 	}
 
 	var hash sql.NullString
 	if process.Hash() != "" {
 		hash = sql.NullString{
 			String: process.Hash(),
+			Valid:  true,
+		}
+	}
+
+	var transaction sql.NullString
+	if process.Transaction() != "" {
+		transaction = sql.NullString{
+			String: process.Transaction(),
 			Valid:  true,
 		}
 	}
@@ -81,10 +94,10 @@ func (r ProcessMysqlRepository) AddProcess(ctx context.Context, process *entity.
 	pm := generated.Process{
 		ID:          insertedId,
 		StartDate:   process.StartDate(),
-		EndDate:     process.EndDate(),
+		EndDate:     endDate,
 		Hash:        hash,
 		PType:       process.Ptype(),
-		Transaction: process.Transaction(),
+		Transaction: transaction,
 		PreviousID:  previousID,
 	}
 
@@ -97,5 +110,5 @@ func (r ProcessMysqlRepository) AddProcess(ctx context.Context, process *entity.
 }
 
 func unmarshalProcess(pm generated.Process) (*entity.Process, error) {
-	return entity.UnmarshalProcessFromDatabase(int(pm.ID), &pm.StartDate, &pm.EndDate, pm.PType, pm.Hash.String, pm.Transaction, int(pm.PreviousID.Int64))
+	return entity.UnmarshalProcessFromDatabase(int(pm.ID), pm.StartDate, pm.EndDate.Time, pm.PType, pm.Hash.String, pm.Transaction.String, int(pm.PreviousID.Int64))
 }
