@@ -37,8 +37,27 @@ func (r ProcessRepository) GetProcess(ctx context.Context, id int64) (*entity.Pr
 	return process, nil
 }
 
-func (r ProcessRepository) GetAllProcesses() ([]*entity.Process, error) {
-	return nil, nil
+func (r ProcessRepository) ListProcesses(ctx context.Context, offset int32, limit int32) ([]*entity.Process, error) {
+	q := generated.New(r.db)
+	pms, err := q.ListProcesses(ctx, generated.ListProcessesParams{
+		Offset: offset,
+		Limit:  limit,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	var processes []*entity.Process
+	for _, pm := range pms {
+		process, err := unmarshalProcess(pm)
+		if err != nil {
+			return nil, err
+		}
+
+		processes = append(processes, process)
+	}
+
+	return processes, nil
 }
 
 func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Process) (*entity.Process, error) {
@@ -64,6 +83,14 @@ func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Proce
 	}
 
 	return insertedProcess, tx.Commit()
+}
+
+func (r ProcessRepository) UpdateProcess(
+	ctx context.Context,
+	processId int64,
+	updateFn func(ctx context.Context, process *entity.Process) (*entity.Process, error),
+) error {
+	return nil
 }
 
 func unmarshalProcess(pm generated.Process) (*entity.Process, error) {

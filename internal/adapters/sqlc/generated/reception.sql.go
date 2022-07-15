@@ -74,3 +74,48 @@ func (q *Queries) GetReception(ctx context.Context, id int64) (Reception, error)
 	)
 	return i, err
 }
+
+const listReceptions = `-- name: ListReceptions :many
+SELECT id, created_at, updated_at, deleted_at, weight, sugar, truck_id, vineyard_id, grape_type_id
+FROM reception
+ORDER BY id
+OFFSET $1 LIMIT $2
+`
+
+type ListReceptionsParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListReceptions(ctx context.Context, arg ListReceptionsParams) ([]Reception, error) {
+	rows, err := q.db.QueryContext(ctx, listReceptions, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Reception
+	for rows.Next() {
+		var i Reception
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Weight,
+			&i.Sugar,
+			&i.TruckID,
+			&i.VineyardID,
+			&i.GrapeTypeID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

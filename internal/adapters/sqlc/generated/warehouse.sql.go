@@ -56,3 +56,45 @@ func (q *Queries) GetWarehouse(ctx context.Context, id int64) (Warehouse, error)
 	)
 	return i, err
 }
+
+const listWarehouses = `-- name: ListWarehouses :many
+SELECT id, created_at, updated_at, deleted_at, name, is_empty
+FROM warehouse
+ORDER BY id
+OFFSET $1 LIMIT $2
+`
+
+type ListWarehousesParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) ([]Warehouse, error) {
+	rows, err := q.db.QueryContext(ctx, listWarehouses, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Warehouse
+	for rows.Next() {
+		var i Warehouse
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Name,
+			&i.IsEmpty,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

@@ -53,3 +53,44 @@ func (q *Queries) GetGrapeType(ctx context.Context, id int64) (GrapeType, error)
 	)
 	return i, err
 }
+
+const listGrapeTypes = `-- name: ListGrapeTypes :many
+SELECT id, created_at, updated_at, deleted_at, name
+FROM grape_type
+ORDER BY id
+OFFSET $1 LIMIT $2
+`
+
+type ListGrapeTypesParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListGrapeTypes(ctx context.Context, arg ListGrapeTypesParams) ([]GrapeType, error) {
+	rows, err := q.db.QueryContext(ctx, listGrapeTypes, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GrapeType
+	for rows.Next() {
+		var i GrapeType
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

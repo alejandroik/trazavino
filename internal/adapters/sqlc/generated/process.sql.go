@@ -7,6 +7,7 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -63,4 +64,86 @@ func (q *Queries) GetProcess(ctx context.Context, id int64) (Process, error) {
 		&i.PreviousID,
 	)
 	return i, err
+}
+
+const listProcesses = `-- name: ListProcesses :many
+SELECT id, created_at, updated_at, deleted_at, start_date, end_date, hash, p_type, transaction, previous_id
+FROM process
+ORDER BY id DESC
+OFFSET $1 LIMIT $2
+`
+
+type ListProcessesParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([]Process, error) {
+	rows, err := q.db.QueryContext(ctx, listProcesses, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Process
+	for rows.Next() {
+		var i Process
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.StartDate,
+			&i.EndDate,
+			&i.Hash,
+			&i.PType,
+			&i.Transaction,
+			&i.PreviousID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateProcessEndDatePreviousID = `-- name: UpdateProcessEndDatePreviousID :exec
+UPDATE process
+SET end_date    = $2,
+    previous_id = $3
+WHERE id = $1
+`
+
+type UpdateProcessEndDatePreviousIDParams struct {
+	ID         int64
+	EndDate    sql.NullTime
+	PreviousID sql.NullInt64
+}
+
+func (q *Queries) UpdateProcessEndDatePreviousID(ctx context.Context, arg UpdateProcessEndDatePreviousIDParams) error {
+	_, err := q.db.ExecContext(ctx, updateProcessEndDatePreviousID, arg.ID, arg.EndDate, arg.PreviousID)
+	return err
+}
+
+const updateProcessHashTransaction = `-- name: UpdateProcessHashTransaction :exec
+UPDATE process
+SET hash        = $2,
+    transaction = $3
+WHERE id = $1
+`
+
+type UpdateProcessHashTransactionParams struct {
+	ID          int64
+	Hash        sql.NullString
+	Transaction sql.NullString
+}
+
+func (q *Queries) UpdateProcessHashTransaction(ctx context.Context, arg UpdateProcessHashTransactionParams) error {
+	_, err := q.db.ExecContext(ctx, updateProcessHashTransaction, arg.ID, arg.Hash, arg.Transaction)
+	return err
 }

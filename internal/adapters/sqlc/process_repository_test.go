@@ -83,4 +83,12 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(maceration)
+
+	ps, err := repo.ListProcesses(ctx, 0, 2)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, p := range ps {
+		t.Log(p)
+	}
 }

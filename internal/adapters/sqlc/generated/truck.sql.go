@@ -53,3 +53,44 @@ func (q *Queries) GetTruck(ctx context.Context, id int64) (Truck, error) {
 	)
 	return i, err
 }
+
+const listTrucks = `-- name: ListTrucks :many
+SELECT id, created_at, updated_at, deleted_at, name
+FROM truck
+ORDER BY id
+OFFSET $1 LIMIT $2
+`
+
+type ListTrucksParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck, error) {
+	rows, err := q.db.QueryContext(ctx, listTrucks, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Truck
+	for rows.Next() {
+		var i Truck
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.Name,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

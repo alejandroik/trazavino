@@ -62,3 +62,45 @@ func (q *Queries) GetMaceration(ctx context.Context, id int64) (Maceration, erro
 	)
 	return i, err
 }
+
+const listMacerations = `-- name: ListMacerations :many
+SELECT id, created_at, updated_at, deleted_at, reception_id, warehouse_id
+FROM maceration
+ORDER BY id
+OFFSET $1 LIMIT $2
+`
+
+type ListMacerationsParams struct {
+	Offset int32
+	Limit  int32
+}
+
+func (q *Queries) ListMacerations(ctx context.Context, arg ListMacerationsParams) ([]Maceration, error) {
+	rows, err := q.db.QueryContext(ctx, listMacerations, arg.Offset, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Maceration
+	for rows.Next() {
+		var i Maceration
+		if err := rows.Scan(
+			&i.ID,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.DeletedAt,
+			&i.ReceptionID,
+			&i.WarehouseID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

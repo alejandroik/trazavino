@@ -36,7 +36,7 @@ func NewRegisterMacerationHandler(processRepository repository.ProcessRepository
 }
 
 func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMaceration) error {
-	pr, err := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Maceration.String(), cmd.ReceptionID)
+	pr, err := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Maceration.String(), 0)
 	if err != nil {
 		return err
 	}

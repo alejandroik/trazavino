@@ -65,7 +65,7 @@ func (r ReceptionRepository) GetReception(ctx context.Context, id int64) (*entit
 	return reception, nil
 }
 
-func (r ReceptionRepository) GetAllReceptions() ([]*entity.Reception, error) {
+func (r ReceptionRepository) ListReceptions(context.Context, int32, int32) ([]*entity.Reception, error) {
 	return nil, nil
 }
 
