@@ -19,9 +19,9 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	pr, _ := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Reception.String(), 0)
 	ctx := context.Background()
 
+	pr, _ := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Reception.String(), 0)
 	repo := NewProcessRepository(db)
 	process, err := repo.AddProcess(ctx, pr)
 	if err != nil {
@@ -60,4 +60,28 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(reception)
+	recId := process.ID()
+
+	wh, _ := entity.NewWarehouse(0, "C244", true)
+	whRepo := NewWarehouseRepository(db)
+	warehouse, err := whRepo.AddWarehouse(ctx, wh)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(warehouse)
+
+	pr, _ = entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Maceration.String(), recId)
+	process, err = repo.AddProcess(ctx, pr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(process)
+
+	mac, _ := entity.NewMaceration(process.ID(), recId, warehouse.ID())
+	macRepo := NewMacerationRepository(db)
+	maceration, err := macRepo.AddMaceration(ctx, mac)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(maceration)
 }

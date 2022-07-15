@@ -8,7 +8,8 @@ type Application struct {
 }
 
 type Commands struct {
-	RegisterReception command.RegisterReceptionHandler
+	RegisterReception  command.RegisterReceptionHandler
+	RegisterMaceration command.RegisterMacerationHandler
 }
 
 type Queries struct {
