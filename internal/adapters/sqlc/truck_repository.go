@@ -2,7 +2,9 @@ package sqlc
 
 import (
 	"context"
+	"time"
 
+	"github.com/alejandroik/trazavino-api/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
 	"github.com/jmoiron/sqlx"
 )
@@ -20,9 +22,49 @@ func NewTruckRepository(db *sqlx.DB) *TruckRepository {
 }
 
 func (r TruckRepository) AddTruck(ctx context.Context, truck *entity.Truck) (*entity.Truck, error) {
-	return nil, nil
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	q := generated.New(tx)
+
+	insertedId, err := q.AddTruck(ctx, generated.AddTruckParams{
+		CreatedAt: time.Now(),
+		Name:      truck.Name(),
+	})
+	if err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+
+	tm := generated.Truck{
+		ID:   insertedId,
+		Name: truck.Name(),
+	}
+
+	insertedTruck, err := unmarshalTruck(tm)
+	if err != nil {
+		return nil, err
+	}
+
+	return insertedTruck, tx.Commit()
 }
 
 func (r TruckRepository) GetTruck(ctx context.Context, truckId int64) (*entity.Truck, error) {
-	return nil, nil
+	q := generated.New(r.db)
+	tm, err := q.GetTruck(ctx, truckId)
+	if err != nil {
+		return nil, err
+	}
+
+	truck, err := unmarshalTruck(tm)
+	if err != nil {
+		return nil, err
+	}
+
+	return truck, nil
+}
+
+func unmarshalTruck(tm generated.Truck) (*entity.Truck, error) {
+	return entity.UnmarshalTruckFromDatabase(tm.ID, tm.Name)
 }

@@ -29,7 +29,31 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(process)
 
-	rec, _ := entity.NewReception(process.ID(), 0, 0, 0, 5, 5)
+	tr, _ := entity.NewTruck(0, "EEOO-990")
+	truckRepo := NewTruckRepository(db)
+	truck, err := truckRepo.AddTruck(ctx, tr)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(truck)
+
+	vy, _ := entity.NewVineyard(0, "Los Andes")
+	vyRepo := NewVineyardRepository(db)
+	vineyard, err := vyRepo.AddVineyard(ctx, vy)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(vineyard)
+
+	gt, _ := entity.NewGrapeType(0, "Rosa")
+	gtRepo := NewGrapeTypeRepository(db)
+	grapeType, err := gtRepo.AddGrapeType(ctx, gt)
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Log(grapeType)
+
+	rec, _ := entity.NewReception(process.ID(), truck.ID(), vineyard.ID(), grapeType.ID(), 5, 5)
 	recRepo := NewReceptionRepository(db)
 	reception, err := recRepo.AddReception(ctx, rec)
 	if err != nil {
