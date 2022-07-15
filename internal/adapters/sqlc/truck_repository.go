@@ -28,18 +28,13 @@ func (r TruckRepository) AddTruck(ctx context.Context, truck *entity.Truck) (*en
 	}
 	q := generated.New(tx)
 
-	insertedId, err := q.AddTruck(ctx, generated.AddTruckParams{
+	tm, err := q.AddTruck(ctx, generated.AddTruckParams{
 		CreatedAt: time.Now(),
 		Name:      truck.Name(),
 	})
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	}
-
-	tm := generated.Truck{
-		ID:   insertedId,
-		Name: truck.Name(),
 	}
 
 	insertedTruck, err := unmarshalTruck(tm)

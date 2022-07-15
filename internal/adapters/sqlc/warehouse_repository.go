@@ -28,7 +28,7 @@ func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity
 	}
 	q := generated.New(tx)
 
-	insertedId, err := q.AddWarehouse(ctx, generated.AddWarehouseParams{
+	wm, err := q.AddWarehouse(ctx, generated.AddWarehouseParams{
 		CreatedAt: time.Now(),
 		Name:      warehouse.Name(),
 		IsEmpty:   warehouse.IsEmpty(),
@@ -36,12 +36,6 @@ func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	}
-
-	wm := generated.Warehouse{
-		ID:      insertedId,
-		Name:    warehouse.Name(),
-		IsEmpty: warehouse.IsEmpty(),
 	}
 
 	insertedWarehouse, err := unmarshalWarehouse(wm)

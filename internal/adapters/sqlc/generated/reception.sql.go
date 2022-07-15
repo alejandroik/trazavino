@@ -7,13 +7,13 @@ package generated
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
-const addReception = `-- name: AddReception :execresult
+const addReception = `-- name: AddReception :one
 INSERT INTO reception (id, created_at, weight, sugar, truck_id, vineyard_id, grape_type_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
+RETURNING id, created_at, updated_at, deleted_at, weight, sugar, truck_id, vineyard_id, grape_type_id
 `
 
 type AddReceptionParams struct {
@@ -26,8 +26,8 @@ type AddReceptionParams struct {
 	GrapeTypeID int64
 }
 
-func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, addReception,
+func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (Reception, error) {
+	row := q.db.QueryRowContext(ctx, addReception,
 		arg.ID,
 		arg.CreatedAt,
 		arg.Weight,
@@ -36,6 +36,19 @@ func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (sql
 		arg.VineyardID,
 		arg.GrapeTypeID,
 	)
+	var i Reception
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Weight,
+		&i.Sugar,
+		&i.TruckID,
+		&i.VineyardID,
+		&i.GrapeTypeID,
+	)
+	return i, err
 }
 
 const getReception = `-- name: GetReception :one

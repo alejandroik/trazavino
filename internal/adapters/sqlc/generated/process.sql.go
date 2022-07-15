@@ -13,7 +13,7 @@ import (
 const addProcess = `-- name: AddProcess :one
 INSERT INTO process (created_at, start_date, p_type)
 VALUES ($1, $2, $3)
-RETURNING id
+RETURNING id, created_at, updated_at, deleted_at, start_date, end_date, hash, p_type, transaction, previous_id
 `
 
 type AddProcessParams struct {
@@ -22,11 +22,22 @@ type AddProcessParams struct {
 	PType     string
 }
 
-func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) (int64, error) {
+func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) (Process, error) {
 	row := q.db.QueryRowContext(ctx, addProcess, arg.CreatedAt, arg.StartDate, arg.PType)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var i Process
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.StartDate,
+		&i.EndDate,
+		&i.Hash,
+		&i.PType,
+		&i.Transaction,
+		&i.PreviousID,
+	)
+	return i, err
 }
 
 const getProcess = `-- name: GetProcess :one

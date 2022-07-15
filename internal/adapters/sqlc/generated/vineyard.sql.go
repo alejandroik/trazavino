@@ -13,7 +13,7 @@ import (
 const addVineyard = `-- name: AddVineyard :one
 INSERT INTO vineyard (created_at, name)
 VALUES ($1, $2)
-RETURNING id
+RETURNING id, created_at, updated_at, deleted_at, name
 `
 
 type AddVineyardParams struct {
@@ -21,11 +21,17 @@ type AddVineyardParams struct {
 	Name      string
 }
 
-func (q *Queries) AddVineyard(ctx context.Context, arg AddVineyardParams) (int64, error) {
+func (q *Queries) AddVineyard(ctx context.Context, arg AddVineyardParams) (Vineyard, error) {
 	row := q.db.QueryRowContext(ctx, addVineyard, arg.CreatedAt, arg.Name)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var i Vineyard
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Name,
+	)
+	return i, err
 }
 
 const getVineyard = `-- name: GetVineyard :one

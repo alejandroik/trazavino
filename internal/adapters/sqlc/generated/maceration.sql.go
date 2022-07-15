@@ -7,13 +7,13 @@ package generated
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
-const addMaceration = `-- name: AddMaceration :execresult
+const addMaceration = `-- name: AddMaceration :one
 INSERT INTO maceration (id, created_at, reception_id, warehouse_id)
 VALUES ($1, $2, $3, $4)
+RETURNING id, created_at, updated_at, deleted_at, reception_id, warehouse_id
 `
 
 type AddMacerationParams struct {
@@ -23,13 +23,23 @@ type AddMacerationParams struct {
 	WarehouseID int64
 }
 
-func (q *Queries) AddMaceration(ctx context.Context, arg AddMacerationParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, addMaceration,
+func (q *Queries) AddMaceration(ctx context.Context, arg AddMacerationParams) (Maceration, error) {
+	row := q.db.QueryRowContext(ctx, addMaceration,
 		arg.ID,
 		arg.CreatedAt,
 		arg.ReceptionID,
 		arg.WarehouseID,
 	)
+	var i Maceration
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.ReceptionID,
+		&i.WarehouseID,
+	)
+	return i, err
 }
 
 const getMaceration = `-- name: GetMaceration :one

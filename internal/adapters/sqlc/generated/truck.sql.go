@@ -13,7 +13,7 @@ import (
 const addTruck = `-- name: AddTruck :one
 INSERT INTO truck (created_at, name)
 VALUES ($1, $2)
-RETURNING id
+RETURNING id, created_at, updated_at, deleted_at, name
 `
 
 type AddTruckParams struct {
@@ -21,11 +21,17 @@ type AddTruckParams struct {
 	Name      string
 }
 
-func (q *Queries) AddTruck(ctx context.Context, arg AddTruckParams) (int64, error) {
+func (q *Queries) AddTruck(ctx context.Context, arg AddTruckParams) (Truck, error) {
 	row := q.db.QueryRowContext(ctx, addTruck, arg.CreatedAt, arg.Name)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var i Truck
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Name,
+	)
+	return i, err
 }
 
 const getTruck = `-- name: GetTruck :one

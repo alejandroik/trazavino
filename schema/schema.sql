@@ -143,7 +143,7 @@ CREATE TABLE process
     hash        varchar(100) UNIQUE,
     p_type      varchar(20) NOT NULL,
     transaction varchar(100),
-    previous_id bigint
+    previous_id bigint references process (id)
 );
 
 CREATE TABLE reception

@@ -13,7 +13,7 @@ import (
 const addWarehouse = `-- name: AddWarehouse :one
 INSERT INTO warehouse (created_at, name, is_empty)
 VALUES ($1, $2, $3)
-RETURNING id
+RETURNING id, created_at, updated_at, deleted_at, name, is_empty
 `
 
 type AddWarehouseParams struct {
@@ -22,11 +22,18 @@ type AddWarehouseParams struct {
 	IsEmpty   bool
 }
 
-func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) (int64, error) {
+func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) (Warehouse, error) {
 	row := q.db.QueryRowContext(ctx, addWarehouse, arg.CreatedAt, arg.Name, arg.IsEmpty)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var i Warehouse
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Name,
+		&i.IsEmpty,
+	)
+	return i, err
 }
 
 const getWarehouse = `-- name: GetWarehouse :one

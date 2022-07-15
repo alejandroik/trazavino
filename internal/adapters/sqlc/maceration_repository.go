@@ -28,7 +28,7 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 	}
 	q := generated.New(tx)
 
-	_, err = q.AddMaceration(ctx, generated.AddMacerationParams{
+	mm, err := q.AddMaceration(ctx, generated.AddMacerationParams{
 		ID:          m.ID(),
 		CreatedAt:   time.Now(),
 		ReceptionID: m.ReceptionID(),
@@ -39,7 +39,12 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		return nil, err
 	}
 
-	return m, tx.Commit()
+	insertedMaceration, err := unmarshalMaceration(mm)
+	if err != nil {
+		return nil, err
+	}
+
+	return insertedMaceration, tx.Commit()
 }
 
 func (r MacerationRepository) GetMaceration(ctx context.Context, macerationId int64) (*entity.Maceration, error) {

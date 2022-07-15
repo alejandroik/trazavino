@@ -28,7 +28,7 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	}
 	q := generated.New(tx)
 
-	_, err = q.AddReception(ctx, generated.AddReceptionParams{
+	rm, err := q.AddReception(ctx, generated.AddReceptionParams{
 		ID:          rc.ID(),
 		CreatedAt:   time.Now(),
 		Weight:      rc.Weight(),
@@ -42,7 +42,12 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 		return nil, err
 	}
 
-	return rc, tx.Commit()
+	insertedReception, err := unmarshalReception(rm)
+	if err != nil {
+		return nil, err
+	}
+
+	return insertedReception, tx.Commit()
 }
 
 func (r ReceptionRepository) GetReception(ctx context.Context, id int64) (*entity.Reception, error) {

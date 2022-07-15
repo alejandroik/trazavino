@@ -60,7 +60,6 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 		t.Fatal(err)
 	}
 	t.Log(reception)
-	recId := process.ID()
 
 	wh, _ := entity.NewWarehouse(0, "C244", true)
 	whRepo := NewWarehouseRepository(db)
@@ -70,14 +69,14 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(warehouse)
 
-	pr, _ = entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Maceration.String(), recId)
+	pr, _ = entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Maceration.String(), 0)
 	process, err = repo.AddProcess(ctx, pr)
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(process)
 
-	mac, _ := entity.NewMaceration(process.ID(), recId, warehouse.ID())
+	mac, _ := entity.NewMaceration(process.ID(), reception.ID(), warehouse.ID())
 	macRepo := NewMacerationRepository(db)
 	maceration, err := macRepo.AddMaceration(ctx, mac)
 	if err != nil {

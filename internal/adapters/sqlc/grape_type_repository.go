@@ -28,18 +28,13 @@ func (r GrapeTypeRepository) AddGrapeType(ctx context.Context, grapeType *entity
 	}
 	q := generated.New(tx)
 
-	insertedId, err := q.AddGrapeType(ctx, generated.AddGrapeTypeParams{
+	gtm, err := q.AddGrapeType(ctx, generated.AddGrapeTypeParams{
 		CreatedAt: time.Now(),
 		Name:      grapeType.Name(),
 	})
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	}
-
-	gtm := generated.GrapeType{
-		ID:   insertedId,
-		Name: grapeType.Name(),
 	}
 
 	insertedGrapeType, err := unmarshalGrapeType(gtm)

@@ -13,7 +13,7 @@ import (
 const addGrapeType = `-- name: AddGrapeType :one
 INSERT INTO grape_type (created_at, name)
 VALUES ($1, $2)
-RETURNING id
+RETURNING id, created_at, updated_at, deleted_at, name
 `
 
 type AddGrapeTypeParams struct {
@@ -21,11 +21,17 @@ type AddGrapeTypeParams struct {
 	Name      string
 }
 
-func (q *Queries) AddGrapeType(ctx context.Context, arg AddGrapeTypeParams) (int64, error) {
+func (q *Queries) AddGrapeType(ctx context.Context, arg AddGrapeTypeParams) (GrapeType, error) {
 	row := q.db.QueryRowContext(ctx, addGrapeType, arg.CreatedAt, arg.Name)
-	var id int64
-	err := row.Scan(&id)
-	return id, err
+	var i GrapeType
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.Name,
+	)
+	return i, err
 }
 
 const getGrapeType = `-- name: GetGrapeType :one

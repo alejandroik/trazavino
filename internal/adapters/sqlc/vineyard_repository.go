@@ -28,18 +28,13 @@ func (r VineyardRepository) AddVineyard(ctx context.Context, vineyard *entity.Vi
 	}
 	q := generated.New(tx)
 
-	insertedId, err := q.AddVineyard(ctx, generated.AddVineyardParams{
+	vm, err := q.AddVineyard(ctx, generated.AddVineyardParams{
 		CreatedAt: time.Now(),
 		Name:      vineyard.Name(),
 	})
 	if err != nil {
 		tx.Rollback()
 		return nil, err
-	}
-
-	vm := generated.Vineyard{
-		ID:   insertedId,
-		Name: vineyard.Name(),
 	}
 
 	insertedVineyard, err := unmarshalVineyard(vm)
