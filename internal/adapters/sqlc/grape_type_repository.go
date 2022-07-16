@@ -39,6 +39,7 @@ func (r GrapeTypeRepository) AddGrapeType(ctx context.Context, grapeType *entity
 
 	insertedGrapeType, err := unmarshalGrapeType(gtm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

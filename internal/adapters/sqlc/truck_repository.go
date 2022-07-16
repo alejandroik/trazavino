@@ -39,6 +39,7 @@ func (r TruckRepository) AddTruck(ctx context.Context, truck *entity.Truck) (*en
 
 	insertedTruck, err := unmarshalTruck(tm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

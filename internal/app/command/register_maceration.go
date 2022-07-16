@@ -19,19 +19,24 @@ type RegisterMacerationHandler Handler[RegisterMaceration]
 type registerMacerationHandler struct {
 	processRepository    repository.ProcessRepository
 	macerationRepository repository.MacerationRepository
+	warehouseRepository  repository.WarehouseRepository
 }
 
-func NewRegisterMacerationHandler(processRepository repository.ProcessRepository, macerationRepository repository.MacerationRepository) RegisterMacerationHandler {
+func NewRegisterMacerationHandler(processRepository repository.ProcessRepository, macerationRepository repository.MacerationRepository, warehouseRepository repository.WarehouseRepository) RegisterMacerationHandler {
 	if processRepository == nil {
 		panic("nil processRepository")
 	}
 	if macerationRepository == nil {
 		panic("nil macerationRepository")
 	}
+	if warehouseRepository == nil {
+		panic("nil warehouseRepository")
+	}
 
 	return registerMacerationHandler{
 		processRepository:    processRepository,
 		macerationRepository: macerationRepository,
+		warehouseRepository:  warehouseRepository,
 	}
 }
 

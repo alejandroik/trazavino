@@ -112,38 +112,33 @@ func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([
 	return items, nil
 }
 
-const updateProcessEndDatePreviousID = `-- name: UpdateProcessEndDatePreviousID :exec
+const updateProcess = `-- name: UpdateProcess :exec
 UPDATE process
-SET end_date    = $2,
-    previous_id = $3
+SET updated_at  = $2,
+    end_date    = $3,
+    previous_id = $4,
+    hash        = $5,
+    transaction = $6
 WHERE id = $1
 `
 
-type UpdateProcessEndDatePreviousIDParams struct {
-	ID         int64
-	EndDate    sql.NullTime
-	PreviousID sql.NullInt64
-}
-
-func (q *Queries) UpdateProcessEndDatePreviousID(ctx context.Context, arg UpdateProcessEndDatePreviousIDParams) error {
-	_, err := q.db.ExecContext(ctx, updateProcessEndDatePreviousID, arg.ID, arg.EndDate, arg.PreviousID)
-	return err
-}
-
-const updateProcessHashTransaction = `-- name: UpdateProcessHashTransaction :exec
-UPDATE process
-SET hash        = $2,
-    transaction = $3
-WHERE id = $1
-`
-
-type UpdateProcessHashTransactionParams struct {
+type UpdateProcessParams struct {
 	ID          int64
+	UpdatedAt   sql.NullTime
+	EndDate     sql.NullTime
+	PreviousID  sql.NullInt64
 	Hash        sql.NullString
 	Transaction sql.NullString
 }
 
-func (q *Queries) UpdateProcessHashTransaction(ctx context.Context, arg UpdateProcessHashTransactionParams) error {
-	_, err := q.db.ExecContext(ctx, updateProcessHashTransaction, arg.ID, arg.Hash, arg.Transaction)
+func (q *Queries) UpdateProcess(ctx context.Context, arg UpdateProcessParams) error {
+	_, err := q.db.ExecContext(ctx, updateProcess,
+		arg.ID,
+		arg.UpdatedAt,
+		arg.EndDate,
+		arg.PreviousID,
+		arg.Hash,
+		arg.Transaction,
+	)
 	return err
 }

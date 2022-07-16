@@ -2,6 +2,7 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/alejandroik/trazavino-api/internal/adapters/sqlc/generated"
@@ -79,6 +80,7 @@ func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Proce
 
 	insertedProcess, err := unmarshalProcess(pm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
@@ -90,9 +92,70 @@ func (r ProcessRepository) UpdateProcess(
 	processId int64,
 	updateFn func(ctx context.Context, process *entity.Process) (*entity.Process, error),
 ) error {
-	return nil
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	q := generated.New(tx)
+
+	pm, err := q.GetProcess(ctx, processId)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	process, err := unmarshalProcess(pm)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	updatedProcess, err := updateFn(ctx, process)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = q.UpdateProcess(ctx, marshalProcessUpdateParams(updatedProcess))
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func marshalProcessUpdateParams(pr *entity.Process) generated.UpdateProcessParams {
+	var endDate sql.NullTime
+	if !pr.EndDate().IsZero() {
+		endDate = sql.NullTime{Time: pr.EndDate(), Valid: true}
+	}
+
+	var previousID sql.NullInt64
+	if pr.PreviousID() != 0 {
+		previousID = sql.NullInt64{Int64: pr.PreviousID(), Valid: true}
+	}
+
+	var hash sql.NullString
+	if pr.Hash() != "" {
+		hash = sql.NullString{String: pr.Hash(), Valid: true}
+	}
+
+	var transaction sql.NullString
+	if pr.Transaction() != "" {
+		transaction = sql.NullString{String: pr.Transaction(), Valid: true}
+	}
+
+	return generated.UpdateProcessParams{
+		ID:          pr.ID(),
+		UpdatedAt:   sql.NullTime{Time: time.Now(), Valid: true},
+		EndDate:     endDate,
+		PreviousID:  previousID,
+		Hash:        hash,
+		Transaction: transaction,
+	}
 }
 
 func unmarshalProcess(pm generated.Process) (*entity.Process, error) {
-	return entity.UnmarshalProcessFromDatabase(pm.ID, pm.StartDate, pm.EndDate.Time, pm.PType, pm.Hash.String, pm.Transaction.String, pm.PreviousID.Int64)
+	return entity.UnmarshalProcessFromDatabase(pm.ID, pm.StartDate, pm.EndDate.Time, pm.Hash.String, pm.Transaction.String, pm.PType, pm.PreviousID.Int64)
 }

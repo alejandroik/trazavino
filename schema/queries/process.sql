@@ -15,14 +15,11 @@ INSERT INTO process (created_at, start_date, p_type)
 VALUES ($1, $2, $3)
 RETURNING *;
 
--- name: UpdateProcessHashTransaction :exec
+-- name: UpdateProcess :exec
 UPDATE process
-SET hash        = $2,
-    transaction = $3
-WHERE id = $1;
-
--- name: UpdateProcessEndDatePreviousID :exec
-UPDATE process
-SET end_date    = $2,
-    previous_id = $3
+SET updated_at  = $2,
+    end_date    = $3,
+    previous_id = $4,
+    hash        = $5,
+    transaction = $6
 WHERE id = $1;

@@ -40,6 +40,7 @@ func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity
 
 	insertedWarehouse, err := unmarshalWarehouse(wm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

@@ -84,6 +84,12 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(maceration)
 
+	err = repo.UpdateProcess(ctx, rec.ID(), func(ctx context.Context, pr *entity.Process) (*entity.Process, error) {
+		pr.UpdateHash("0x6234234235234")
+
+		return pr, nil
+	})
+
 	ps, err := repo.ListProcesses(ctx, 0, 2)
 	if err != nil {
 		t.Fatal(err)

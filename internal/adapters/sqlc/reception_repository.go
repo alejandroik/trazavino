@@ -44,6 +44,7 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 
 	insertedReception, err := unmarshalReception(rm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

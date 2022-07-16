@@ -7,6 +7,7 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -97,4 +98,22 @@ func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateWarehouse = `-- name: UpdateWarehouse :exec
+UPDATE warehouse
+SET updated_at = $2,
+    is_empty   = $3
+WHERE id = $1
+`
+
+type UpdateWarehouseParams struct {
+	ID        int64
+	UpdatedAt sql.NullTime
+	IsEmpty   bool
+}
+
+func (q *Queries) UpdateWarehouse(ctx context.Context, arg UpdateWarehouseParams) error {
+	_, err := q.db.ExecContext(ctx, updateWarehouse, arg.ID, arg.UpdatedAt, arg.IsEmpty)
+	return err
 }

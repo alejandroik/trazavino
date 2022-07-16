@@ -41,6 +41,7 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 
 	insertedMaceration, err := unmarshalMaceration(mm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

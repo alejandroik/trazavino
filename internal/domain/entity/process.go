@@ -61,6 +61,30 @@ func (p Process) PreviousID() int64 {
 	return p.previousId
 }
 
+func (p *Process) UpdateEndDate(date time.Time) error {
+	p.endDate = date
+
+	return nil
+}
+
+func (p *Process) UpdatePreviousID(id int64) error {
+	p.previousId = id
+
+	return nil
+}
+
+func (p *Process) UpdateHash(hash string) error {
+	p.hash = hash
+
+	return nil
+}
+
+func (p *Process) UpdateTransaction(transaction string) error {
+	p.transaction = transaction
+
+	return nil
+}
+
 func UnmarshalProcessFromDatabase(
 	id int64,
 	startDate time.Time,

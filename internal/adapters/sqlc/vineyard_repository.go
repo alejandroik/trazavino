@@ -39,6 +39,7 @@ func (r VineyardRepository) AddVineyard(ctx context.Context, vineyard *entity.Vi
 
 	insertedVineyard, err := unmarshalVineyard(vm)
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 

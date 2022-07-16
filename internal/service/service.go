@@ -22,11 +22,12 @@ func newApplication(ctx context.Context) app.Application {
 	processRepository := sqlc.NewProcessRepository(db)
 	receptionRepository := sqlc.NewReceptionRepository(db)
 	macerationRepository := sqlc.NewMacerationRepository(db)
+	warehouseRepository := sqlc.NewWarehouseRepository(db)
 
 	return app.Application{
 		Commands: app.Commands{
 			RegisterReception:  command.NewRegisterReceptionHandler(processRepository, receptionRepository),
-			RegisterMaceration: command.NewRegisterMacerationHandler(processRepository, macerationRepository),
+			RegisterMaceration: command.NewRegisterMacerationHandler(processRepository, macerationRepository, warehouseRepository),
 		},
 	}
 }
