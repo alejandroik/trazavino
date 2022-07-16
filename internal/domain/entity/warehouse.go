@@ -24,6 +24,12 @@ func (w Warehouse) IsEmpty() bool {
 	return w.isEmpty
 }
 
+func (w *Warehouse) UpdateIsEmpty(v bool) error {
+	w.isEmpty = v
+
+	return nil
+}
+
 func UnmarshalWarehouseFromDatabase(id int64, name string, isEmpty bool) (*Warehouse, error) {
 	return NewWarehouse(id, name, isEmpty)
 }

@@ -41,7 +41,9 @@ func NewRegisterMacerationHandler(processRepository repository.ProcessRepository
 }
 
 func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMaceration) error {
-	pr, err := entity.NewProcess(0, time.Now(), time.Time{}, "", "", process_type.Maceration.String(), 0)
+	date := time.Now()
+
+	pr, err := entity.NewProcess(0, date, time.Time{}, "", "", process_type.Maceration.String(), 0)
 	if err != nil {
 		return err
 	}
@@ -54,8 +56,44 @@ func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMacer
 	if err != nil {
 		return err
 	}
-	_, err = h.macerationRepository.AddMaceration(ctx, rc)
+	mac, err := h.macerationRepository.AddMaceration(ctx, rc)
 	if err != nil {
+		return err
+	}
+
+	// set warehouse as occupied
+	if err = h.warehouseRepository.UpdateWarehouse(
+		ctx,
+		cmd.WarehouseID,
+		func(ctx context.Context, wh *entity.Warehouse) (*entity.Warehouse, error) {
+			_ = wh.UpdateIsEmpty(false)
+
+			return wh, nil
+		}); err != nil {
+		return err
+	}
+
+	// update reception end date
+	if err = h.processRepository.UpdateProcess(
+		ctx,
+		cmd.ReceptionID,
+		func(ctx context.Context, pr *entity.Process) (*entity.Process, error) {
+			_ = pr.UpdateEndDate(date)
+
+			return pr, nil
+		}); err != nil {
+		return err
+	}
+
+	// set reception as previous process
+	if err = h.processRepository.UpdateProcess(
+		ctx,
+		mac.ID(),
+		func(ctx context.Context, pr *entity.Process) (*entity.Process, error) {
+			_ = pr.UpdatePreviousID(cmd.ReceptionID)
+
+			return pr, nil
+		}); err != nil {
 		return err
 	}
 
