@@ -1,8 +1,20 @@
 package entity
 
+import "time"
+
 type Ageing struct {
-	id       int64
-	tankId   int64
-	cellarId int64
+	uuid string
+
+	time time.Time
+
+	tankUUID string
+	tankName string
+
+	cellarUUID string
+	cellarName string
+
 	humidity int32
+
+	hash        string
+	transaction string
 }

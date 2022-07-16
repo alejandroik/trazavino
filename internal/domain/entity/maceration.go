@@ -1,31 +1,94 @@
 package entity
 
+import (
+	"time"
+
+	"github.com/pkg/errors"
+)
+
 type Maceration struct {
-	id          int64
-	receptionId int64
-	warehouseId int64
+	uuid string
+
+	time time.Time
+
+	receptionUUID string
+
+	warehouseUUID string
+	warehouseName string
+
+	hash        string
+	transaction string
 }
 
-func NewMaceration(id int64, receptionId int64, warehouseId int64) (*Maceration, error) {
+func NewMaceration(uuid string, time time.Time, receptionUUID string, warehouseUUID string, warehouseName string) (*Maceration, error) {
+	if uuid == "" {
+		return nil, errors.New("empty maceration uuid")
+	}
+	if time.IsZero() {
+		return nil, errors.New("zero maceration time")
+	}
+	if receptionUUID == "" {
+		return nil, errors.New("empty reception uuid")
+	}
+	if warehouseUUID == "" {
+		return nil, errors.New("empty warehouse uuid")
+	}
+	if warehouseName == "" {
+		return nil, errors.New("empty warehouse name")
+	}
+
 	return &Maceration{
-		id:          id,
-		receptionId: receptionId,
-		warehouseId: warehouseId,
+		uuid:          uuid,
+		time:          time,
+		receptionUUID: receptionUUID,
+		warehouseUUID: warehouseUUID,
+		warehouseName: warehouseName,
 	}, nil
 }
 
-func (m Maceration) ID() int64 {
-	return m.id
+func (m Maceration) UUID() string {
+	return m.uuid
 }
 
-func (m Maceration) ReceptionID() int64 {
-	return m.receptionId
+func (m Maceration) ReceptionUUID() string {
+	return m.receptionUUID
 }
 
-func (m Maceration) WarehouseID() int64 {
-	return m.warehouseId
+func (m Maceration) WarehouseUUID() string {
+	return m.warehouseUUID
 }
 
-func UnmarshalMacerationFromDatabase(id int64, receptionId int64, warehouseId int64) (*Maceration, error) {
-	return NewMaceration(id, receptionId, warehouseId)
+func (m Maceration) WarehouseName() string {
+	return m.warehouseName
+}
+
+func (r *Maceration) UpdateHash(hash string) error {
+	r.hash = hash
+
+	return nil
+}
+
+func (r *Maceration) UpdateTransaction(tr string) error {
+	r.transaction = tr
+
+	return nil
+}
+
+func UnmarshalMacerationFromDatabase(
+	uuid string,
+	time time.Time,
+	receptionUUID string,
+	warehouseUUID string,
+	warehouseName string,
+	hash string,
+	transaction string) (*Maceration, error) {
+	m, err := NewMaceration(uuid, time, receptionUUID, warehouseUUID, warehouseName)
+	if err != nil {
+		return nil, err
+	}
+
+	m.hash = hash
+	m.transaction = transaction
+
+	return m, nil
 }

@@ -29,10 +29,10 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 	q := generated.New(tx)
 
 	mm, err := q.AddMaceration(ctx, generated.AddMacerationParams{
-		ID:          m.ID(),
+		ID:          m.UUID(),
 		CreatedAt:   time.Now(),
-		ReceptionID: m.ReceptionID(),
-		WarehouseID: m.WarehouseID(),
+		ReceptionID: m.ReceptionUUID(),
+		WarehouseID: m.WarehouseUUID(),
 	})
 	if err != nil {
 		tx.Rollback()

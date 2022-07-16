@@ -7,7 +7,6 @@ import (
 
 	"github.com/alejandroik/trazavino-api/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -132,8 +131,8 @@ func marshalProcessUpdateParams(pr *entity.Process) generated.UpdateProcessParam
 	}
 
 	var previousID sql.NullInt64
-	if pr.PreviousID() != 0 {
-		previousID = sql.NullInt64{Int64: pr.PreviousID(), Valid: true}
+	if pr.PreviousUUID() != 0 {
+		previousID = sql.NullInt64{Int64: pr.PreviousUUID(), Valid: true}
 	}
 
 	var hash sql.NullString
@@ -147,7 +146,7 @@ func marshalProcessUpdateParams(pr *entity.Process) generated.UpdateProcessParam
 	}
 
 	return generated.UpdateProcessParams{
-		ID:          pr.ID(),
+		ID:          pr.UUID(),
 		UpdatedAt:   sql.NullTime{Time: time.Now(), Valid: true},
 		EndDate:     endDate,
 		PreviousID:  previousID,

@@ -1,7 +1,18 @@
 package entity
 
+import "time"
+
 type Fermentation struct {
-	id          int64
-	warehouseId int64
-	tankId      int64
+	uuid string
+
+	time time.Time
+
+	warehouseUUID string
+	warehouseName string
+
+	tankUUID string
+	tankName string
+
+	hash        string
+	transaction string
 }
