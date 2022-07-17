@@ -9,7 +9,8 @@ import (
 type Reception struct {
 	uuid string
 
-	time time.Time
+	startTime time.Time
+	endTime   time.Time
 
 	truckUUID    string
 	truckLicense string
@@ -29,7 +30,7 @@ type Reception struct {
 
 func NewReception(
 	uuid string,
-	time time.Time,
+	startTime time.Time,
 	truckUUID string,
 	truckLicense string,
 	vineyardUUID string,
@@ -41,7 +42,7 @@ func NewReception(
 	if uuid == "" {
 		return nil, errors.New("empty reception uuid")
 	}
-	if time.IsZero() {
+	if startTime.IsZero() {
 		return nil, errors.New("zero reception start time")
 	}
 	if truckUUID == "" {
@@ -65,7 +66,7 @@ func NewReception(
 
 	return &Reception{
 		uuid:          uuid,
-		time:          time,
+		startTime:     startTime,
 		truckUUID:     truckUUID,
 		truckLicense:  truckLicense,
 		vineyardUUID:  vineyardUUID,
@@ -81,8 +82,8 @@ func (r Reception) UUID() string {
 	return r.uuid
 }
 
-func (r Reception) Time() time.Time {
-	return r.time
+func (r Reception) StartTime() time.Time {
+	return r.startTime
 }
 
 func (r Reception) TruckUUID() string {
@@ -131,7 +132,7 @@ func (r *Reception) UpdateTransaction(tr string) error {
 
 func UnmarshalReceptionFromDatabase(
 	uuid string,
-	time time.Time,
+	startTime time.Time,
 	truckUUID string,
 	truckLicense string,
 	vineyardUUID string,
@@ -140,11 +141,12 @@ func UnmarshalReceptionFromDatabase(
 	grapeTypeName string,
 	weight int32,
 	sugar int32,
+	endTime time.Time,
 	hash string,
 	transaction string) (*Reception, error) {
 	r, err := NewReception(
 		uuid,
-		time,
+		startTime,
 		truckUUID,
 		truckLicense,
 		vineyardUUID,
@@ -157,6 +159,7 @@ func UnmarshalReceptionFromDatabase(
 		return nil, err
 	}
 
+	r.endTime = endTime
 	r.hash = hash
 	r.transaction = transaction
 
