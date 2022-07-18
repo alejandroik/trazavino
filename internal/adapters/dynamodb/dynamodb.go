@@ -10,10 +10,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Document map[string]types.AttributeValue
+type document map[string]types.AttributeValue
 
-func stringKey(k string, v string) Document {
-	return Document{k: &types.AttributeValueMemberS{Value: v}}
+func stringKey(k string, v string) document {
+	return document{k: &types.AttributeValueMemberS{Value: v}}
 }
 
 func NewDynamoDbClient(ctx context.Context) (*dynamodb.Client, error) {

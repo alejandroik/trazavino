@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/alejandroik/trazavino-api/internal/domain/entity"
-	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
@@ -60,10 +59,9 @@ func TestReceptionDynamoDbRepository_Marshal(t *testing.T) {
 	require.NoError(t, err)
 	recRepo := NewReceptionDynamoDbRepository(client)
 
-	rm := recRepo.marshalReception(rc)
-	putReceptionItem, err := attributevalue.MarshalMap(rm)
+	rm, err := recRepo.marshalReception(rc)
 	require.NoError(t, err)
-	reception, err := recRepo.unmarshalReception(putReceptionItem)
+	reception, err := recRepo.unmarshalReception(rm)
 	require.NoError(t, err)
 	t.Log(reception)
 }
@@ -79,4 +77,23 @@ func TestReceptionDynamoDbRepository_GetReception(t *testing.T) {
 	rc, err := recRepo.GetReception(ctx, "54293b87-be54-401b-8efe-983b7d109ee3")
 	require.NoError(t, err)
 	t.Log(rc)
+}
+
+func TestReceptionDynamoDbRepository_UpdateReception(t *testing.T) {
+	ctx := context.Background()
+
+	os.Setenv("LOCAL_DB_ENDPOINT", "http://localhost:8000")
+	client, err := NewDynamoDbClient(ctx)
+	require.NoError(t, err)
+	recRepo := NewReceptionDynamoDbRepository(client)
+
+	err = recRepo.UpdateReception(
+		ctx,
+		"54293b87-be54-401b-8efe-983b7d109ee3",
+		func(ctx context.Context, rc *entity.Reception) (*entity.Reception, error) {
+			rc.UpdateEndTime(time.Now().Round(time.Second))
+
+			return rc, nil
+		})
+	require.NoError(t, err)
 }

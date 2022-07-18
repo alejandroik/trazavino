@@ -33,13 +33,8 @@ type ReceptionModel struct {
 	Transaction *string `dynamodbav:"Transaction"`
 }
 
-func (r ReceptionModel) GetKey() (map[string]types.AttributeValue, error) {
-	uuid, err := attributevalue.Marshal(r.UUID)
-	if err != nil {
-		return map[string]types.AttributeValue{}, err
-	}
-
-	return map[string]types.AttributeValue{"UUID": uuid}, nil
+func (r ReceptionDynamoDbRepository) getKey(doc document) document {
+	return document{"UUID": doc["UUID"]}
 }
 
 type ReceptionDynamoDbRepository struct {
@@ -55,70 +50,54 @@ func (r ReceptionDynamoDbRepository) receptionTable() *string {
 }
 
 func (r ReceptionDynamoDbRepository) AddReception(ctx context.Context, rc *entity.Reception) error {
-	rm := r.marshalReception(rc)
-
-	putReceptionItem, err := attributevalue.MarshalMap(rm)
+	rm, err := r.marshalReception(rc)
 	if err != nil {
 		return err
 	}
 
 	var transactItems []types.TransactWriteItem
 
-	transactItems = append(
-		transactItems,
-		types.TransactWriteItem{
-			ConditionCheck: &types.ConditionCheck{
-				Key:                      stringKey("UUID", rc.TruckUUID()),
-				TableName:                aws.String("Truck"),
-				ConditionExpression:      aws.String("attribute_exists(#U)"),
-				ExpressionAttributeNames: map[string]string{"#U": "UUID"},
-			},
-		})
+	transactItems = append(transactItems, types.TransactWriteItem{
+		ConditionCheck: &types.ConditionCheck{
+			Key:                      stringKey("UUID", rc.TruckUUID()),
+			TableName:                aws.String("Truck"),
+			ConditionExpression:      aws.String("attribute_exists(#U)"),
+			ExpressionAttributeNames: map[string]string{"#U": "UUID"},
+		},
+	})
 
-	transactItems = append(
-		transactItems,
-		types.TransactWriteItem{
-			ConditionCheck: &types.ConditionCheck{
-				Key:                      stringKey("UUID", rc.VineyardUUID()),
-				TableName:                aws.String("Vineyard"),
-				ConditionExpression:      aws.String("attribute_exists(#U)"),
-				ExpressionAttributeNames: map[string]string{"#U": "UUID"},
-			},
-		})
+	transactItems = append(transactItems, types.TransactWriteItem{
+		ConditionCheck: &types.ConditionCheck{
+			Key:                      stringKey("UUID", rc.VineyardUUID()),
+			TableName:                aws.String("Vineyard"),
+			ConditionExpression:      aws.String("attribute_exists(#U)"),
+			ExpressionAttributeNames: map[string]string{"#U": "UUID"},
+		},
+	})
 
-	transactItems = append(
-		transactItems,
-		types.TransactWriteItem{
-			ConditionCheck: &types.ConditionCheck{
-				Key:                      stringKey("UUID", rc.GrapeTypeUUID()),
-				TableName:                aws.String("GrapeType"),
-				ConditionExpression:      aws.String("attribute_exists(#U)"),
-				ExpressionAttributeNames: map[string]string{"#U": "UUID"},
-			},
-		})
+	transactItems = append(transactItems, types.TransactWriteItem{
+		ConditionCheck: &types.ConditionCheck{
+			Key:                      stringKey("UUID", rc.GrapeTypeUUID()),
+			TableName:                aws.String("GrapeType"),
+			ConditionExpression:      aws.String("attribute_exists(#U)"),
+			ExpressionAttributeNames: map[string]string{"#U": "UUID"},
+		},
+	})
 
-	transactItems = append(
-		transactItems,
-		types.TransactWriteItem{
-			Put: &types.Put{
-				Item:      putReceptionItem,
-				TableName: r.receptionTable(),
-			},
-		})
+	transactItems = append(transactItems, types.TransactWriteItem{
+		Put: &types.Put{
+			Item:      rm,
+			TableName: r.receptionTable(),
+		},
+	})
 
 	_, err = r.dynamoDbClient.TransactWriteItems(ctx, &dynamodb.TransactWriteItemsInput{TransactItems: transactItems})
 	return err
 }
 
 func (r ReceptionDynamoDbRepository) GetReception(ctx context.Context, receptionUUID string) (*entity.Reception, error) {
-	rm := ReceptionModel{UUID: receptionUUID}
-	rk, err := rm.GetKey()
-	if err != nil {
-		return nil, err
-	}
-
 	response, err := r.dynamoDbClient.GetItem(ctx, &dynamodb.GetItemInput{
-		Key: rk, TableName: r.receptionTable(),
+		Key: stringKey("UUID", receptionUUID), TableName: r.receptionTable(),
 	})
 	if err != nil {
 		return nil, err
@@ -133,10 +112,32 @@ func (r ReceptionDynamoDbRepository) GetReception(ctx context.Context, reception
 }
 
 func (r ReceptionDynamoDbRepository) UpdateReception(ctx context.Context, receptionUUID string, updateFn func(ctx context.Context, rc *entity.Reception) (*entity.Reception, error)) error {
+	reception, err := r.GetReception(ctx, receptionUUID)
+	if err != nil {
+		return err
+	}
+
+	updReception, err := updateFn(ctx, reception)
+	if err != nil {
+		return err
+	}
+
+	rm, err := r.marshalReception(updReception)
+	if err != nil {
+		return err
+	}
+
+	_, err = r.dynamoDbClient.PutItem(ctx, &dynamodb.PutItemInput{
+		TableName: r.receptionTable(), Item: rm,
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
-func (r ReceptionDynamoDbRepository) marshalReception(rc *entity.Reception) ReceptionModel {
+func (r ReceptionDynamoDbRepository) marshalReception(rc *entity.Reception) (document, error) {
 	receptionModel := ReceptionModel{
 		UUID:          rc.UUID(),
 		StartTime:     rc.StartTime(),
@@ -150,10 +151,23 @@ func (r ReceptionDynamoDbRepository) marshalReception(rc *entity.Reception) Rece
 		Sugar:         rc.Sugar(),
 	}
 
-	return receptionModel
+	et := rc.EndTime()
+	if !et.IsZero() {
+		receptionModel.EndTime = &et
+	}
+	hash := rc.Hash()
+	if hash != "" {
+		receptionModel.Hash = &hash
+	}
+	transaction := rc.Transaction()
+	if transaction != "" {
+		receptionModel.Transaction = &transaction
+	}
+
+	return attributevalue.MarshalMap(receptionModel)
 }
 
-func (r ReceptionDynamoDbRepository) unmarshalReception(av Document) (*entity.Reception, error) {
+func (r ReceptionDynamoDbRepository) unmarshalReception(av document) (*entity.Reception, error) {
 	rm := ReceptionModel{}
 	err := attributevalue.UnmarshalMap(av, &rm)
 	if err != nil {

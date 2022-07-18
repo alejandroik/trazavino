@@ -118,6 +118,24 @@ func (r Reception) Sugar() int32 {
 	return r.sugar
 }
 
+func (r Reception) EndTime() time.Time {
+	return r.endTime
+}
+
+func (r Reception) Hash() string {
+	return r.hash
+}
+
+func (r Reception) Transaction() string {
+	return r.transaction
+}
+
+func (r *Reception) UpdateEndTime(t time.Time) error {
+	r.endTime = t
+
+	return nil
+}
+
 func (r *Reception) UpdateHash(hash string) error {
 	r.hash = hash
 
