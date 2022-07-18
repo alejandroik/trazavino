@@ -1,9 +1,11 @@
 version: "3.9"
 services:
-  db:
-    image: postgres:14.4-alpine
-    restart: unless-stopped
-    env_file:
-      - .env
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:1.18.0"
     ports:
-      - "5432:5432"
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+    restart: unless-stopped

@@ -52,7 +52,7 @@ func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMacer
 		return err
 	}
 
-	rc, err := entity.NewMaceration(insertedProcess.ID(), cmd.ReceptionID, cmd.WarehouseID)
+	rc, err := entity.NewMaceration(insertedProcess.UUID(), cmd.ReceptionID, cmd.WarehouseID)
 	if err != nil {
 		return err
 	}
@@ -88,9 +88,9 @@ func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMacer
 	// set reception as previous process
 	if err = h.processRepository.UpdateProcess(
 		ctx,
-		mac.ID(),
+		mac.UUID(),
 		func(ctx context.Context, pr *entity.Process) (*entity.Process, error) {
-			_ = pr.UpdatePreviousID(cmd.ReceptionID)
+			_ = pr.UpdatePreviousUUID(cmd.ReceptionID)
 
 			return pr, nil
 		}); err != nil {

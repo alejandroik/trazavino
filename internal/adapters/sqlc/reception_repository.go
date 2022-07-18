@@ -29,13 +29,13 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	q := generated.New(tx)
 
 	rm, err := q.AddReception(ctx, generated.AddReceptionParams{
-		ID:          rc.ID(),
+		ID:          rc.UUID(),
 		CreatedAt:   time.Now(),
 		Weight:      rc.Weight(),
 		Sugar:       rc.Sugar(),
-		TruckID:     rc.TruckID(),
-		VineyardID:  rc.VineyardID(),
-		GrapeTypeID: rc.GrapeTypeID(),
+		TruckID:     rc.TruckUUID(),
+		VineyardID:  rc.VineyardUUID(),
+		GrapeTypeID: rc.GrapeTypeUUID(),
 	})
 	if err != nil {
 		tx.Rollback()

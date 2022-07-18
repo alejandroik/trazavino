@@ -5,36 +5,40 @@ import (
 )
 
 type Process struct {
-	id          int64
-	startDate   time.Time
-	endDate     time.Time
+	uuid string
+
+	startDate time.Time
+	endDate   time.Time
+
 	hash        string
 	transaction string
-	pType       string
-	previousId  int64
+
+	pType string
+
+	previousUUID string
 }
 
 func NewProcess(
-	id int64,
+	uuid string,
 	startDate time.Time,
 	endDate time.Time,
 	hash string,
 	transaction string,
 	pType string,
-	previousId int64) (*Process, error) {
+	previousUUID string) (*Process, error) {
 	return &Process{
-		id:          id,
-		startDate:   startDate,
-		endDate:     endDate,
-		hash:        hash,
-		transaction: transaction,
-		pType:       pType,
-		previousId:  previousId,
+		uuid:         uuid,
+		startDate:    startDate,
+		endDate:      endDate,
+		hash:         hash,
+		transaction:  transaction,
+		pType:        pType,
+		previousUUID: previousUUID,
 	}, nil
 }
 
-func (p Process) ID() int64 {
-	return p.id
+func (p Process) UUID() string {
+	return p.uuid
 }
 
 func (p Process) StartDate() time.Time {
@@ -57,8 +61,8 @@ func (p Process) Ptype() string {
 	return p.pType
 }
 
-func (p Process) PreviousID() int64 {
-	return p.previousId
+func (p Process) PreviousUUID() string {
+	return p.previousUUID
 }
 
 func (p *Process) UpdateEndDate(date time.Time) error {
@@ -67,8 +71,8 @@ func (p *Process) UpdateEndDate(date time.Time) error {
 	return nil
 }
 
-func (p *Process) UpdatePreviousID(id int64) error {
-	p.previousId = id
+func (p *Process) UpdatePreviousUUID(uuid string) error {
+	p.previousUUID = uuid
 
 	return nil
 }
@@ -86,15 +90,15 @@ func (p *Process) UpdateTransaction(transaction string) error {
 }
 
 func UnmarshalProcessFromDatabase(
-	id int64,
+	uuid string,
 	startDate time.Time,
 	endDate time.Time,
 	hash string,
 	transaction string,
 	ptype string,
-	previousId int64,
+	previousUUID string,
 ) (*Process, error) {
-	p, err := NewProcess(id, startDate, endDate, hash, transaction, ptype, previousId)
+	p, err := NewProcess(uuid, startDate, endDate, hash, transaction, ptype, previousUUID)
 	if err != nil {
 		return nil, err
 	}

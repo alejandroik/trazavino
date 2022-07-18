@@ -53,7 +53,7 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(grapeType)
 
-	rec, _ := entity.NewReception(process.ID(), truck.ID(), vineyard.ID(), grapeType.ID(), 5, 5)
+	rec, _ := entity.NewReception(process.UUID(), truck.ID(), vineyard.ID(), grapeType.ID(), 5, 5)
 	recRepo := NewReceptionRepository(db)
 	reception, err := recRepo.AddReception(ctx, rec)
 	if err != nil {
@@ -76,7 +76,7 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(process)
 
-	mac, _ := entity.NewMaceration(process.ID(), reception.ID(), warehouse.ID())
+	mac, _ := entity.NewMaceration(process.UUID(), reception.UUID(), warehouse.ID())
 	macRepo := NewMacerationRepository(db)
 	maceration, err := macRepo.AddMaceration(ctx, mac)
 	if err != nil {
@@ -84,7 +84,7 @@ func TestProcessRepository_AddProcess(t *testing.T) {
 	}
 	t.Log(maceration)
 
-	err = repo.UpdateProcess(ctx, rec.ID(), func(ctx context.Context, pr *entity.Process) (*entity.Process, error) {
+	err = repo.UpdateProcess(ctx, rec.UUID(), func(ctx context.Context, pr *entity.Process) (*entity.Process, error) {
 		pr.UpdateHash("0x6234234235234")
 
 		return pr, nil
