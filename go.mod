@@ -1,4 +1,4 @@
-module github.com/alejandroik/trazavino-api
+module github.com/alejandroik/trazavino
 
 go 1.18
 

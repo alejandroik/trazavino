@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/entity"
-	"github.com/alejandroik/trazavino-api/internal/domain/entity/enum/process_type"
-	"github.com/alejandroik/trazavino-api/internal/domain/repository"
+	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
+	"github.com/alejandroik/trazavino/internal/domain/repository"
 )
 
 type RegisterMaceration struct {

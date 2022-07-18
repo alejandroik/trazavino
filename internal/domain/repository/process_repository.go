@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/entity"
+	"github.com/alejandroik/trazavino/internal/domain/entity"
 )
 
 type ProcessRepository interface {

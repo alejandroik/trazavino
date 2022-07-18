@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/alejandroik/trazavino-api/internal/adapters/sqlc/generated"
-	"github.com/alejandroik/trazavino-api/internal/domain/entity"
+	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
+	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/jmoiron/sqlx"
 )
 

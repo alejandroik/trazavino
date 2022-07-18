@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/repository"
+	"github.com/alejandroik/trazavino/internal/domain/repository"
 )
 
 func TestRegisterReception(t *testing.T) {

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/entity"
-	"github.com/alejandroik/trazavino-api/internal/domain/entity/enum/process_type"
+	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )

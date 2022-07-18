@@ -1,6 +1,6 @@
 package app
 
-import "github.com/alejandroik/trazavino-api/internal/app/command"
+import "github.com/alejandroik/trazavino/internal/app/command"
 
 type Application struct {
 	Commands Commands

@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/alejandroik/trazavino-api/internal/ports"
-	"github.com/alejandroik/trazavino-api/internal/service"
-	"github.com/alejandroik/trazavino-api/pkg/server"
+	"github.com/alejandroik/trazavino/internal/ports"
+	"github.com/alejandroik/trazavino/internal/service"
+	"github.com/alejandroik/trazavino/pkg/server"
 	"github.com/gin-gonic/gin"
 )
 

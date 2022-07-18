@@ -3,9 +3,9 @@ package service
 import (
 	"context"
 
-	"github.com/alejandroik/trazavino-api/internal/adapters/dynamodb"
-	"github.com/alejandroik/trazavino-api/internal/app"
-	"github.com/alejandroik/trazavino-api/internal/app/command"
+	"github.com/alejandroik/trazavino/internal/adapters/dynamodb"
+	"github.com/alejandroik/trazavino/internal/app"
+	"github.com/alejandroik/trazavino/internal/app/command"
 )
 
 // TODO implement

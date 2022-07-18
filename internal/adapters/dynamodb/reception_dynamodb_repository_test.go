@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/alejandroik/trazavino-api/internal/domain/entity"
+	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 )
