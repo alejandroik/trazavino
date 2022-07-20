@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/alejandroik/trazavino/internal/ports"
 	"github.com/alejandroik/trazavino/internal/service"
@@ -13,12 +12,10 @@ import (
 func main() {
 	ctx := context.Background()
 
-	app, _ := service.NewApplication(ctx)
+	app, shutdown := service.NewApplication(ctx)
+	defer shutdown()
 
-	ports.NewHttpServer(app)
-
-	//TODO implement
-	server.RunHTTPServer(func(router *gin.Engine) http.Handler {
-		return gin.Default()
+	server.RunHTTPServer(func(router *gin.Engine, prefix string) *gin.Engine {
+		return ports.RegisterHandlersWithOptions(router, ports.NewHttpServer(app), ports.GinServerOptions{BaseURL: prefix})
 	})
 }

@@ -1,3 +1,199 @@
 openapi: "3.0.0"
 info:
+  version: 1.0.0
+  title: Trazavino
+  description: Wine Supply Chain Traceability System based on Blockchain
+  contact:
+    name: github.com/alejandroik
+    url: https://github.com/alejandroik
+servers:
+  - url: https://{hostname}/v1
+    variables:
+      hostname:
+        default: localhost
+security:
+  - bearerAuth: []
 paths:
+  /receptions:
+    get:
+      operationId: getReceptions
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receptions'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: registerReception
+      requestBody:
+        description: todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostReception'
+      responses:
+        '204':
+          description: todo
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /receptions/{receptionUUID}:
+    get:
+      operationId: getReception
+      parameters:
+        - in: path
+          name: receptionUUID
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reception'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /status:
+    get:
+      operationId: status
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Reception:
+      type: object
+      required: [uuid, startTime, truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        truck:
+          type: string
+          example: AA-00-33-BF24
+        truckUuid:
+          type: string
+          format: uuid
+        vineyard:
+          type: string
+          example: Los Andes
+        vineyardUuid:
+          type: string
+          format: uuid
+        grapeType:
+          type: string
+          example: Rosada
+        grapeTypeUuid:
+          type: string
+          format: uuid
+        weight:
+          type: integer
+          format: int32
+          example: 2500
+        sugar:
+          type: integer
+          format: int32
+          example: 5
+        endTime:
+          type: string
+          format: date-time
+        hash:
+          type: string
+          example: "0xfa646594bf2241061314d53e850a466815b3600a"
+        transaction:
+          type: string
+          example: "0xa1db35ca1754495896bc0d3f7c41c3e80230f138cd528a073fbdd846a026576b"
+
+    Receptions:
+      type: object
+      required: [receptions]
+      properties:
+        receptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Reception'
+
+    PostReception:
+      type: object
+      required: [truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
+      properties:
+        truck:
+          type: string
+          example: AA-00-33-BF24
+        truckUuid:
+          type: string
+          format: uuid
+        vineyard:
+          type: string
+          example: Los Andes
+        vineyardkUuid:
+          type: string
+          format: uuid
+        grapeType:
+          type: string
+          example: Rosada
+        grapeTypeUuid:
+          type: string
+          format: uuid
+        weight:
+          type: integer
+          format: int32
+          example: 2500
+        sugar:
+          type: integer
+          format: int32
+          example: 5
+
+    Error:
+      type: object
+      required:
+        - slug
+        - message
+      properties:
+        slug:
+          type: string
+        message:
+          type: string
+
+    Status:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: ok

@@ -6,6 +6,7 @@ import (
 	"github.com/alejandroik/trazavino/internal/adapters/dynamodb"
 	"github.com/alejandroik/trazavino/internal/app"
 	"github.com/alejandroik/trazavino/internal/app/command"
+	"github.com/alejandroik/trazavino/internal/app/query"
 )
 
 // TODO implement
@@ -24,7 +25,9 @@ func newApplication(ctx context.Context) app.Application {
 	return app.Application{
 		Commands: app.Commands{
 			RegisterReception: command.NewRegisterReceptionHandler(receptionRepository),
-			//RegisterMaceration: command.NewRegisterMacerationHandler(processRepository, macerationRepository, warehouseRepository),
+		},
+		Queries: app.Queries{
+			ReceptionByID: query.NewReceptionByIDHandler(receptionRepository),
 		},
 	}
 }

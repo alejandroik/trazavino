@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/alejandroik/trazavino/internal/app/query"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
@@ -14,8 +15,7 @@ import (
 type ReceptionModel struct {
 	UUID string `dynamodbav:"UUID"`
 
-	StartTime time.Time  `dynamodbav:"StartTime"`
-	EndTime   *time.Time `dynamodbav:"EndTime"`
+	StartTime time.Time `dynamodbav:"StartTime"`
 
 	TruckUUID string `dynamodbav:"TruckUUID"`
 	Truck     string `dynamodbav:"Truck"`
@@ -29,8 +29,9 @@ type ReceptionModel struct {
 	Weight int32 `dynamodbav:"Weight"`
 	Sugar  int32 `dynamodbav:"Sugar"`
 
-	Hash        *string `dynamodbav:"Hash"`
-	Transaction *string `dynamodbav:"Transaction"`
+	EndTime     *time.Time `dynamodbav:"EndTime"`
+	Hash        *string    `dynamodbav:"Hash"`
+	Transaction *string    `dynamodbav:"Transaction"`
 }
 
 func (r ReceptionDynamoDbRepository) getKey(doc document) document {
@@ -137,6 +138,15 @@ func (r ReceptionDynamoDbRepository) UpdateReception(ctx context.Context, recept
 	return nil
 }
 
+func (r ReceptionDynamoDbRepository) FindReceptionByID(ctx context.Context, receptionUUID string) (query.Reception, error) {
+	reception, err := r.GetReception(ctx, receptionUUID)
+	if err != nil {
+		return query.Reception{}, err
+	}
+
+	return r.receptionToQuery(reception)
+}
+
 func (r ReceptionDynamoDbRepository) marshalReception(rc *entity.Reception) (document, error) {
 	receptionModel := ReceptionModel{
 		UUID:          rc.UUID(),
@@ -203,4 +213,34 @@ func (r ReceptionDynamoDbRepository) unmarshalReception(av document) (*entity.Re
 		endTime,
 		hash,
 		transaction)
+}
+
+func (r ReceptionDynamoDbRepository) receptionToQuery(rc *entity.Reception) (query.Reception, error) {
+	qr := query.Reception{
+		UUID:          rc.UUID(),
+		StartTime:     rc.StartTime(),
+		TruckUUID:     rc.TruckUUID(),
+		Truck:         rc.TruckLicense(),
+		VineyardUUID:  rc.VineyardUUID(),
+		Vineyard:      rc.VineyardName(),
+		GrapeTypeUUID: rc.GrapeTypeUUID(),
+		GrapeType:     rc.GrapeTypeName(),
+		Weight:        rc.Weight(),
+		Sugar:         rc.Sugar(),
+	}
+
+	et := rc.EndTime()
+	if !et.IsZero() {
+		qr.EndTime = &et
+	}
+	hash := rc.Hash()
+	if hash != "" {
+		qr.Hash = &hash
+	}
+	transaction := rc.Transaction()
+	if transaction != "" {
+		qr.Transaction = &transaction
+	}
+
+	return qr, nil
 }

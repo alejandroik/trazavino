@@ -1,6 +1,9 @@
 package app
 
-import "github.com/alejandroik/trazavino/internal/app/command"
+import (
+	"github.com/alejandroik/trazavino/internal/app/command"
+	"github.com/alejandroik/trazavino/internal/app/query"
+)
 
 type Application struct {
 	Commands Commands
@@ -13,4 +16,5 @@ type Commands struct {
 }
 
 type Queries struct {
+	ReceptionByID query.ReceptionByIDHandler
 }

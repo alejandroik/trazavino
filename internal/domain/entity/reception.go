@@ -10,7 +10,6 @@ type Reception struct {
 	uuid string
 
 	startTime time.Time
-	endTime   time.Time
 
 	truckUUID    string
 	truckLicense string
@@ -24,6 +23,7 @@ type Reception struct {
 	weight int32
 	sugar  int32
 
+	endTime     time.Time
 	hash        string
 	transaction string
 }

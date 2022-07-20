@@ -1,0 +1,8 @@
+output:
+  internal/ports
+package: trazavino
+generate:
+  - types
+  - gin
+  - client
+  - spec
