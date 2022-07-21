@@ -1,4 +1,4 @@
-package ports
+package v1
 
 import "github.com/alejandroik/trazavino/internal/app"
 

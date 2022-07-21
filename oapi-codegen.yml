@@ -1,6 +1,6 @@
 output:
-  internal/ports/openapi.gen.go
-package: ports
+  internal/ports/v1/openapi.gen.go
+package: v1
 generate:
   gin-server: true
   models: true

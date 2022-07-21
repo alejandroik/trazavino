@@ -6,6 +6,8 @@ import (
 
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/repository"
+	"github.com/alejandroik/trazavino/pkg/decorator"
+	"github.com/alejandroik/trazavino/pkg/logger"
 )
 
 type RegisterReception struct {
@@ -26,23 +28,27 @@ type RegisterReception struct {
 	Sugar  int32
 }
 
-type RegisterReceptionHandler Handler[RegisterReception]
+type RegisterReceptionHandler decorator.CommandHandler[RegisterReception]
 
 type registerReceptionHandler struct {
 	receptionRepository repository.ReceptionRepository
 }
 
-func NewRegisterReceptionHandler(receptionRepository repository.ReceptionRepository) RegisterReceptionHandler {
+func NewRegisterReceptionHandler(
+	receptionRepository repository.ReceptionRepository,
+	log logger.Interface,
+) RegisterReceptionHandler {
 	if receptionRepository == nil {
 		panic("nil receptionRepository")
 	}
 
-	return registerReceptionHandler{
-		receptionRepository: receptionRepository,
-	}
+	return decorator.ApplyCommandDecorators[RegisterReception](
+		registerReceptionHandler{receptionRepository: receptionRepository},
+		log,
+	)
 }
 
-func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterReception) error {
+func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterReception) (err error) {
 	rc, err := entity.NewReception(
 		cmd.ReceptionUUID,
 		cmd.ReceptionStartTime,
@@ -58,8 +64,7 @@ func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterRecept
 		return err
 	}
 
-	err = h.receptionRepository.AddReception(ctx, rc)
-	if err != nil {
+	if err = h.receptionRepository.AddReception(ctx, rc); err != nil {
 		return err
 	}
 

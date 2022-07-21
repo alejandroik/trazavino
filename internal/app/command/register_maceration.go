@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/alejandroik/trazavino/internal/domain/repository"
+	"github.com/alejandroik/trazavino/pkg/decorator"
 )
 
 type RegisterMaceration struct {
@@ -11,7 +12,7 @@ type RegisterMaceration struct {
 	WarehouseID int64
 }
 
-type RegisterMacerationHandler Handler[RegisterMaceration]
+type RegisterMacerationHandler decorator.CommandHandler[RegisterMaceration]
 
 type registerMacerationHandler struct {
 	macerationRepository repository.MacerationRepository

@@ -7,24 +7,24 @@ import (
 	"github.com/alejandroik/trazavino/internal/app"
 	"github.com/alejandroik/trazavino/internal/app/command"
 	"github.com/alejandroik/trazavino/internal/app/query"
+	"github.com/alejandroik/trazavino/pkg/logger"
 )
 
-// TODO implement
-func NewApplication(ctx context.Context) (app.Application, func()) {
-	return newApplication(ctx), func() {}
+func NewApplication(ctx context.Context, log logger.Interface) app.Application {
+	return newApplication(ctx, log)
 }
 
-func newApplication(ctx context.Context) app.Application {
-	client, err := dynamodb.NewDynamoDbClient(ctx)
+func newApplication(ctx context.Context, log logger.Interface) app.Application {
+	dbClient, err := dynamodb.NewDynamoDbClient(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	receptionRepository := dynamodb.NewReceptionDynamoDbRepository(client)
+	receptionRepository := dynamodb.NewReceptionDynamoDbRepository(dbClient)
 
 	return app.Application{
 		Commands: app.Commands{
-			RegisterReception: command.NewRegisterReceptionHandler(receptionRepository),
+			RegisterReception: command.NewRegisterReceptionHandler(receptionRepository, log),
 		},
 		Queries: app.Queries{
 			ReceptionByID: query.NewReceptionByIDHandler(receptionRepository),
