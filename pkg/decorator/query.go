@@ -1,7 +1,7 @@
-package query
+package decorator
 
 import "context"
 
-type Handler[Q any, R any] interface {
+type QueryHandler[Q any, R any] interface {
 	Handle(ctx context.Context, q Q) (R, error)
 }

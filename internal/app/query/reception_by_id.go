@@ -1,12 +1,16 @@
 package query
 
-import "context"
+import (
+	"context"
+
+	"github.com/alejandroik/trazavino/pkg/decorator"
+)
 
 type ReceptionByID struct {
 	ReceptionUUID string
 }
 
-type ReceptionByIDHandler Handler[ReceptionByID, Reception]
+type ReceptionByIDHandler decorator.QueryHandler[ReceptionByID, Reception]
 
 type receptionByIDHandler struct {
 	readModel ReceptionByIDReadModel
