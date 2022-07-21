@@ -1,1 +1,0 @@
-oapi-codegen -config oapi-codegen.yml api/openapi/trazavino.yml
