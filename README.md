@@ -1,5 +1,5 @@
 <a href="https://aimeos.org/">
-    <img src="docs/img/logo.png" alt="logo" title="logo" align="right" height="60" />
+    <img src="docs/logo.png" alt="Aimeos logo" title="Aimeos" align="right" height="60" />
 </a>
 
 # Trazavino

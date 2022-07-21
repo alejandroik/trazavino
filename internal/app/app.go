@@ -1,9 +1,6 @@
 package app
 
-import (
-	"github.com/alejandroik/trazavino/internal/app/command"
-	"github.com/alejandroik/trazavino/internal/app/query"
-)
+import "github.com/alejandroik/trazavino-api/internal/app/command"
 
 type Application struct {
 	Commands Commands
@@ -11,10 +8,8 @@ type Application struct {
 }
 
 type Commands struct {
-	RegisterReception  command.RegisterReceptionHandler
-	RegisterMaceration command.RegisterMacerationHandler
+	RegisterReception command.RegisterReceptionHandler
 }
 
 type Queries struct {
-	ReceptionByID query.ReceptionByIDHandler
 }
