@@ -1,46 +1,48 @@
 package logger
 
+import "go.uber.org/zap"
+
 type Interface interface {
-	Debug(message interface{}, args ...interface{})
-	Info(message string, args ...interface{})
-	Warn(message string, args ...interface{})
-	Error(message interface{}, args ...interface{})
-	Fatal(message interface{}, args ...interface{})
+	Debugf(message string, args ...interface{})
+	Infof(message string, args ...interface{})
+	Warnf(message string, args ...interface{})
+	Errorf(message string, args ...interface{})
+	Fatalf(message string, args ...interface{})
 }
 
 // Logger -.
 type Logger struct {
-	//logger *zerolog.Logger
+	logger *zap.Logger
 }
 
 var _ Interface = (*Logger)(nil)
 
-func (l *Logger) Debug(message interface{}, args ...interface{}) {
-	//l.msg("debug", message, args...)
+func New() *Logger {
+	logger, _ := zap.NewProduction()
+
+	return &Logger{logger: logger}
+}
+
+func (l *Logger) Debugf(message string, args ...interface{}) {
+	l.logger.Sugar().Debugf(message, args...)
 }
 
 // Info -.
-func (l *Logger) Info(message string, args ...interface{}) {
-	//l.log(message, args...)
+func (l *Logger) Infof(message string, args ...interface{}) {
+	l.logger.Sugar().Infof(message, args...)
 }
 
 // Warn -.
-func (l *Logger) Warn(message string, args ...interface{}) {
-	//l.log(message, args...)
+func (l *Logger) Warnf(message string, args ...interface{}) {
+	l.logger.Sugar().Warnf(message, args...)
 }
 
 // Error -.
-func (l *Logger) Error(message interface{}, args ...interface{}) {
-	//if l.logger.GetLevel() == zerolog.DebugLevel {
-	//	l.Debug(message, args...)
-	//}
-	//
-	//l.msg("error", message, args...)
+func (l *Logger) Errorf(message string, args ...interface{}) {
+	l.logger.Sugar().Errorf(message, args...)
 }
 
 // Fatal -.
-func (l *Logger) Fatal(message interface{}, args ...interface{}) {
-	//l.msg("fatal", message, args...)
-	//
-	//os.Exit(1)
+func (l *Logger) Fatalf(message string, args ...interface{}) {
+	l.logger.Sugar().Fatalf(message, args...)
 }

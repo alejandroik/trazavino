@@ -1,8 +1,6 @@
 output:
-  internal/ports
-package: trazavino
+  internal/ports/openapi.gen.go
+package: ports
 generate:
-  - types
-  - gin
-  - client
-  - spec
+  gin-server: true
+  models: true
