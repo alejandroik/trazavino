@@ -15,13 +15,7 @@ func (h HttpServer) GetReceptions(c *gin.Context) {
 }
 
 func (h HttpServer) GetReception(c *gin.Context, receptionUUID openapi_types.UUID) {
-	//reception, err := h.app.Queries.ReceptionByID.Handle(c, query.ReceptionByID{ReceptionUUID: receptionUUID.String()})
-	//if err != nil {
-	//	c.Writer.WriteHeader(http.StatusInternalServerError)
-	//	return
-	//}
-	//
-	//c.JSON(200, receptionToResponse(reception))
+
 }
 
 func (h HttpServer) RegisterReception(c *gin.Context) {
