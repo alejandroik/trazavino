@@ -74,6 +74,68 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /macerations:
+    get:
+      operationId: getMacerations
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Macerations'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: registerMaceration
+      requestBody:
+        description: todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMaceration'
+      responses:
+        '204':
+          description: todo
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /macerations/{macerationUUID}:
+    get:
+      operationId: getMaceration
+      parameters:
+        - in: path
+          name: macerationUUID
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Maceration'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /status:
     get:
       operationId: status
@@ -177,6 +239,64 @@ components:
           type: integer
           format: int32
           example: 5
+
+    Maceration:
+      type: object
+      required: [uuid, startTime, reception, receptionUuid, warehouse, warehouseUuid]
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        reception:
+          type: string
+          format: date-time
+        receptionUuid:
+          type: string
+          format: uuid
+        warehouse:
+          type: string
+          example: E#245987F
+        warehouseUuid:
+          type: string
+          format: uuid
+        endTime:
+          type: string
+          format: date-time
+        hash:
+          type: string
+          example: "0xfa646594bf2241061314d53e850a466815b3600a"
+        transaction:
+          type: string
+          example: "0xa1db35ca1754495896bc0d3f7c41c3e80230f138cd528a073fbdd846a026576b"
+
+    Macerations:
+      type: object
+      required: [macerations]
+      properties:
+        receptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Maceration'
+
+    PostMaceration:
+      type: object
+      required: [reception, receptionUuid, warehouse, warehouseUuid]
+      properties:
+        reception:
+          type: string
+          format: date-time
+        receptionUuid:
+          type: string
+          format: uuid
+        warehouse:
+          type: string
+          example: E#245987F
+        warehouseUuid:
+          type: string
+          format: uuid
 
     Error:
       type: object

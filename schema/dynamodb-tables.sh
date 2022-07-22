@@ -10,6 +10,17 @@ aws dynamodb create-table \
     --endpoint-url http://localhost:8000
 
 aws dynamodb create-table \
+    --table-name Warehouse \
+    --attribute-definitions \
+        AttributeName=UUID,AttributeType=S \
+    --key-schema \
+        AttributeName=UUID,KeyType=HASH \
+    --provisioned-throughput \
+        ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --table-class STANDARD \
+    --endpoint-url http://localhost:8000
+
+aws dynamodb create-table \
     --table-name Vineyard \
     --attribute-definitions \
         AttributeName=UUID,AttributeType=S \
@@ -69,6 +80,12 @@ aws dynamodb put-item \
     --table-name GrapeType  \
     --item \
         '{"UUID": {"S": "6555c14c-07da-44c0-a85e-094c250448ea"}, "Name": {"S": "Rosada"}}' \
+    --endpoint-url http://localhost:8000
+
+aws dynamodb put-item \
+    --table-name Warehouse  \
+    --item \
+        '{"UUID": {"S": "93f24e5f-59b8-488d-a583-dc6d948140bb"}, "Name": {"S": "EEEEEE"}, "IsEmpty": {"BOOL": true}}' \
     --endpoint-url http://localhost:8000
 
 

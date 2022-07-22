@@ -5,8 +5,7 @@ import (
 
 	"github.com/alejandroik/trazavino/internal/adapters/dynamodb"
 	"github.com/alejandroik/trazavino/internal/app"
-	"github.com/alejandroik/trazavino/internal/app/command"
-	"github.com/alejandroik/trazavino/internal/app/query"
+	"github.com/alejandroik/trazavino/internal/app/usecase"
 	"github.com/alejandroik/trazavino/pkg/logger"
 )
 
@@ -21,13 +20,12 @@ func newApplication(ctx context.Context, log logger.Interface) app.Application {
 	}
 
 	receptionRepository := dynamodb.NewReceptionDynamoDbRepository(dbClient)
+	macerationRepository := dynamodb.NewMacerationDynamodbRepository(dbClient)
 
 	return app.Application{
-		Commands: app.Commands{
-			RegisterReception: command.NewRegisterReceptionHandler(receptionRepository, log),
-		},
-		Queries: app.Queries{
-			ReceptionByID: query.NewReceptionByIDHandler(receptionRepository),
+		UseCases: app.UseCases{
+			RegisterReception:  usecase.NewRegisterReceptionHandler(receptionRepository, log),
+			RegisterMaceration: usecase.NewRegisterMacerationHandler(macerationRepository, log),
 		},
 	}
 }

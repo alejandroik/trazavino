@@ -1,20 +1,14 @@
 package app
 
 import (
-	"github.com/alejandroik/trazavino/internal/app/command"
-	"github.com/alejandroik/trazavino/internal/app/query"
+	"github.com/alejandroik/trazavino/internal/app/usecase"
 )
 
 type Application struct {
-	Commands Commands
-	Queries  Queries
+	UseCases UseCases
 }
 
-type Commands struct {
-	RegisterReception  command.RegisterReceptionHandler
-	RegisterMaceration command.RegisterMacerationHandler
-}
-
-type Queries struct {
-	ReceptionByID query.ReceptionByIDHandler
+type UseCases struct {
+	RegisterReception  usecase.RegisterReceptionHandler
+	RegisterMaceration usecase.RegisterMacerationHandler
 }

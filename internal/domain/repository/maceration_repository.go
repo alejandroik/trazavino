@@ -7,7 +7,7 @@ import (
 )
 
 type MacerationRepository interface {
-	AddMaceration(ctx context.Context, m *entity.Maceration) (*entity.Maceration, error)
-	GetMaceration(ctx context.Context, macerationId int64) (*entity.Maceration, error)
-	UpdateMaceration(ctx context.Context, macerationId int64, updateFn func(ctx context.Context, m *entity.Maceration) (*entity.Maceration, error))
+	AddMaceration(ctx context.Context, m *entity.Maceration) error
+	GetMaceration(ctx context.Context, macerationUUID string) (*entity.Maceration, error)
+	UpdateMaceration(ctx context.Context, macerationUUID string, updateFn func(ctx context.Context, m *entity.Maceration) (*entity.Maceration, error)) error
 }
