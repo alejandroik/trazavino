@@ -8,34 +8,34 @@ import (
 	"github.com/alejandroik/trazavino/pkg/logger"
 )
 
-type commandLoggingDecorator[C any] struct {
-	base CommandHandler[C]
+type loggingDecorator[C any] struct {
+	base Handler[C]
 	log  logger.Interface
 }
 
-func (d commandLoggingDecorator[C]) Handle(ctx context.Context, cmd C) (err error) {
+func (d loggingDecorator[C]) Handle(ctx context.Context, uc C) (err error) {
 	defer func() {
 		if err == nil {
-			d.log.Infow("Command executed successfully", fields(cmd)...)
+			d.log.Infow("Use case executed successfully", fields(uc)...)
 		} else {
-			d.log.Errorw("Failed to execute command", fieldsWithError(cmd, err)...)
+			d.log.Errorw("Failed to execute use case", fieldsWithError(uc, err)...)
 		}
 	}()
 
-	return d.base.Handle(ctx, cmd)
+	return d.base.Handle(ctx, uc)
 }
 
 func generateActionName(handler any) string {
 	return strings.Split(fmt.Sprintf("%T", handler), ".")[1]
 }
 
-func fields(cmd interface{}) []interface{} {
+func fields(uc interface{}) []interface{} {
 	return []interface{}{
-		"command", generateActionName(cmd),
-		"command_body", fmt.Sprintf("%+v", cmd),
+		"usecase", generateActionName(uc),
+		"usecase_body", fmt.Sprintf("%+v", uc),
 	}
 }
 
-func fieldsWithError(cmd interface{}, err error) []interface{} {
-	return append(fields(cmd), "error", err)
+func fieldsWithError(uc interface{}, err error) []interface{} {
+	return append(fields(uc), "error", err)
 }

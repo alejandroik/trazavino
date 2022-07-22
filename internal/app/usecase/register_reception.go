@@ -1,4 +1,4 @@
-package command
+package usecase
 
 import (
 	"context"
@@ -28,7 +28,7 @@ type RegisterReception struct {
 	Sugar  int32
 }
 
-type RegisterReceptionHandler decorator.CommandHandler[RegisterReception]
+type RegisterReceptionHandler decorator.Handler[RegisterReception]
 
 type registerReceptionHandler struct {
 	receptionRepository repository.ReceptionRepository
@@ -42,7 +42,7 @@ func NewRegisterReceptionHandler(
 		panic("nil receptionRepository")
 	}
 
-	return decorator.ApplyCommandDecorators[RegisterReception](
+	return decorator.ApplyDecorators[RegisterReception](
 		registerReceptionHandler{receptionRepository: receptionRepository},
 		log,
 	)

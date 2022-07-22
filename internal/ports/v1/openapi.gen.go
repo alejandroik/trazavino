@@ -23,6 +23,32 @@ type Error struct {
 	Slug    string `json:"slug"`
 }
 
+// Maceration defines model for Maceration.
+type Maceration struct {
+	EndTime       *time.Time         `json:"endTime,omitempty"`
+	Hash          *string            `json:"hash,omitempty"`
+	Reception     time.Time          `json:"reception"`
+	ReceptionUuid openapi_types.UUID `json:"receptionUuid"`
+	StartTime     time.Time          `json:"startTime"`
+	Transaction   *string            `json:"transaction,omitempty"`
+	Uuid          openapi_types.UUID `json:"uuid"`
+	Warehouse     string             `json:"warehouse"`
+	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
+}
+
+// Macerations defines model for Macerations.
+type Macerations struct {
+	Receptions *[]Maceration `json:"receptions,omitempty"`
+}
+
+// PostMaceration defines model for PostMaceration.
+type PostMaceration struct {
+	Reception     time.Time          `json:"reception"`
+	ReceptionUuid openapi_types.UUID `json:"receptionUuid"`
+	Warehouse     string             `json:"warehouse"`
+	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
+}
+
 // PostReception defines model for PostReception.
 type PostReception struct {
 	GrapeType     string              `json:"grapeType"`
@@ -62,14 +88,29 @@ type Status struct {
 	Message string `json:"message"`
 }
 
+// RegisterMacerationJSONBody defines parameters for RegisterMaceration.
+type RegisterMacerationJSONBody = PostMaceration
+
 // RegisterReceptionJSONBody defines parameters for RegisterReception.
 type RegisterReceptionJSONBody = PostReception
+
+// RegisterMacerationJSONRequestBody defines body for RegisterMaceration for application/json ContentType.
+type RegisterMacerationJSONRequestBody = RegisterMacerationJSONBody
 
 // RegisterReceptionJSONRequestBody defines body for RegisterReception for application/json ContentType.
 type RegisterReceptionJSONRequestBody = RegisterReceptionJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
+	// (GET /macerations)
+	GetMacerations(c *gin.Context)
+
+	// (POST /macerations)
+	RegisterMaceration(c *gin.Context)
+
+	// (GET /macerations/{macerationUUID})
+	GetMaceration(c *gin.Context, macerationUUID openapi_types.UUID)
 
 	// (GET /receptions)
 	GetReceptions(c *gin.Context)
@@ -91,6 +132,53 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// GetMacerations operation middleware
+func (siw *ServerInterfaceWrapper) GetMacerations(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetMacerations(c)
+}
+
+// RegisterMaceration operation middleware
+func (siw *ServerInterfaceWrapper) RegisterMaceration(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.RegisterMaceration(c)
+}
+
+// GetMaceration operation middleware
+func (siw *ServerInterfaceWrapper) GetMaceration(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "macerationUUID" -------------
+	var macerationUUID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "macerationUUID", c.Param("macerationUUID"), &macerationUUID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": fmt.Sprintf("Invalid format for parameter macerationUUID: %s", err)})
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetMaceration(c, macerationUUID)
+}
 
 // GetReceptions operation middleware
 func (siw *ServerInterfaceWrapper) GetReceptions(c *gin.Context) {
@@ -168,6 +256,12 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 		Handler:            si,
 		HandlerMiddlewares: options.Middlewares,
 	}
+
+	router.GET(options.BaseURL+"/macerations", wrapper.GetMacerations)
+
+	router.POST(options.BaseURL+"/macerations", wrapper.RegisterMaceration)
+
+	router.GET(options.BaseURL+"/macerations/:macerationUUID", wrapper.GetMaceration)
 
 	router.GET(options.BaseURL+"/receptions", wrapper.GetReceptions)
 
