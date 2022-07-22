@@ -17,23 +17,83 @@ const (
 	BearerAuthScopes = "bearerAuth.Scopes"
 )
 
+// Ageing defines model for Ageing.
+type Ageing struct {
+	Cellar       string              `json:"cellar"`
+	CellarUuid   openapi_types.UUID  `json:"cellarUuid"`
+	EndTime      *time.Time          `json:"endTime,omitempty"`
+	Hash         *string             `json:"hash,omitempty"`
+	Humidty      *int32              `json:"humidty,omitempty"`
+	PreviousUuid *openapi_types.UUID `json:"previousUuid,omitempty"`
+	StartTime    time.Time           `json:"startTime"`
+	Tank         string              `json:"tank"`
+	TankUuid     openapi_types.UUID  `json:"tankUuid"`
+	Transaction  *string             `json:"transaction,omitempty"`
+	Uuid         openapi_types.UUID  `json:"uuid"`
+}
+
+// Ageings defines model for Ageings.
+type Ageings struct {
+	Receptions *[]Ageing `json:"receptions,omitempty"`
+}
+
+// Bottling defines model for Bottling.
+type Bottling struct {
+	BottleQty    int32               `json:"bottleQty"`
+	Cellar       string              `json:"cellar"`
+	CellarUuid   openapi_types.UUID  `json:"cellarUuid"`
+	EndTime      *time.Time          `json:"endTime,omitempty"`
+	Hash         *string             `json:"hash,omitempty"`
+	PreviousUuid *openapi_types.UUID `json:"previousUuid,omitempty"`
+	StartTime    time.Time           `json:"startTime"`
+	Transaction  *string             `json:"transaction,omitempty"`
+	Uuid         openapi_types.UUID  `json:"uuid"`
+	Wine         string              `json:"wine"`
+	WineUuid     openapi_types.UUID  `json:"wineUuid"`
+}
+
+// Bottlings defines model for Bottlings.
+type Bottlings struct {
+	Receptions *[]Bottling `json:"receptions,omitempty"`
+}
+
 // Error defines model for Error.
 type Error struct {
 	Message string `json:"message"`
 	Slug    string `json:"slug"`
 }
 
+// Fermentation defines model for Fermentation.
+type Fermentation struct {
+	EndTime       *time.Time          `json:"endTime,omitempty"`
+	Hash          *string             `json:"hash,omitempty"`
+	PreviousUuid  *openapi_types.UUID `json:"previousUuid,omitempty"`
+	StartTime     time.Time           `json:"startTime"`
+	Tank          string              `json:"tank"`
+	TankUuid      openapi_types.UUID  `json:"tankUuid"`
+	Transaction   *string             `json:"transaction,omitempty"`
+	Uuid          openapi_types.UUID  `json:"uuid"`
+	Warehouse     string              `json:"warehouse"`
+	WarehouseUuid openapi_types.UUID  `json:"warehouseUuid"`
+}
+
+// Fermentations defines model for Fermentations.
+type Fermentations struct {
+	Receptions *[]Fermentation `json:"receptions,omitempty"`
+}
+
 // Maceration defines model for Maceration.
 type Maceration struct {
-	EndTime       *time.Time         `json:"endTime,omitempty"`
-	Hash          *string            `json:"hash,omitempty"`
-	Reception     time.Time          `json:"reception"`
-	ReceptionUuid openapi_types.UUID `json:"receptionUuid"`
-	StartTime     time.Time          `json:"startTime"`
-	Transaction   *string            `json:"transaction,omitempty"`
-	Uuid          openapi_types.UUID `json:"uuid"`
-	Warehouse     string             `json:"warehouse"`
-	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
+	EndTime       *time.Time          `json:"endTime,omitempty"`
+	Hash          *string             `json:"hash,omitempty"`
+	PreviousUuid  *openapi_types.UUID `json:"previousUuid,omitempty"`
+	Reception     time.Time           `json:"reception"`
+	ReceptionUuid openapi_types.UUID  `json:"receptionUuid"`
+	StartTime     time.Time           `json:"startTime"`
+	Transaction   *string             `json:"transaction,omitempty"`
+	Uuid          openapi_types.UUID  `json:"uuid"`
+	Warehouse     string              `json:"warehouse"`
+	WarehouseUuid openapi_types.UUID  `json:"warehouseUuid"`
 }
 
 // Macerations defines model for Macerations.
@@ -41,22 +101,37 @@ type Macerations struct {
 	Receptions *[]Maceration `json:"receptions,omitempty"`
 }
 
+// PostAgeing defines model for PostAgeing.
+type PostAgeing struct {
+	CellarUuid openapi_types.UUID `json:"cellarUuid"`
+	Humidty    *int32             `json:"humidty,omitempty"`
+	TankUuid   openapi_types.UUID `json:"tankUuid"`
+}
+
+// PostBottling defines model for PostBottling.
+type PostBottling struct {
+	BottleQty  int32              `json:"bottleQty"`
+	CellarUuid openapi_types.UUID `json:"cellarUuid"`
+	WineUuid   openapi_types.UUID `json:"wineUuid"`
+}
+
+// PostFermentation defines model for PostFermentation.
+type PostFermentation struct {
+	TankUuid      openapi_types.UUID `json:"tankUuid"`
+	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
+}
+
 // PostMaceration defines model for PostMaceration.
 type PostMaceration struct {
-	Reception     time.Time          `json:"reception"`
 	ReceptionUuid openapi_types.UUID `json:"receptionUuid"`
-	Warehouse     string             `json:"warehouse"`
 	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
 }
 
 // PostReception defines model for PostReception.
 type PostReception struct {
-	GrapeType     string              `json:"grapeType"`
 	GrapeTypeUuid openapi_types.UUID  `json:"grapeTypeUuid"`
 	Sugar         int32               `json:"sugar"`
-	Truck         string              `json:"truck"`
 	TruckUuid     openapi_types.UUID  `json:"truckUuid"`
-	Vineyard      string              `json:"vineyard"`
 	VineyardkUuid *openapi_types.UUID `json:"vineyardkUuid,omitempty"`
 	Weight        int32               `json:"weight"`
 }
@@ -88,11 +163,29 @@ type Status struct {
 	Message string `json:"message"`
 }
 
+// RegisterAgeingJSONBody defines parameters for RegisterAgeing.
+type RegisterAgeingJSONBody = PostAgeing
+
+// RegisterBottlingJSONBody defines parameters for RegisterBottling.
+type RegisterBottlingJSONBody = PostBottling
+
+// RegisterFermentationJSONBody defines parameters for RegisterFermentation.
+type RegisterFermentationJSONBody = PostFermentation
+
 // RegisterMacerationJSONBody defines parameters for RegisterMaceration.
 type RegisterMacerationJSONBody = PostMaceration
 
 // RegisterReceptionJSONBody defines parameters for RegisterReception.
 type RegisterReceptionJSONBody = PostReception
+
+// RegisterAgeingJSONRequestBody defines body for RegisterAgeing for application/json ContentType.
+type RegisterAgeingJSONRequestBody = RegisterAgeingJSONBody
+
+// RegisterBottlingJSONRequestBody defines body for RegisterBottling for application/json ContentType.
+type RegisterBottlingJSONRequestBody = RegisterBottlingJSONBody
+
+// RegisterFermentationJSONRequestBody defines body for RegisterFermentation for application/json ContentType.
+type RegisterFermentationJSONRequestBody = RegisterFermentationJSONBody
 
 // RegisterMacerationJSONRequestBody defines body for RegisterMaceration for application/json ContentType.
 type RegisterMacerationJSONRequestBody = RegisterMacerationJSONBody
@@ -102,6 +195,33 @@ type RegisterReceptionJSONRequestBody = RegisterReceptionJSONBody
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
+	// (GET /ageings)
+	GetAgeings(c *gin.Context)
+
+	// (POST /ageings)
+	RegisterAgeing(c *gin.Context)
+
+	// (GET /ageings/{ageingUUID})
+	GetAgeing(c *gin.Context, ageingUUID openapi_types.UUID)
+
+	// (GET /bottlings)
+	GetBottlings(c *gin.Context)
+
+	// (POST /bottlings)
+	RegisterBottling(c *gin.Context)
+
+	// (GET /bottlings/{bottlingUUID})
+	GetBottling(c *gin.Context, bottlingUUID openapi_types.UUID)
+
+	// (GET /fermentations)
+	GetFermentations(c *gin.Context)
+
+	// (POST /fermentations)
+	RegisterFermentation(c *gin.Context)
+
+	// (GET /fermentations/{fermentationUUID})
+	GetFermentation(c *gin.Context, fermentationUUID openapi_types.UUID)
 
 	// (GET /macerations)
 	GetMacerations(c *gin.Context)
@@ -132,6 +252,147 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// GetAgeings operation middleware
+func (siw *ServerInterfaceWrapper) GetAgeings(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetAgeings(c)
+}
+
+// RegisterAgeing operation middleware
+func (siw *ServerInterfaceWrapper) RegisterAgeing(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.RegisterAgeing(c)
+}
+
+// GetAgeing operation middleware
+func (siw *ServerInterfaceWrapper) GetAgeing(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "ageingUUID" -------------
+	var ageingUUID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "ageingUUID", c.Param("ageingUUID"), &ageingUUID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": fmt.Sprintf("Invalid format for parameter ageingUUID: %s", err)})
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetAgeing(c, ageingUUID)
+}
+
+// GetBottlings operation middleware
+func (siw *ServerInterfaceWrapper) GetBottlings(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetBottlings(c)
+}
+
+// RegisterBottling operation middleware
+func (siw *ServerInterfaceWrapper) RegisterBottling(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.RegisterBottling(c)
+}
+
+// GetBottling operation middleware
+func (siw *ServerInterfaceWrapper) GetBottling(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "bottlingUUID" -------------
+	var bottlingUUID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "bottlingUUID", c.Param("bottlingUUID"), &bottlingUUID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": fmt.Sprintf("Invalid format for parameter bottlingUUID: %s", err)})
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetBottling(c, bottlingUUID)
+}
+
+// GetFermentations operation middleware
+func (siw *ServerInterfaceWrapper) GetFermentations(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetFermentations(c)
+}
+
+// RegisterFermentation operation middleware
+func (siw *ServerInterfaceWrapper) RegisterFermentation(c *gin.Context) {
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.RegisterFermentation(c)
+}
+
+// GetFermentation operation middleware
+func (siw *ServerInterfaceWrapper) GetFermentation(c *gin.Context) {
+
+	var err error
+
+	// ------------- Path parameter "fermentationUUID" -------------
+	var fermentationUUID openapi_types.UUID
+
+	err = runtime.BindStyledParameter("simple", false, "fermentationUUID", c.Param("fermentationUUID"), &fermentationUUID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"msg": fmt.Sprintf("Invalid format for parameter fermentationUUID: %s", err)})
+		return
+	}
+
+	c.Set(BearerAuthScopes, []string{""})
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+	}
+
+	siw.Handler.GetFermentation(c, fermentationUUID)
+}
 
 // GetMacerations operation middleware
 func (siw *ServerInterfaceWrapper) GetMacerations(c *gin.Context) {
@@ -256,6 +517,24 @@ func RegisterHandlersWithOptions(router *gin.Engine, si ServerInterface, options
 		Handler:            si,
 		HandlerMiddlewares: options.Middlewares,
 	}
+
+	router.GET(options.BaseURL+"/ageings", wrapper.GetAgeings)
+
+	router.POST(options.BaseURL+"/ageings", wrapper.RegisterAgeing)
+
+	router.GET(options.BaseURL+"/ageings/:ageingUUID", wrapper.GetAgeing)
+
+	router.GET(options.BaseURL+"/bottlings", wrapper.GetBottlings)
+
+	router.POST(options.BaseURL+"/bottlings", wrapper.RegisterBottling)
+
+	router.GET(options.BaseURL+"/bottlings/:bottlingUUID", wrapper.GetBottling)
+
+	router.GET(options.BaseURL+"/fermentations", wrapper.GetFermentations)
+
+	router.POST(options.BaseURL+"/fermentations", wrapper.RegisterFermentation)
+
+	router.GET(options.BaseURL+"/fermentations/:fermentationUUID", wrapper.GetFermentation)
 
 	router.GET(options.BaseURL+"/macerations", wrapper.GetMacerations)
 

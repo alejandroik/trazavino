@@ -7,10 +7,9 @@ LIMIT 1;
 -- name: ListVineyards :many
 SELECT *
 FROM vineyard
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
--- name: AddVineyard :one
-INSERT INTO vineyard (created_at, name)
-VALUES ($1, $2)
-RETURNING *;
+-- name: AddVineyard :exec
+INSERT INTO vineyard (id, created_at, name)
+VALUES ($1, $2, $3);

@@ -7,10 +7,9 @@ LIMIT 1;
 -- name: ListMacerations :many
 SELECT *
 FROM maceration
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
--- name: AddMaceration :one
+-- name: AddMaceration :exec
 INSERT INTO maceration (id, created_at, reception_id, warehouse_id)
-VALUES ($1, $2, $3, $4)
-RETURNING *;
+VALUES ($1, $2, $3, $4);

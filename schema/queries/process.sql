@@ -7,18 +7,17 @@ LIMIT 1;
 -- name: ListProcesses :many
 SELECT *
 FROM process
-ORDER BY id DESC
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
--- name: AddProcess :one
-INSERT INTO process (created_at, start_date, p_type)
-VALUES ($1, $2, $3)
-RETURNING *;
+-- name: AddProcess :exec
+INSERT INTO process (id, created_at, start_time, p_type)
+VALUES ($1, $2, $3, $4);
 
 -- name: UpdateProcess :exec
 UPDATE process
 SET updated_at  = $2,
-    end_date    = $3,
+    end_time    = $3,
     previous_id = $4,
     hash        = $5,
     transaction = $6

@@ -8,30 +8,24 @@ package generated
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addGrapeType = `-- name: AddGrapeType :one
-INSERT INTO grape_type (created_at, name)
-VALUES ($1, $2)
-RETURNING id, created_at, updated_at, deleted_at, name
+const addGrapeType = `-- name: AddGrapeType :exec
+INSERT INTO grape_type (id, created_at, name)
+VALUES ($1, $2, $3)
 `
 
 type AddGrapeTypeParams struct {
+	ID        uuid.UUID
 	CreatedAt time.Time
 	Name      string
 }
 
-func (q *Queries) AddGrapeType(ctx context.Context, arg AddGrapeTypeParams) (GrapeType, error) {
-	row := q.db.QueryRowContext(ctx, addGrapeType, arg.CreatedAt, arg.Name)
-	var i GrapeType
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.Name,
-	)
-	return i, err
+func (q *Queries) AddGrapeType(ctx context.Context, arg AddGrapeTypeParams) error {
+	_, err := q.db.ExecContext(ctx, addGrapeType, arg.ID, arg.CreatedAt, arg.Name)
+	return err
 }
 
 const getGrapeType = `-- name: GetGrapeType :one
@@ -41,7 +35,7 @@ WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetGrapeType(ctx context.Context, id int64) (GrapeType, error) {
+func (q *Queries) GetGrapeType(ctx context.Context, id uuid.UUID) (GrapeType, error) {
 	row := q.db.QueryRowContext(ctx, getGrapeType, id)
 	var i GrapeType
 	err := row.Scan(
@@ -57,7 +51,7 @@ func (q *Queries) GetGrapeType(ctx context.Context, id int64) (GrapeType, error)
 const listGrapeTypes = `-- name: ListGrapeTypes :many
 SELECT id, created_at, updated_at, deleted_at, name
 FROM grape_type
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 

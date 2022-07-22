@@ -29,9 +29,7 @@ func (h HttpServer) RegisterMaceration(c *gin.Context) {
 		MacerationUUID:      uuid.New().String(),
 		MacerationStartTime: time.Now().Round(time.Second),
 		ReceptionUUID:       postMaceration.ReceptionUuid.String(),
-		ReceptionStartTime:  postMaceration.Reception,
 		WarehouseUUID:       postMaceration.WarehouseUuid.String(),
-		WarehouseName:       postMaceration.Warehouse,
 	}
 
 	err := h.app.UseCases.RegisterMaceration.Handle(c, uc)

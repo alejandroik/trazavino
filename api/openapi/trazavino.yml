@@ -136,6 +136,189 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /fermentations:
+    get:
+      operationId: getFermentations
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fermentations'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: registerFermentation
+      requestBody:
+        description: todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostFermentation'
+      responses:
+        '204':
+          description: todo
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /fermentations/{fermentationUUID}:
+    get:
+      operationId: getFermentation
+      parameters:
+        - in: path
+          name: fermentationUUID
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fermentation'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ageings:
+    get:
+      operationId: getAgeings
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ageings'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: registerAgeing
+      requestBody:
+        description: todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostAgeing'
+      responses:
+        '204':
+          description: todo
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /ageings/{ageingUUID}:
+    get:
+      operationId: getAgeing
+      parameters:
+        - in: path
+          name: ageingUUID
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ageing'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bottlings:
+    get:
+      operationId: getBottlings
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bottlings'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      operationId: registerBottling
+      requestBody:
+        description: todo
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostBottling'
+      responses:
+        '204':
+          description: todo
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /bottlings/{bottlingUUID}:
+    get:
+      operationId: getBottling
+      parameters:
+        - in: path
+          name: bottlingUUID
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: todo
+      responses:
+        '200':
+          description: todo
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Bottling'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
   /status:
     get:
       operationId: status
@@ -211,23 +394,14 @@ components:
 
     PostReception:
       type: object
-      required: [truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
+      required: [truckUuid, vineyardUuid, grapeTypeUuid, weight, sugar]
       properties:
-        truck:
-          type: string
-          example: AA-00-33-BF24
         truckUuid:
           type: string
           format: uuid
-        vineyard:
-          type: string
-          example: Los Andes
         vineyardkUuid:
           type: string
           format: uuid
-        grapeType:
-          type: string
-          example: Rosada
         grapeTypeUuid:
           type: string
           format: uuid
@@ -265,6 +439,9 @@ components:
         endTime:
           type: string
           format: date-time
+        previousUuid:
+          type: string
+          format: uuid
         hash:
           type: string
           example: "0xfa646594bf2241061314d53e850a466815b3600a"
@@ -283,20 +460,195 @@ components:
 
     PostMaceration:
       type: object
-      required: [reception, receptionUuid, warehouse, warehouseUuid]
+      required: [receptionUuid, warehouseUuid]
       properties:
-        reception:
-          type: string
-          format: date-time
         receptionUuid:
           type: string
           format: uuid
+        warehouseUuid:
+          type: string
+          format: uuid
+
+    Fermentation:
+      type: object
+      required: [uuid, startTime, warehouse, warehouseUuid, tank, tankUuid]
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
         warehouse:
           type: string
           example: E#245987F
         warehouseUuid:
           type: string
           format: uuid
+        tank:
+          type: string
+          example: E#245987F
+        tankUuid:
+          type: string
+          format: uuid
+        endTime:
+          type: string
+          format: date-time
+        previousUuid:
+          type: string
+          format: uuid
+        hash:
+          type: string
+          example: "0xfa646594bf2241061314d53e850a466815b3600a"
+        transaction:
+          type: string
+          example: "0xa1db35ca1754495896bc0d3f7c41c3e80230f138cd528a073fbdd846a026576b"
+
+    Fermentations:
+      type: object
+      required: [fermentations]
+      properties:
+        receptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Fermentation'
+
+    PostFermentation:
+      type: object
+      required: [warehouseUuid, tankUuid]
+      properties:
+        warehouseUuid:
+          type: string
+          format: uuid
+        tankUuid:
+          type: string
+          format: uuid
+
+    Ageing:
+      type: object
+      required: [uuid, startTime, tank, tankUuid, cellar, cellarUuid, humidity]
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        tank:
+          type: string
+          example: E#245987F
+        tankUuid:
+          type: string
+          format: uuid
+        cellar:
+          type: string
+          example: E#245987F
+        cellarUuid:
+          type: string
+          format: uuid
+        humidty:
+          type: integer
+          format: int32
+          example: 5
+        endTime:
+          type: string
+          format: date-time
+        previousUuid:
+          type: string
+          format: uuid
+        hash:
+          type: string
+          example: "0xfa646594bf2241061314d53e850a466815b3600a"
+        transaction:
+          type: string
+          example: "0xa1db35ca1754495896bc0d3f7c41c3e80230f138cd528a073fbdd846a026576b"
+
+    Ageings:
+      type: object
+      required: [ageings]
+      properties:
+        receptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Ageing'
+
+    PostAgeing:
+      type: object
+      required: [tankUuid, cellarUuid, humidity]
+      properties:
+        tankUuid:
+          type: string
+          format: uuid
+        cellarUuid:
+          type: string
+          format: uuid
+        humidty:
+          type: integer
+          format: int32
+          example: 5
+
+    Bottling:
+      type: object
+      required: [uuid, startTime, cellar, cellarUuid, wine, wineUuid, bottleQty]
+      properties:
+        uuid:
+          type: string
+          format: uuid
+        startTime:
+          type: string
+          format: date-time
+        cellar:
+          type: string
+          example: E#245987F
+        cellarUuid:
+          type: string
+          format: uuid
+        wine:
+          type: string
+          example: E#245987F
+        wineUuid:
+          type: string
+          format: uuid
+        bottleQty:
+          type: integer
+          format: int32
+          example: 5
+        endTime:
+          type: string
+          format: date-time
+        previousUuid:
+          type: string
+          format: uuid
+        hash:
+          type: string
+          example: "0xfa646594bf2241061314d53e850a466815b3600a"
+        transaction:
+          type: string
+          example: "0xa1db35ca1754495896bc0d3f7c41c3e80230f138cd528a073fbdd846a026576b"
+
+    Bottlings:
+      type: object
+      required: [bottlings]
+      properties:
+        receptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Bottling'
+
+    PostBottling:
+      type: object
+      required: [cellarUuid, wineUuid, bottleQty]
+      properties:
+        cellarUuid:
+          type: string
+          format: uuid
+        wineUuid:
+          type: string
+          format: uuid
+        bottleQty:
+          type: integer
+          format: int32
+          example: 5
 
     Error:
       type: object

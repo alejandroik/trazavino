@@ -8,30 +8,24 @@ package generated
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addTruck = `-- name: AddTruck :one
-INSERT INTO truck (created_at, name)
-VALUES ($1, $2)
-RETURNING id, created_at, updated_at, deleted_at, name
+const addTruck = `-- name: AddTruck :exec
+INSERT INTO truck (id, created_at, name)
+VALUES ($1, $2, $3)
 `
 
 type AddTruckParams struct {
+	ID        uuid.UUID
 	CreatedAt time.Time
 	Name      string
 }
 
-func (q *Queries) AddTruck(ctx context.Context, arg AddTruckParams) (Truck, error) {
-	row := q.db.QueryRowContext(ctx, addTruck, arg.CreatedAt, arg.Name)
-	var i Truck
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.Name,
-	)
-	return i, err
+func (q *Queries) AddTruck(ctx context.Context, arg AddTruckParams) error {
+	_, err := q.db.ExecContext(ctx, addTruck, arg.ID, arg.CreatedAt, arg.Name)
+	return err
 }
 
 const getTruck = `-- name: GetTruck :one
@@ -41,7 +35,7 @@ WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetTruck(ctx context.Context, id int64) (Truck, error) {
+func (q *Queries) GetTruck(ctx context.Context, id uuid.UUID) (Truck, error) {
 	row := q.db.QueryRowContext(ctx, getTruck, id)
 	var i Truck
 	err := row.Scan(
@@ -57,7 +51,7 @@ func (q *Queries) GetTruck(ctx context.Context, id int64) (Truck, error) {
 const listTrucks = `-- name: ListTrucks :many
 SELECT id, created_at, updated_at, deleted_at, name
 FROM truck
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 

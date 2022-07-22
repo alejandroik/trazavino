@@ -9,32 +9,30 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addWarehouse = `-- name: AddWarehouse :one
-INSERT INTO warehouse (created_at, name, is_empty)
-VALUES ($1, $2, $3)
-RETURNING id, created_at, updated_at, deleted_at, name, is_empty
+const addWarehouse = `-- name: AddWarehouse :exec
+INSERT INTO warehouse (id, created_at, name, is_empty)
+VALUES ($1, $2, $3, $4)
 `
 
 type AddWarehouseParams struct {
+	ID        uuid.UUID
 	CreatedAt time.Time
 	Name      string
 	IsEmpty   bool
 }
 
-func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) (Warehouse, error) {
-	row := q.db.QueryRowContext(ctx, addWarehouse, arg.CreatedAt, arg.Name, arg.IsEmpty)
-	var i Warehouse
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.Name,
-		&i.IsEmpty,
+func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) error {
+	_, err := q.db.ExecContext(ctx, addWarehouse,
+		arg.ID,
+		arg.CreatedAt,
+		arg.Name,
+		arg.IsEmpty,
 	)
-	return i, err
+	return err
 }
 
 const getWarehouse = `-- name: GetWarehouse :one
@@ -44,7 +42,7 @@ WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetWarehouse(ctx context.Context, id int64) (Warehouse, error) {
+func (q *Queries) GetWarehouse(ctx context.Context, id uuid.UUID) (Warehouse, error) {
 	row := q.db.QueryRowContext(ctx, getWarehouse, id)
 	var i Warehouse
 	err := row.Scan(
@@ -61,7 +59,7 @@ func (q *Queries) GetWarehouse(ctx context.Context, id int64) (Warehouse, error)
 const listWarehouses = `-- name: ListWarehouses :many
 SELECT id, created_at, updated_at, deleted_at, name, is_empty
 FROM warehouse
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 
@@ -108,7 +106,7 @@ WHERE id = $1
 `
 
 type UpdateWarehouseParams struct {
-	ID        int64
+	ID        uuid.UUID
 	UpdatedAt sql.NullTime
 	IsEmpty   bool
 }
