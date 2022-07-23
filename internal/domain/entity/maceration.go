@@ -91,6 +91,12 @@ func (m Maceration) Transaction() string {
 	return m.transaction
 }
 
+func (m *Maceration) UpdatePreviousUUID(pv string) error {
+	m.previousUUID = pv
+
+	return nil
+}
+
 func (m *Maceration) UpdateEndTime(t time.Time) error {
 	m.endTime = t
 
