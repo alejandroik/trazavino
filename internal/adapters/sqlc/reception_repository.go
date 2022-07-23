@@ -47,10 +47,11 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	}
 	q := generated.New(tx)
 
-	ca := time.Now()
+	now := time.Now()
+
 	if err = q.AddProcess(ctx, generated.AddProcessParams{
 		ID:        processUuid,
-		CreatedAt: ca,
+		CreatedAt: now,
 		StartTime: rc.StartTime(),
 		PType:     process_type.Reception.String(),
 	}); err != nil {
@@ -60,7 +61,7 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 
 	if err = q.AddReception(ctx, generated.AddReceptionParams{
 		ID:          processUuid,
-		CreatedAt:   ca,
+		CreatedAt:   now,
 		Weight:      rc.Weight(),
 		Sugar:       rc.Sugar(),
 		TruckID:     truckUuid,
@@ -75,18 +76,6 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 }
 
 func (r ReceptionRepository) GetReception(ctx context.Context, id string) (*entity.Reception, error) {
-	//q := generated.New(r.db)
-	//rm, err := q.GetReception(ctx, id)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//reception, err := unmarshalReception(rm)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//return reception, nil
 	return nil, nil
 }
 
@@ -99,6 +88,5 @@ func (r ReceptionRepository) UpdateReception(ctx context.Context, receptionId st
 }
 
 func unmarshalReception(rm generated.Reception) (*entity.Reception, error) {
-	//return entity.UnmarshalReceptionFromDatabase(rm.ID, rm.TruckID, rm.VineyardID, rm.GrapeTypeID, rm.Weight, rm.Sugar)
 	return nil, nil
 }

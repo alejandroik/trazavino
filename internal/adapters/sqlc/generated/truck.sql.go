@@ -7,6 +7,7 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -87,4 +88,22 @@ func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateTruck = `-- name: UpdateTruck :exec
+UPDATE truck
+SET name       = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateTruckParams struct {
+	ID        uuid.UUID
+	Name      string
+	UpdatedAt sql.NullTime
+}
+
+func (q *Queries) UpdateTruck(ctx context.Context, arg UpdateTruckParams) error {
+	_, err := q.db.ExecContext(ctx, updateTruck, arg.ID, arg.Name, arg.UpdatedAt)
+	return err
 }

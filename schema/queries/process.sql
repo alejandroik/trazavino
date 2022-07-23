@@ -11,8 +11,8 @@ ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
 -- name: AddProcess :exec
-INSERT INTO process (id, created_at, start_time, p_type)
-VALUES ($1, $2, $3, $4);
+INSERT INTO process (id, created_at, start_time, p_type, previous_id)
+VALUES ($1, $2, $3, $4, $5);
 
 -- name: UpdateProcess :exec
 UPDATE process

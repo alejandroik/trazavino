@@ -16,6 +16,7 @@ VALUES ($1, $2, $3, $4);
 
 -- name: UpdateWarehouse :exec
 UPDATE warehouse
-SET updated_at = $2,
-    is_empty   = $3
+SET name       = $2,
+    updated_at = $3,
+    is_empty   = $4
 WHERE id = $1;

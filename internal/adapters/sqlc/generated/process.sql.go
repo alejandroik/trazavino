@@ -14,15 +14,16 @@ import (
 )
 
 const addProcess = `-- name: AddProcess :exec
-INSERT INTO process (id, created_at, start_time, p_type)
-VALUES ($1, $2, $3, $4)
+INSERT INTO process (id, created_at, start_time, p_type, previous_id)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddProcessParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	StartTime time.Time
-	PType     string
+	ID         uuid.UUID
+	CreatedAt  time.Time
+	StartTime  time.Time
+	PType      string
+	PreviousID uuid.NullUUID
 }
 
 func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) error {
@@ -31,6 +32,7 @@ func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) error {
 		arg.CreatedAt,
 		arg.StartTime,
 		arg.PType,
+		arg.PreviousID,
 	)
 	return err
 }

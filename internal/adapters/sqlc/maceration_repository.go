@@ -44,30 +44,11 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 	}
 	q := generated.New(tx)
 
-	ca := time.Now()
-	if err = q.AddProcess(ctx, generated.AddProcessParams{
-		ID:        mcUuid,
-		CreatedAt: ca,
-		StartTime: m.StartTime(),
-		PType:     process_type.Maceration.String(),
-	}); err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	if err = q.AddMaceration(ctx, generated.AddMacerationParams{
-		ID:          mcUuid,
-		CreatedAt:   time.Now(),
-		ReceptionID: recUuid,
-		WarehouseID: whUuid,
-	}); err != nil {
-		tx.Rollback()
-		return err
-	}
+	now := time.Now()
 
 	if err = q.UpdateProcess(ctx, generated.UpdateProcessParams{
 		ID:        recUuid,
-		UpdatedAt: sql.NullTime{Time: ca, Valid: true},
+		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		EndTime:   sql.NullTime{Time: m.StartTime(), Valid: true},
 	}); err != nil {
 		tx.Rollback()
@@ -76,8 +57,29 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 
 	if err = q.UpdateWarehouse(ctx, generated.UpdateWarehouseParams{
 		ID:        whUuid,
-		UpdatedAt: sql.NullTime{Time: ca, Valid: true},
+		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,
+	}); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err = q.AddProcess(ctx, generated.AddProcessParams{
+		ID:         mcUuid,
+		CreatedAt:  now,
+		StartTime:  m.StartTime(),
+		PType:      process_type.Maceration.String(),
+		PreviousID: uuid.NullUUID{UUID: recUuid, Valid: true},
+	}); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err = q.AddMaceration(ctx, generated.AddMacerationParams{
+		ID:          mcUuid,
+		CreatedAt:   now,
+		ReceptionID: recUuid,
+		WarehouseID: whUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err
@@ -87,18 +89,6 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 }
 
 func (r MacerationRepository) GetMaceration(ctx context.Context, macerationId string) (*entity.Maceration, error) {
-	//q := generated.New(r.db)
-	//mm, err := q.GetMaceration(ctx, macerationId)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//maceration, err := unmarshalMaceration(mm)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//return maceration, nil
 	return nil, nil
 }
 
@@ -111,6 +101,5 @@ func (r MacerationRepository) UpdateMaceration(
 }
 
 func unmarshalMaceration(mm generated.Maceration) (*entity.Maceration, error) {
-	//return entity.UnmarshalMacerationFromDatabase(mm.ID, mm.ReceptionID, mm.WarehouseID)
 	return nil, nil
 }

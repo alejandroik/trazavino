@@ -34,6 +34,29 @@ func (q *Queries) AddMaceration(ctx context.Context, arg AddMacerationParams) er
 	return err
 }
 
+const findMaceration = `-- name: FindMaceration :one
+SELECT maceration.id, maceration.created_at, maceration.updated_at, maceration.deleted_at, maceration.reception_id, maceration.warehouse_id
+FROM maceration
+         INNER JOIN process p on maceration.id = p.id
+WHERE end_time IS NULL
+  AND maceration.warehouse_id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindMaceration(ctx context.Context, warehouseID uuid.UUID) (Maceration, error) {
+	row := q.db.QueryRowContext(ctx, findMaceration, warehouseID)
+	var i Maceration
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.ReceptionID,
+		&i.WarehouseID,
+	)
+	return i, err
+}
+
 const getMaceration = `-- name: GetMaceration :one
 SELECT id, created_at, updated_at, deleted_at, reception_id, warehouse_id
 FROM maceration

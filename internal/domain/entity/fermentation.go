@@ -68,11 +68,11 @@ func (f Fermentation) WarehouseName() string {
 }
 
 func (f Fermentation) TankUUID() string {
-	return f.warehouseUUID
+	return f.tankUUID
 }
 
 func (f Fermentation) TankName() string {
-	return f.warehouseName
+	return f.tankName
 }
 
 func (f Fermentation) EndTime() time.Time {

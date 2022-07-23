@@ -4,6 +4,14 @@ FROM maceration
 WHERE id = $1
 LIMIT 1;
 
+-- name: FindMaceration :one
+SELECT maceration.*
+FROM maceration
+         INNER JOIN process p on maceration.id = p.id
+WHERE end_time IS NULL
+  AND maceration.warehouse_id = $1
+LIMIT 1;
+
 -- name: ListMacerations :many
 SELECT *
 FROM maceration

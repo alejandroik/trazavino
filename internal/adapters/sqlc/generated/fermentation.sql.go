@@ -34,6 +34,29 @@ func (q *Queries) AddFermentation(ctx context.Context, arg AddFermentationParams
 	return err
 }
 
+const findFermentation = `-- name: FindFermentation :one
+SELECT fermentation.id, fermentation.created_at, fermentation.updated_at, fermentation.deleted_at, fermentation.warehouse_id, fermentation.tank_id
+FROM fermentation
+         INNER JOIN process p on fermentation.id = p.id
+WHERE end_time IS NULL
+  AND fermentation.tank_id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindFermentation(ctx context.Context, tankID uuid.UUID) (Fermentation, error) {
+	row := q.db.QueryRowContext(ctx, findFermentation, tankID)
+	var i Fermentation
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.DeletedAt,
+		&i.WarehouseID,
+		&i.TankID,
+	)
+	return i, err
+}
+
 const getFermentation = `-- name: GetFermentation :one
 SELECT id, created_at, updated_at, deleted_at, warehouse_id, tank_id
 FROM fermentation

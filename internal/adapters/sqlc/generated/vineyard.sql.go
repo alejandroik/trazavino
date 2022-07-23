@@ -7,6 +7,7 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -87,4 +88,22 @@ func (q *Queries) ListVineyards(ctx context.Context, arg ListVineyardsParams) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateVineyard = `-- name: UpdateVineyard :exec
+UPDATE vineyard
+SET name       = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateVineyardParams struct {
+	ID        uuid.UUID
+	Name      string
+	UpdatedAt sql.NullTime
+}
+
+func (q *Queries) UpdateVineyard(ctx context.Context, arg UpdateVineyardParams) error {
+	_, err := q.db.ExecContext(ctx, updateVineyard, arg.ID, arg.Name, arg.UpdatedAt)
+	return err
 }

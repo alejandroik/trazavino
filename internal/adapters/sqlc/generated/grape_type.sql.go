@@ -7,6 +7,7 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -87,4 +88,22 @@ func (q *Queries) ListGrapeTypes(ctx context.Context, arg ListGrapeTypesParams) 
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateGrapeType = `-- name: UpdateGrapeType :exec
+UPDATE grape_type
+SET name       = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateGrapeTypeParams struct {
+	ID        uuid.UUID
+	Name      string
+	UpdatedAt sql.NullTime
+}
+
+func (q *Queries) UpdateGrapeType(ctx context.Context, arg UpdateGrapeTypeParams) error {
+	_, err := q.db.ExecContext(ctx, updateGrapeType, arg.ID, arg.Name, arg.UpdatedAt)
+	return err
 }

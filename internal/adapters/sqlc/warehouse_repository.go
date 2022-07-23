@@ -2,6 +2,7 @@ package sqlc
 
 import (
 	"context"
+	"database/sql"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
@@ -43,19 +44,23 @@ func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity
 }
 
 func (r WarehouseRepository) GetWarehouse(ctx context.Context, warehouseId string) (*entity.Warehouse, error) {
-	//q := generated.New(r.db)
-	//wm, err := q.GetWarehouse(ctx, warehouseId)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//warehouse, err := unmarshalWarehouse(wm)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//return warehouse, nil
-	return nil, nil
+	whUuid, err := uuid.Parse(warehouseId)
+	if err != nil {
+		return nil, err
+	}
+
+	q := generated.New(r.db)
+	wm, err := q.GetWarehouse(ctx, whUuid)
+	if err != nil {
+		return nil, err
+	}
+
+	warehouse, err := unmarshalWarehouse(wm)
+	if err != nil {
+		return nil, err
+	}
+
+	return warehouse, nil
 }
 
 func (r WarehouseRepository) ListWarehouses(ctx context.Context, offset int32, limit int32) ([]*entity.Warehouse, error) {
@@ -86,50 +91,48 @@ func (r WarehouseRepository) UpdateWarehouse(
 	warehouseId string,
 	updateFn func(ctx context.Context, wh *entity.Warehouse) (*entity.Warehouse, error),
 ) error {
-	//tx, err := r.db.BeginTx(ctx, nil)
-	//if err != nil {
-	//	return err
-	//}
-	//q := generated.New(tx)
-	//
-	//wm, err := q.GetWarehouse(ctx, warehouseId)
-	//if err != nil {
-	//	tx.Rollback()
-	//	return err
-	//}
-	//
-	//warehouse, err := unmarshalWarehouse(wm)
-	//if err != nil {
-	//	tx.Rollback()
-	//	return err
-	//}
-	//
-	//updatedWarehouse, err := updateFn(ctx, warehouse)
-	//if err != nil {
-	//	tx.Rollback()
-	//	return err
-	//}
-	//
-	//err = q.UpdateWarehouse(ctx, marshalWarehouseUpdateParams(updatedWarehouse))
-	//if err != nil {
-	//	tx.Rollback()
-	//	return err
-	//}
-	//
-	//return tx.Commit()
-	return nil
-}
+	whUuid, err := uuid.Parse(warehouseId)
+	if err != nil {
+		return err
+	}
 
-func marshalWarehouseUpdateParams(wh *entity.Warehouse) generated.UpdateWarehouseParams {
-	//return generated.UpdateWarehouseParams{
-	//	ID:        wh.ID(),
-	//	UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
-	//	IsEmpty:   wh.IsEmpty(),
-	//}
-	return generated.UpdateWarehouseParams{}
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	q := generated.New(tx)
+
+	wm, err := q.GetWarehouse(ctx, whUuid)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	warehouse, err := unmarshalWarehouse(wm)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	updatedWarehouse, err := updateFn(ctx, warehouse)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err = q.UpdateWarehouse(ctx, generated.UpdateWarehouseParams{
+		ID:        whUuid,
+		Name:      updatedWarehouse.Name(),
+		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		IsEmpty:   updatedWarehouse.IsEmpty(),
+	}); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
 }
 
 func unmarshalWarehouse(wm generated.Warehouse) (*entity.Warehouse, error) {
-	//return entity.UnmarshalWarehouseFromDatabase(wm.ID, wm.Name, wm.IsEmpty)
-	return nil, nil
+	return entity.UnmarshalWarehouseFromDatabase(wm.ID.String(), wm.Name, wm.IsEmpty)
 }
