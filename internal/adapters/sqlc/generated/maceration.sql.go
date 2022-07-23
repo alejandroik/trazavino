@@ -8,28 +8,43 @@ package generated
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addMaceration = `-- name: AddMaceration :one
+const addMaceration = `-- name: AddMaceration :exec
 INSERT INTO maceration (id, created_at, reception_id, warehouse_id)
 VALUES ($1, $2, $3, $4)
-RETURNING id, created_at, updated_at, deleted_at, reception_id, warehouse_id
 `
 
 type AddMacerationParams struct {
-	ID          int64
+	ID          uuid.UUID
 	CreatedAt   time.Time
-	ReceptionID int64
-	WarehouseID int64
+	ReceptionID uuid.UUID
+	WarehouseID uuid.UUID
 }
 
-func (q *Queries) AddMaceration(ctx context.Context, arg AddMacerationParams) (Maceration, error) {
-	row := q.db.QueryRowContext(ctx, addMaceration,
+func (q *Queries) AddMaceration(ctx context.Context, arg AddMacerationParams) error {
+	_, err := q.db.ExecContext(ctx, addMaceration,
 		arg.ID,
 		arg.CreatedAt,
 		arg.ReceptionID,
 		arg.WarehouseID,
 	)
+	return err
+}
+
+const findMaceration = `-- name: FindMaceration :one
+SELECT maceration.id, maceration.created_at, maceration.updated_at, maceration.deleted_at, maceration.reception_id, maceration.warehouse_id
+FROM maceration
+         INNER JOIN process p on maceration.id = p.id
+WHERE end_time IS NULL
+  AND maceration.warehouse_id = $1
+LIMIT 1
+`
+
+func (q *Queries) FindMaceration(ctx context.Context, warehouseID uuid.UUID) (Maceration, error) {
+	row := q.db.QueryRowContext(ctx, findMaceration, warehouseID)
 	var i Maceration
 	err := row.Scan(
 		&i.ID,
@@ -49,7 +64,7 @@ WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetMaceration(ctx context.Context, id int64) (Maceration, error) {
+func (q *Queries) GetMaceration(ctx context.Context, id uuid.UUID) (Maceration, error) {
 	row := q.db.QueryRowContext(ctx, getMaceration, id)
 	var i Maceration
 	err := row.Scan(
@@ -66,7 +81,7 @@ func (q *Queries) GetMaceration(ctx context.Context, id int64) (Maceration, erro
 const listMacerations = `-- name: ListMacerations :many
 SELECT id, created_at, updated_at, deleted_at, reception_id, warehouse_id
 FROM maceration
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 

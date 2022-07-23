@@ -23,9 +23,11 @@ type MacerationModel struct {
 	WarehouseUUID string `dynamodbav:"WarehouseUUID"`
 	Warehouse     string `dynamodbav:"Warehouse"`
 
-	EndTime     *time.Time `dynamodbav:"EndTime"`
-	Hash        *string    `dynamodbav:"Hash"`
-	Transaction *string    `dynamodbav:"Transaction"`
+	EndTime      *time.Time `dynamodbav:"EndTime"`
+	PreviousUUID *string    `dynamodbav:"PreviousUUID"`
+
+	Hash        *string `dynamodbav:"Hash"`
+	Transaction *string `dynamodbav:"Transaction"`
 }
 
 type MacerationDynamoDbRepository struct {
@@ -173,6 +175,11 @@ func (r MacerationDynamoDbRepository) unmarshalMaceration(av document) (*entity.
 		endTime = *mm.EndTime
 	}
 
+	var previousUUID string
+	if mm.PreviousUUID != nil {
+		previousUUID = *mm.PreviousUUID
+	}
+
 	var hash string
 	if mm.Hash != nil {
 		hash = *mm.Hash
@@ -191,6 +198,8 @@ func (r MacerationDynamoDbRepository) unmarshalMaceration(av document) (*entity.
 		mm.WarehouseUUID,
 		mm.Warehouse,
 		endTime,
+		previousUUID,
 		hash,
-		transaction)
+		transaction,
+	)
 }

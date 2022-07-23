@@ -29,11 +29,8 @@ func (h HttpServer) RegisterReception(c *gin.Context) {
 		ReceptionUUID:      uuid.New().String(),
 		ReceptionStartTime: time.Now().Round(time.Second),
 		TruckUUID:          postReception.TruckUuid.String(),
-		TruckLicense:       postReception.Truck,
 		VineyardUUID:       postReception.VineyardkUuid.String(),
-		VineyardName:       postReception.Vineyard,
 		GrapeTypeUUID:      postReception.GrapeTypeUuid.String(),
-		GrapeTypeName:      postReception.GrapeType,
 		Weight:             postReception.Weight,
 		Sugar:              postReception.Sugar,
 	}

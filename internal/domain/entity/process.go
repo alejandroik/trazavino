@@ -2,38 +2,43 @@ package entity
 
 import (
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type Process struct {
 	uuid string
 
-	startDate time.Time
-	endDate   time.Time
-
-	hash        string
-	transaction string
+	startTime time.Time
 
 	pType string
 
+	endTime      time.Time
 	previousUUID string
+
+	hash        string
+	transaction string
 }
 
 func NewProcess(
 	uuid string,
-	startDate time.Time,
-	endDate time.Time,
-	hash string,
-	transaction string,
+	startTime time.Time,
 	pType string,
-	previousUUID string) (*Process, error) {
+) (*Process, error) {
+	if uuid == "" {
+		return nil, errors.New("empty process uuid")
+	}
+	if startTime.IsZero() {
+		return nil, errors.New("zero process start time")
+	}
+	if pType == "" {
+		return nil, errors.New("empty process type")
+	}
+
 	return &Process{
-		uuid:         uuid,
-		startDate:    startDate,
-		endDate:      endDate,
-		hash:         hash,
-		transaction:  transaction,
-		pType:        pType,
-		previousUUID: previousUUID,
+		uuid:      uuid,
+		startTime: startTime,
+		pType:     pType,
 	}, nil
 }
 
@@ -41,12 +46,12 @@ func (p Process) UUID() string {
 	return p.uuid
 }
 
-func (p Process) StartDate() time.Time {
-	return p.startDate
+func (p Process) StartTime() time.Time {
+	return p.startTime
 }
 
-func (p Process) EndDate() time.Time {
-	return p.endDate
+func (p Process) EndTime() time.Time {
+	return p.endTime
 }
 
 func (p Process) Hash() string {
@@ -65,8 +70,8 @@ func (p Process) PreviousUUID() string {
 	return p.previousUUID
 }
 
-func (p *Process) UpdateEndDate(date time.Time) error {
-	p.endDate = date
+func (p *Process) UpdateEndTime(date time.Time) error {
+	p.endTime = date
 
 	return nil
 }
@@ -91,17 +96,22 @@ func (p *Process) UpdateTransaction(transaction string) error {
 
 func UnmarshalProcessFromDatabase(
 	uuid string,
-	startDate time.Time,
-	endDate time.Time,
+	startTime time.Time,
+	ptype string,
+	endTime time.Time,
+	previousUUID string,
 	hash string,
 	transaction string,
-	ptype string,
-	previousUUID string,
 ) (*Process, error) {
-	p, err := NewProcess(uuid, startDate, endDate, hash, transaction, ptype, previousUUID)
+	p, err := NewProcess(uuid, startTime, ptype)
 	if err != nil {
 		return nil, err
 	}
+
+	p.endTime = endTime
+	p.previousUUID = previousUUID
+	p.hash = hash
+	p.transaction = transaction
 
 	return p, nil
 }

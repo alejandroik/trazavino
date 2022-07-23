@@ -5,7 +5,7 @@ import "time"
 type Bottling struct {
 	uuid string
 
-	time time.Time
+	startTime time.Time
 
 	cellarUUID string
 	cellarName string
@@ -14,6 +14,9 @@ type Bottling struct {
 	wineName string
 
 	bottleQty int32
+
+	endTime      time.Time
+	previousUUID string
 
 	hash        string
 	transaction string

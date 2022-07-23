@@ -6,6 +6,7 @@ import (
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -21,46 +22,42 @@ func NewVineyardRepository(db *sqlx.DB) *VineyardRepository {
 	return &VineyardRepository{db: db}
 }
 
-func (r VineyardRepository) AddVineyard(ctx context.Context, vineyard *entity.Vineyard) (*entity.Vineyard, error) {
-	tx, err := r.db.BeginTx(ctx, nil)
+func (r VineyardRepository) AddVineyard(ctx context.Context, vineyard *entity.Vineyard) error {
+	vyUuid, err := uuid.Parse(vineyard.ID())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	q := generated.New(tx)
 
-	vm, err := q.AddVineyard(ctx, generated.AddVineyardParams{
+	q := generated.New(r.db)
+
+	if err = q.AddVineyard(ctx, generated.AddVineyardParams{
+		ID:        vyUuid,
 		CreatedAt: time.Now(),
 		Name:      vineyard.Name(),
-	})
-	if err != nil {
-		tx.Rollback()
-		return nil, err
+	}); err != nil {
+		return err
 	}
 
-	insertedVineyard, err := unmarshalVineyard(vm)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	return insertedVineyard, tx.Commit()
+	return nil
 }
 
-func (r VineyardRepository) GetVineyard(ctx context.Context, vineyardId int64) (*entity.Vineyard, error) {
-	q := generated.New(r.db)
-	vm, err := q.GetVineyard(ctx, vineyardId)
-	if err != nil {
-		return nil, err
-	}
-
-	vineyard, err := unmarshalVineyard(vm)
-	if err != nil {
-		return nil, err
-	}
-
-	return vineyard, nil
+func (r VineyardRepository) GetVineyard(ctx context.Context, vineyardId string) (*entity.Vineyard, error) {
+	//q := generated.New(r.db)
+	//vm, err := q.GetVineyard(ctx, vineyardId)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//vineyard, err := unmarshalVineyard(vm)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//return vineyard, nil
+	return nil, nil
 }
 
 func unmarshalVineyard(vm generated.Vineyard) (*entity.Vineyard, error) {
-	return entity.UnmarshalVineyardFromDatabase(vm.ID, vm.Name)
+	//return entity.UnmarshalVineyardFromDatabase(vm.ID, vm.Name)
+	return nil, nil
 }

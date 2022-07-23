@@ -15,14 +15,11 @@ type RegisterReception struct {
 
 	ReceptionStartTime time.Time
 
-	TruckUUID    string
-	TruckLicense string
+	TruckUUID string
 
 	VineyardUUID string
-	VineyardName string
 
 	GrapeTypeUUID string
-	GrapeTypeName string
 
 	Weight int32
 	Sugar  int32
@@ -53,11 +50,8 @@ func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterRecept
 		cmd.ReceptionUUID,
 		cmd.ReceptionStartTime,
 		cmd.TruckUUID,
-		cmd.TruckLicense,
 		cmd.VineyardUUID,
-		cmd.VineyardName,
 		cmd.GrapeTypeUUID,
-		cmd.GrapeTypeName,
 		cmd.Weight,
 		cmd.Sugar)
 	if err != nil {

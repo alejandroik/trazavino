@@ -7,19 +7,21 @@ package generated
 import (
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Ageing struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
-	TankID    int64
-	CaskID    int64
+	TankID    uuid.UUID
+	CaskID    uuid.UUID
 }
 
 type Bottle struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -27,22 +29,22 @@ type Bottle struct {
 }
 
 type Bottling struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
-	CaskID    int64
+	CaskID    uuid.UUID
 	BottleQty int32
-	WineID    int64
+	WineID    uuid.UUID
 }
 
 type BottlingBottle struct {
-	BottlingID int64
-	BottleID   int64
+	BottlingID uuid.UUID
+	BottleID   uuid.UUID
 }
 
 type Cask struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -52,7 +54,7 @@ type Cask struct {
 }
 
 type Cellar struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -60,46 +62,46 @@ type Cellar struct {
 }
 
 type CellarCask struct {
-	CellarID int64
-	CaskID   int64
+	CellarID uuid.UUID
+	CaskID   uuid.UUID
 }
 
 type CellarTank struct {
-	CellarID int64
-	TankID   int64
+	CellarID uuid.UUID
+	TankID   uuid.UUID
 }
 
 type CellarTruck struct {
-	CellarID int64
-	TruckID  int64
+	CellarID uuid.UUID
+	TruckID  uuid.UUID
 }
 
 type CellarVineyard struct {
-	CellarID   int64
-	VineyardID int64
+	CellarID   uuid.UUID
+	VineyardID uuid.UUID
 }
 
 type CellarWarehouse struct {
-	CellarID    int64
-	WarehouseID int64
+	CellarID    uuid.UUID
+	WarehouseID uuid.UUID
 }
 
 type CellarWine struct {
-	CellarID int64
-	WineID   int64
+	CellarID uuid.UUID
+	WineID   uuid.UUID
 }
 
 type Fermentation struct {
-	ID          int64
+	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	DeletedAt   sql.NullTime
-	WarehouseID int64
-	TankID      int64
+	WarehouseID uuid.UUID
+	TankID      uuid.UUID
 }
 
 type GrapeType struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -107,41 +109,41 @@ type GrapeType struct {
 }
 
 type Maceration struct {
-	ID          int64
+	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	DeletedAt   sql.NullTime
-	ReceptionID int64
-	WarehouseID int64
+	ReceptionID uuid.UUID
+	WarehouseID uuid.UUID
 }
 
 type Process struct {
-	ID          int64
+	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	DeletedAt   sql.NullTime
-	StartDate   time.Time
-	EndDate     sql.NullTime
+	StartTime   time.Time
+	EndTime     sql.NullTime
 	Hash        sql.NullString
 	PType       string
 	Transaction sql.NullString
-	PreviousID  sql.NullInt64
+	PreviousID  uuid.NullUUID
 }
 
 type Reception struct {
-	ID          int64
+	ID          uuid.UUID
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	DeletedAt   sql.NullTime
 	Weight      int32
 	Sugar       int32
-	TruckID     int64
-	VineyardID  int64
-	GrapeTypeID int64
+	TruckID     uuid.UUID
+	VineyardID  uuid.UUID
+	GrapeTypeID uuid.UUID
 }
 
 type Tank struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -150,7 +152,7 @@ type Tank struct {
 }
 
 type Truck struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -158,7 +160,7 @@ type Truck struct {
 }
 
 type Vineyard struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -166,12 +168,12 @@ type Vineyard struct {
 }
 
 type VineyardGrapeType struct {
-	VineyardID  int64
-	GrapeTypeID int64
+	VineyardID  uuid.UUID
+	GrapeTypeID uuid.UUID
 }
 
 type Warehouse struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
@@ -180,7 +182,7 @@ type Warehouse struct {
 }
 
 type Wine struct {
-	ID        int64
+	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime

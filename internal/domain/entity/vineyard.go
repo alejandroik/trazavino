@@ -4,16 +4,16 @@ type Vineyard struct {
 	baseEntity
 }
 
-func NewVineyard(id int64, name string) (*Vineyard, error) {
-	return &Vineyard{baseEntity{id: id, name: name}}, nil
+func NewVineyard(id string, name string) (*Vineyard, error) {
+	return &Vineyard{baseEntity{uuid: id, name: name}}, nil
 }
 
-func UnmarshalVineyardFromDatabase(id int64, name string) (*Vineyard, error) {
+func UnmarshalVineyardFromDatabase(id string, name string) (*Vineyard, error) {
 	return NewVineyard(id, name)
 }
 
-func (v Vineyard) ID() int64 {
-	return v.id
+func (v Vineyard) ID() string {
+	return v.uuid
 }
 
 func (v Vineyard) Name() string {

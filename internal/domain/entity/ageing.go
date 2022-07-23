@@ -5,7 +5,7 @@ import "time"
 type Ageing struct {
 	uuid string
 
-	time time.Time
+	startTime time.Time
 
 	tankUUID string
 	tankName string
@@ -14,6 +14,9 @@ type Ageing struct {
 	cellarName string
 
 	humidity int32
+
+	endTime      time.Time
+	previousUUID string
 
 	hash        string
 	transaction string

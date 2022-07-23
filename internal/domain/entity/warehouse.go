@@ -5,15 +5,15 @@ type Warehouse struct {
 	isEmpty bool
 }
 
-func NewWarehouse(id int64, name string, isEmpty bool) (*Warehouse, error) {
+func NewWarehouse(id string, name string, isEmpty bool) (*Warehouse, error) {
 	return &Warehouse{
-		baseEntity: baseEntity{id: id, name: name},
+		baseEntity: baseEntity{uuid: id, name: name},
 		isEmpty:    isEmpty,
 	}, nil
 }
 
-func (w Warehouse) ID() int64 {
-	return w.id
+func (w Warehouse) ID() string {
+	return w.uuid
 }
 
 func (w Warehouse) Name() string {
@@ -30,6 +30,6 @@ func (w *Warehouse) UpdateIsEmpty(v bool) error {
 	return nil
 }
 
-func UnmarshalWarehouseFromDatabase(id int64, name string, isEmpty bool) (*Warehouse, error) {
+func UnmarshalWarehouseFromDatabase(id string, name string, isEmpty bool) (*Warehouse, error) {
 	return NewWarehouse(id, name, isEmpty)
 }

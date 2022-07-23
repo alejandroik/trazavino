@@ -6,6 +6,7 @@ import (
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -21,46 +22,42 @@ func NewGrapeTypeRepository(db *sqlx.DB) *GrapeTypeRepository {
 	return &GrapeTypeRepository{db: db}
 }
 
-func (r GrapeTypeRepository) AddGrapeType(ctx context.Context, grapeType *entity.GrapeType) (*entity.GrapeType, error) {
-	tx, err := r.db.BeginTx(ctx, nil)
+func (r GrapeTypeRepository) AddGrapeType(ctx context.Context, grapeType *entity.GrapeType) error {
+	gtUuid, err := uuid.Parse(grapeType.ID())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	q := generated.New(tx)
 
-	gtm, err := q.AddGrapeType(ctx, generated.AddGrapeTypeParams{
+	q := generated.New(r.db)
+
+	if err = q.AddGrapeType(ctx, generated.AddGrapeTypeParams{
+		ID:        gtUuid,
 		CreatedAt: time.Now(),
 		Name:      grapeType.Name(),
-	})
-	if err != nil {
-		tx.Rollback()
-		return nil, err
+	}); err != nil {
+		return err
 	}
 
-	insertedGrapeType, err := unmarshalGrapeType(gtm)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	return insertedGrapeType, tx.Commit()
+	return nil
 }
 
 func (r GrapeTypeRepository) GetGrapeType(ctx context.Context, grapeTypeId int64) (*entity.GrapeType, error) {
-	q := generated.New(r.db)
-	gtm, err := q.GetGrapeType(ctx, grapeTypeId)
-	if err != nil {
-		return nil, err
-	}
-
-	grapeType, err := unmarshalGrapeType(gtm)
-	if err != nil {
-		return nil, err
-	}
-
-	return grapeType, nil
+	//q := generated.New(r.db)
+	//gtm, err := q.GetGrapeType(ctx, grapeTypeId)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//grapeType, err := unmarshalGrapeType(gtm)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//return grapeType, nil
+	return nil, nil
 }
 
 func unmarshalGrapeType(gtm generated.GrapeType) (*entity.GrapeType, error) {
-	return entity.UnmarshalGrapeTypeFromDatabase(gtm.ID, gtm.Name)
+	//return entity.UnmarshalGrapeTypeFromDatabase(gtm.ID, gtm.Name)
+	return nil, nil
 }
