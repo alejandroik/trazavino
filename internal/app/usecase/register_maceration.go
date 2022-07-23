@@ -24,8 +24,6 @@ type RegisterMacerationHandler decorator.Handler[RegisterMaceration]
 
 type registerMacerationHandler struct {
 	macerationRepository repository.MacerationRepository
-	receptionRepository  repository.ReceptionRepository
-	warehouseRepository  repository.WarehouseRepository
 }
 
 func NewRegisterMacerationHandler(

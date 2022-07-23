@@ -9,6 +9,7 @@ type Application struct {
 }
 
 type UseCases struct {
-	RegisterReception  usecase.RegisterReceptionHandler
-	RegisterMaceration usecase.RegisterMacerationHandler
+	RegisterReception    usecase.RegisterReceptionHandler
+	RegisterMaceration   usecase.RegisterMacerationHandler
+	RegisterFermentation usecase.RegisterFermentationHandler
 }
