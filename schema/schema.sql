@@ -7,16 +7,6 @@ CREATE TABLE winery
     name       varchar(20) NOT NULL
 );
 
-CREATE TABLE bottle
-(
-    id          uuid PRIMARY KEY,
-    created_at  timestamp                     NOT NULL,
-    updated_at  timestamp,
-    deleted_at  timestamp,
-    bottling_id uuid references bottling (id) NOT NULL,
-    name        varchar(20)                   NOT NULL
-);
-
 CREATE TABLE cask
 (
     id         uuid PRIMARY KEY,
@@ -164,4 +154,14 @@ CREATE TABLE bottling
     cask_id    uuid references cask (id) NOT NULL,
     bottle_qty integer                   NOT NULL,
     wine_id    uuid references wine (id) NOT NULL
+);
+
+CREATE TABLE bottle
+(
+    id          uuid PRIMARY KEY,
+    created_at  timestamp                     NOT NULL,
+    updated_at  timestamp,
+    deleted_at  timestamp,
+    bottling_id uuid references bottling (id) NOT NULL,
+    name        varchar(20)                   NOT NULL
 );
