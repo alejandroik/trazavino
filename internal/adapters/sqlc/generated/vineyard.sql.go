@@ -7,31 +7,26 @@ package generated
 
 import (
 	"context"
+	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addVineyard = `-- name: AddVineyard :one
-INSERT INTO vineyard (created_at, name)
-VALUES ($1, $2)
-RETURNING id, created_at, updated_at, deleted_at, name
+const addVineyard = `-- name: AddVineyard :exec
+INSERT INTO vineyard (id, created_at, name)
+VALUES ($1, $2, $3)
 `
 
 type AddVineyardParams struct {
+	ID        uuid.UUID
 	CreatedAt time.Time
 	Name      string
 }
 
-func (q *Queries) AddVineyard(ctx context.Context, arg AddVineyardParams) (Vineyard, error) {
-	row := q.db.QueryRowContext(ctx, addVineyard, arg.CreatedAt, arg.Name)
-	var i Vineyard
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.Name,
-	)
-	return i, err
+func (q *Queries) AddVineyard(ctx context.Context, arg AddVineyardParams) error {
+	_, err := q.db.ExecContext(ctx, addVineyard, arg.ID, arg.CreatedAt, arg.Name)
+	return err
 }
 
 const getVineyard = `-- name: GetVineyard :one
@@ -41,7 +36,7 @@ WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetVineyard(ctx context.Context, id int64) (Vineyard, error) {
+func (q *Queries) GetVineyard(ctx context.Context, id uuid.UUID) (Vineyard, error) {
 	row := q.db.QueryRowContext(ctx, getVineyard, id)
 	var i Vineyard
 	err := row.Scan(
@@ -57,7 +52,7 @@ func (q *Queries) GetVineyard(ctx context.Context, id int64) (Vineyard, error) {
 const listVineyards = `-- name: ListVineyards :many
 SELECT id, created_at, updated_at, deleted_at, name
 FROM vineyard
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 
@@ -93,4 +88,22 @@ func (q *Queries) ListVineyards(ctx context.Context, arg ListVineyardsParams) ([
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateVineyard = `-- name: UpdateVineyard :exec
+UPDATE vineyard
+SET name       = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateVineyardParams struct {
+	ID        uuid.UUID
+	Name      string
+	UpdatedAt sql.NullTime
+}
+
+func (q *Queries) UpdateVineyard(ctx context.Context, arg UpdateVineyardParams) error {
+	_, err := q.db.ExecContext(ctx, updateVineyard, arg.ID, arg.Name, arg.UpdatedAt)
+	return err
 }

@@ -9,46 +9,42 @@ import (
 	"context"
 	"database/sql"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addProcess = `-- name: AddProcess :one
-INSERT INTO process (created_at, start_date, p_type)
-VALUES ($1, $2, $3)
-RETURNING id, created_at, updated_at, deleted_at, start_date, end_date, hash, p_type, transaction, previous_id
+const addProcess = `-- name: AddProcess :exec
+INSERT INTO process (id, created_at, start_time, p_type, previous_id)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddProcessParams struct {
-	CreatedAt time.Time
-	StartDate time.Time
-	PType     string
+	ID         uuid.UUID
+	CreatedAt  time.Time
+	StartTime  time.Time
+	PType      string
+	PreviousID uuid.NullUUID
 }
 
-func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) (Process, error) {
-	row := q.db.QueryRowContext(ctx, addProcess, arg.CreatedAt, arg.StartDate, arg.PType)
-	var i Process
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.StartDate,
-		&i.EndDate,
-		&i.Hash,
-		&i.PType,
-		&i.Transaction,
-		&i.PreviousID,
+func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) error {
+	_, err := q.db.ExecContext(ctx, addProcess,
+		arg.ID,
+		arg.CreatedAt,
+		arg.StartTime,
+		arg.PType,
+		arg.PreviousID,
 	)
-	return i, err
+	return err
 }
 
 const getProcess = `-- name: GetProcess :one
-SELECT id, created_at, updated_at, deleted_at, start_date, end_date, hash, p_type, transaction, previous_id
+SELECT id, created_at, updated_at, deleted_at, start_time, end_time, hash, p_type, transaction, previous_id
 FROM process
 WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetProcess(ctx context.Context, id int64) (Process, error) {
+func (q *Queries) GetProcess(ctx context.Context, id uuid.UUID) (Process, error) {
 	row := q.db.QueryRowContext(ctx, getProcess, id)
 	var i Process
 	err := row.Scan(
@@ -56,8 +52,8 @@ func (q *Queries) GetProcess(ctx context.Context, id int64) (Process, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
-		&i.StartDate,
-		&i.EndDate,
+		&i.StartTime,
+		&i.EndTime,
 		&i.Hash,
 		&i.PType,
 		&i.Transaction,
@@ -67,9 +63,9 @@ func (q *Queries) GetProcess(ctx context.Context, id int64) (Process, error) {
 }
 
 const listProcesses = `-- name: ListProcesses :many
-SELECT id, created_at, updated_at, deleted_at, start_date, end_date, hash, p_type, transaction, previous_id
+SELECT id, created_at, updated_at, deleted_at, start_time, end_time, hash, p_type, transaction, previous_id
 FROM process
-ORDER BY id DESC
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 
@@ -92,8 +88,8 @@ func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
-			&i.StartDate,
-			&i.EndDate,
+			&i.StartTime,
+			&i.EndTime,
 			&i.Hash,
 			&i.PType,
 			&i.Transaction,
@@ -114,19 +110,19 @@ func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([
 
 const updateProcess = `-- name: UpdateProcess :exec
 UPDATE process
-SET updated_at  = $2,
-    end_date    = $3,
-    previous_id = $4,
-    hash        = $5,
-    transaction = $6
+SET updated_at  = COALESCE($2, updated_at),
+    end_time    = COALESCE($3, end_time),
+    previous_id = COALESCE($4, previous_id),
+    hash        = COALESCE($5, hash),
+    transaction = COALESCE($6, transaction)
 WHERE id = $1
 `
 
 type UpdateProcessParams struct {
-	ID          int64
+	ID          uuid.UUID
 	UpdatedAt   sql.NullTime
-	EndDate     sql.NullTime
-	PreviousID  sql.NullInt64
+	EndTime     sql.NullTime
+	PreviousID  uuid.NullUUID
 	Hash        sql.NullString
 	Transaction sql.NullString
 }
@@ -135,7 +131,7 @@ func (q *Queries) UpdateProcess(ctx context.Context, arg UpdateProcessParams) er
 	_, err := q.db.ExecContext(ctx, updateProcess,
 		arg.ID,
 		arg.UpdatedAt,
-		arg.EndDate,
+		arg.EndTime,
 		arg.PreviousID,
 		arg.Hash,
 		arg.Transaction,

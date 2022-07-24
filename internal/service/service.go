@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 
-	"github.com/alejandroik/trazavino/internal/adapters/dynamodb"
 	"github.com/alejandroik/trazavino/internal/app"
 	"github.com/alejandroik/trazavino/internal/app/usecase"
 	"github.com/alejandroik/trazavino/pkg/logger"
@@ -14,18 +13,16 @@ func NewApplication(ctx context.Context, log logger.Interface) app.Application {
 }
 
 func newApplication(ctx context.Context, log logger.Interface) app.Application {
-	dbClient, err := dynamodb.NewDynamoDbClient(ctx)
+	r, err := getRepositories(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	receptionRepository := dynamodb.NewReceptionDynamoDbRepository(dbClient)
-	macerationRepository := dynamodb.NewMacerationDynamodbRepository(dbClient)
-
 	return app.Application{
 		UseCases: app.UseCases{
-			RegisterReception:  usecase.NewRegisterReceptionHandler(receptionRepository, log),
-			RegisterMaceration: usecase.NewRegisterMacerationHandler(macerationRepository, log),
+			RegisterReception:    usecase.NewRegisterReceptionHandler(r.ReceptionRepository, log),
+			RegisterMaceration:   usecase.NewRegisterMacerationHandler(r.MacerationRepository, log),
+			RegisterFermentation: usecase.NewRegisterFermentationHandler(r.FermentationRepository, log),
 		},
 	}
 }

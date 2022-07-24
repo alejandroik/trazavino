@@ -7,6 +7,7 @@ import (
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -22,35 +23,34 @@ func NewWarehouseRepository(db *sqlx.DB) *WarehouseRepository {
 	return &WarehouseRepository{db: db}
 }
 
-func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity.Warehouse) (*entity.Warehouse, error) {
-	tx, err := r.db.BeginTx(ctx, nil)
+func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity.Warehouse) error {
+	whUuid, err := uuid.Parse(warehouse.ID())
 	if err != nil {
-		return nil, err
+		return err
 	}
-	q := generated.New(tx)
 
-	wm, err := q.AddWarehouse(ctx, generated.AddWarehouseParams{
+	q := generated.New(r.db)
+
+	if err = q.AddWarehouse(ctx, generated.AddWarehouseParams{
+		ID:        whUuid,
 		CreatedAt: time.Now(),
 		Name:      warehouse.Name(),
 		IsEmpty:   true,
-	})
-	if err != nil {
-		tx.Rollback()
-		return nil, err
+	}); err != nil {
+		return err
 	}
 
-	insertedWarehouse, err := unmarshalWarehouse(wm)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	return insertedWarehouse, tx.Commit()
+	return nil
 }
 
-func (r WarehouseRepository) GetWarehouse(ctx context.Context, warehouseId int64) (*entity.Warehouse, error) {
+func (r WarehouseRepository) GetWarehouse(ctx context.Context, warehouseId string) (*entity.Warehouse, error) {
+	whUuid, err := uuid.Parse(warehouseId)
+	if err != nil {
+		return nil, err
+	}
+
 	q := generated.New(r.db)
-	wm, err := q.GetWarehouse(ctx, warehouseId)
+	wm, err := q.GetWarehouse(ctx, whUuid)
 	if err != nil {
 		return nil, err
 	}
@@ -88,16 +88,21 @@ func (r WarehouseRepository) ListWarehouses(ctx context.Context, offset int32, l
 
 func (r WarehouseRepository) UpdateWarehouse(
 	ctx context.Context,
-	warehouseId int64,
+	warehouseId string,
 	updateFn func(ctx context.Context, wh *entity.Warehouse) (*entity.Warehouse, error),
 ) error {
+	whUuid, err := uuid.Parse(warehouseId)
+	if err != nil {
+		return err
+	}
+
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	q := generated.New(tx)
 
-	wm, err := q.GetWarehouse(ctx, warehouseId)
+	wm, err := q.GetWarehouse(ctx, whUuid)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -115,8 +120,12 @@ func (r WarehouseRepository) UpdateWarehouse(
 		return err
 	}
 
-	err = q.UpdateWarehouse(ctx, marshalWarehouseUpdateParams(updatedWarehouse))
-	if err != nil {
+	if err = q.UpdateWarehouse(ctx, generated.UpdateWarehouseParams{
+		ID:        whUuid,
+		Name:      updatedWarehouse.Name(),
+		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		IsEmpty:   updatedWarehouse.IsEmpty(),
+	}); err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -124,14 +133,6 @@ func (r WarehouseRepository) UpdateWarehouse(
 	return tx.Commit()
 }
 
-func marshalWarehouseUpdateParams(wh *entity.Warehouse) generated.UpdateWarehouseParams {
-	return generated.UpdateWarehouseParams{
-		ID:        wh.ID(),
-		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
-		IsEmpty:   wh.IsEmpty(),
-	}
-}
-
 func unmarshalWarehouse(wm generated.Warehouse) (*entity.Warehouse, error) {
-	return entity.UnmarshalWarehouseFromDatabase(wm.ID, wm.Name, wm.IsEmpty)
+	return entity.UnmarshalWarehouseFromDatabase(wm.ID.String(), wm.Name, wm.IsEmpty)
 }

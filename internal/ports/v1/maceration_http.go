@@ -26,16 +26,13 @@ func (h HttpServer) RegisterMaceration(c *gin.Context) {
 	}
 
 	uc := usecase.RegisterMaceration{
-		MacerationUUID:      uuid.New().String(),
+		MacerationUUID:      uuid.NewString(),
 		MacerationStartTime: time.Now().Round(time.Second),
 		ReceptionUUID:       postMaceration.ReceptionUuid.String(),
-		ReceptionStartTime:  postMaceration.Reception,
 		WarehouseUUID:       postMaceration.WarehouseUuid.String(),
-		WarehouseName:       postMaceration.Warehouse,
 	}
 
-	err := h.app.UseCases.RegisterMaceration.Handle(c, uc)
-	if err != nil {
+	if err := h.app.UseCases.RegisterMaceration.Handle(c, uc); err != nil {
 		c.Status(http.StatusInternalServerError)
 		return
 	}

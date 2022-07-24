@@ -7,6 +7,7 @@ import (
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -22,9 +23,14 @@ func NewProcessRepository(db *sqlx.DB) *ProcessRepository {
 	return &ProcessRepository{db: db}
 }
 
-func (r ProcessRepository) GetProcess(ctx context.Context, id int64) (*entity.Process, error) {
+func (r ProcessRepository) GetProcess(ctx context.Context, id string) (*entity.Process, error) {
+	processUuid, err := uuid.Parse(id)
+	if err != nil {
+		return nil, err
+	}
+
 	q := generated.New(r.db)
-	pm, err := q.GetProcess(ctx, id)
+	pm, err := q.GetProcess(ctx, processUuid)
 	if err != nil {
 		return nil, err
 	}
@@ -60,44 +66,48 @@ func (r ProcessRepository) ListProcesses(ctx context.Context, offset int32, limi
 	return processes, nil
 }
 
-func (r ProcessRepository) AddProcess(ctx context.Context, process *entity.Process) (*entity.Process, error) {
-	tx, err := r.db.BeginTx(ctx, nil)
+func (r ProcessRepository) AddProcess(ctx context.Context, pr *entity.Process) error {
+	processUuid, err := uuid.Parse(pr.UUID())
 	if err != nil {
-		return nil, err
-	}
-	q := generated.New(tx)
-
-	pm, err := q.AddProcess(ctx, generated.AddProcessParams{
-		CreatedAt: time.Now(),
-		StartDate: process.StartDate(),
-		PType:     process.Ptype(),
-	})
-	if err != nil {
-		tx.Rollback()
-		return nil, err
+		return err
 	}
 
-	insertedProcess, err := unmarshalProcess(pm)
-	if err != nil {
-		tx.Rollback()
-		return nil, err
-	}
-
-	return insertedProcess, tx.Commit()
-}
-
-func (r ProcessRepository) UpdateProcess(
-	ctx context.Context,
-	processId int64,
-	updateFn func(ctx context.Context, process *entity.Process) (*entity.Process, error),
-) error {
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
 		return err
 	}
 	q := generated.New(tx)
 
-	pm, err := q.GetProcess(ctx, processId)
+	if err = q.AddProcess(ctx, generated.AddProcessParams{
+		ID:        processUuid,
+		CreatedAt: time.Now(),
+		StartTime: pr.StartTime(),
+		PType:     pr.Ptype(),
+	}); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func (r ProcessRepository) UpdateProcess(
+	ctx context.Context,
+	prUuid string,
+	updateFn func(ctx context.Context, process *entity.Process) (*entity.Process, error),
+) error {
+	processUuid, err := uuid.Parse(prUuid)
+	if err != nil {
+		return err
+	}
+
+	tx, err := r.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	q := generated.New(tx)
+
+	pm, err := q.GetProcess(ctx, processUuid)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -115,7 +125,13 @@ func (r ProcessRepository) UpdateProcess(
 		return err
 	}
 
-	err = q.UpdateProcess(ctx, marshalProcessUpdateParams(updatedProcess))
+	params, err := marshalProcessUpdateParams(updatedProcess)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	err = q.UpdateProcess(ctx, params)
 	if err != nil {
 		tx.Rollback()
 		return err
@@ -124,15 +140,24 @@ func (r ProcessRepository) UpdateProcess(
 	return tx.Commit()
 }
 
-func marshalProcessUpdateParams(pr *entity.Process) generated.UpdateProcessParams {
-	var endDate sql.NullTime
-	if !pr.EndDate().IsZero() {
-		endDate = sql.NullTime{Time: pr.EndDate(), Valid: true}
+func marshalProcessUpdateParams(pr *entity.Process) (generated.UpdateProcessParams, error) {
+	processUuid, err := uuid.Parse(pr.UUID())
+	if err != nil {
+		return generated.UpdateProcessParams{}, err
 	}
 
-	var previousID sql.NullInt64
-	if pr.PreviousUUID() != 0 {
-		previousID = sql.NullInt64{Int64: pr.PreviousUUID(), Valid: true}
+	var endDate sql.NullTime
+	if !pr.EndTime().IsZero() {
+		endDate = sql.NullTime{Time: pr.EndTime(), Valid: true}
+	}
+
+	var previousID uuid.NullUUID
+	if pr.PreviousUUID() != "" {
+		prevUuid, err := uuid.Parse(pr.PreviousUUID())
+		if err != nil {
+			return generated.UpdateProcessParams{}, err
+		}
+		previousID = uuid.NullUUID{UUID: prevUuid, Valid: true}
 	}
 
 	var hash sql.NullString
@@ -146,15 +171,43 @@ func marshalProcessUpdateParams(pr *entity.Process) generated.UpdateProcessParam
 	}
 
 	return generated.UpdateProcessParams{
-		ID:          pr.UUID(),
+		ID:          processUuid,
 		UpdatedAt:   sql.NullTime{Time: time.Now(), Valid: true},
-		EndDate:     endDate,
+		EndTime:     endDate,
 		PreviousID:  previousID,
 		Hash:        hash,
 		Transaction: transaction,
-	}
+	}, nil
 }
 
 func unmarshalProcess(pm generated.Process) (*entity.Process, error) {
-	return entity.UnmarshalProcessFromDatabase(pm.ID, pm.StartDate, pm.EndDate.Time, pm.Hash.String, pm.Transaction.String, pm.PType, pm.PreviousID.Int64)
+	var endTime time.Time
+	if pm.EndTime.Valid {
+		endTime = pm.EndTime.Time
+	}
+
+	var previousUUID string
+	if pm.PreviousID.Valid {
+		previousUUID = pm.PreviousID.UUID.String()
+	}
+
+	var hash string
+	if pm.Hash.Valid {
+		hash = pm.Hash.String
+	}
+
+	var transaction string
+	if pm.Transaction.Valid {
+		transaction = pm.Transaction.String
+	}
+
+	return entity.UnmarshalProcessFromDatabase(
+		pm.ID.String(),
+		pm.StartTime,
+		pm.PType,
+		endTime,
+		previousUUID,
+		hash,
+		transaction,
+	)
 }

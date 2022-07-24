@@ -1,6 +1,6 @@
 package entity
 
 type baseEntity struct {
-	id   int64
+	uuid string
 	name string
 }

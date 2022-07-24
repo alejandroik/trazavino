@@ -15,19 +15,15 @@ type RegisterMaceration struct {
 
 	MacerationStartTime time.Time
 
-	ReceptionUUID      string
-	ReceptionStartTime time.Time
+	ReceptionUUID string
 
 	WarehouseUUID string
-	WarehouseName string
 }
 
 type RegisterMacerationHandler decorator.Handler[RegisterMaceration]
 
 type registerMacerationHandler struct {
 	macerationRepository repository.MacerationRepository
-	receptionRepository  repository.ReceptionRepository
-	warehouseRepository  repository.WarehouseRepository
 }
 
 func NewRegisterMacerationHandler(
@@ -49,9 +45,8 @@ func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMacer
 		cmd.MacerationUUID,
 		cmd.MacerationStartTime,
 		cmd.ReceptionUUID,
-		cmd.ReceptionStartTime,
 		cmd.WarehouseUUID,
-		cmd.WarehouseName)
+	)
 	if err != nil {
 		return err
 	}

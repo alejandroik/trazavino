@@ -32,11 +32,8 @@ func NewReception(
 	uuid string,
 	startTime time.Time,
 	truckUUID string,
-	truckLicense string,
 	vineyardUUID string,
-	vineyardName string,
 	grapeTypeUUID string,
-	grapeTypeName string,
 	weight int32,
 	sugar int32) (*Reception, error) {
 	if uuid == "" {
@@ -48,31 +45,19 @@ func NewReception(
 	if truckUUID == "" {
 		return nil, errors.New("empty truck uuid")
 	}
-	if truckLicense == "" {
-		return nil, errors.New("empty truck license")
-	}
 	if vineyardUUID == "" {
 		return nil, errors.New("empty vineyard uuid")
 	}
-	if vineyardName == "" {
-		return nil, errors.New("empty vineyard name")
-	}
 	if grapeTypeUUID == "" {
 		return nil, errors.New("empty grape type uuid")
-	}
-	if grapeTypeName == "" {
-		return nil, errors.New("empty grape type name")
 	}
 
 	return &Reception{
 		uuid:          uuid,
 		startTime:     startTime,
 		truckUUID:     truckUUID,
-		truckLicense:  truckLicense,
 		vineyardUUID:  vineyardUUID,
-		vineyardName:  vineyardName,
 		grapeTypeUUID: grapeTypeUUID,
-		grapeTypeName: grapeTypeName,
 		weight:        weight,
 		sugar:         sugar,
 	}, nil
@@ -166,16 +151,17 @@ func UnmarshalReceptionFromDatabase(
 		uuid,
 		startTime,
 		truckUUID,
-		truckLicense,
 		vineyardUUID,
-		vineyardName,
 		grapeTypeUUID,
-		grapeTypeName,
 		weight,
 		sugar)
 	if err != nil {
 		return nil, err
 	}
+
+	r.truckLicense = truckLicense
+	r.vineyardName = vineyardName
+	r.grapeTypeName = grapeTypeName
 
 	r.endTime = endTime
 	r.hash = hash

@@ -8,26 +8,27 @@ package generated
 import (
 	"context"
 	"time"
+
+	"github.com/google/uuid"
 )
 
-const addReception = `-- name: AddReception :one
+const addReception = `-- name: AddReception :exec
 INSERT INTO reception (id, created_at, weight, sugar, truck_id, vineyard_id, grape_type_id)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, created_at, updated_at, deleted_at, weight, sugar, truck_id, vineyard_id, grape_type_id
 `
 
 type AddReceptionParams struct {
-	ID          int64
+	ID          uuid.UUID
 	CreatedAt   time.Time
 	Weight      int32
 	Sugar       int32
-	TruckID     int64
-	VineyardID  int64
-	GrapeTypeID int64
+	TruckID     uuid.UUID
+	VineyardID  uuid.UUID
+	GrapeTypeID uuid.UUID
 }
 
-func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (Reception, error) {
-	row := q.db.QueryRowContext(ctx, addReception,
+func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) error {
+	_, err := q.db.ExecContext(ctx, addReception,
 		arg.ID,
 		arg.CreatedAt,
 		arg.Weight,
@@ -36,19 +37,7 @@ func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) (Rec
 		arg.VineyardID,
 		arg.GrapeTypeID,
 	)
-	var i Reception
-	err := row.Scan(
-		&i.ID,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.DeletedAt,
-		&i.Weight,
-		&i.Sugar,
-		&i.TruckID,
-		&i.VineyardID,
-		&i.GrapeTypeID,
-	)
-	return i, err
+	return err
 }
 
 const getReception = `-- name: GetReception :one
@@ -58,7 +47,7 @@ WHERE id = $1
 LIMIT 1
 `
 
-func (q *Queries) GetReception(ctx context.Context, id int64) (Reception, error) {
+func (q *Queries) GetReception(ctx context.Context, id uuid.UUID) (Reception, error) {
 	row := q.db.QueryRowContext(ctx, getReception, id)
 	var i Reception
 	err := row.Scan(
@@ -78,7 +67,7 @@ func (q *Queries) GetReception(ctx context.Context, id int64) (Reception, error)
 const listReceptions = `-- name: ListReceptions :many
 SELECT id, created_at, updated_at, deleted_at, weight, sugar, truck_id, vineyard_id, grape_type_id
 FROM reception
-ORDER BY id
+ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
 `
 
