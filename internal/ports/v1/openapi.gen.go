@@ -129,11 +129,11 @@ type PostMaceration struct {
 
 // PostReception defines model for PostReception.
 type PostReception struct {
-	GrapeTypeUuid openapi_types.UUID  `json:"grapeTypeUuid"`
-	Sugar         int32               `json:"sugar"`
-	TruckUuid     openapi_types.UUID  `json:"truckUuid"`
-	VineyardkUuid *openapi_types.UUID `json:"vineyardkUuid,omitempty"`
-	Weight        int32               `json:"weight"`
+	GrapeTypeUuid openapi_types.UUID `json:"grapeTypeUuid"`
+	Sugar         int32              `json:"sugar"`
+	TruckUuid     openapi_types.UUID `json:"truckUuid"`
+	VineyardUuid  openapi_types.UUID `json:"vineyardUuid"`
+	Weight        int32              `json:"weight"`
 }
 
 // Reception defines model for Reception.

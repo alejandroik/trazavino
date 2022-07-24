@@ -26,17 +26,16 @@ func (h HttpServer) RegisterReception(c *gin.Context) {
 	}
 
 	uc := usecase.RegisterReception{
-		ReceptionUUID:      uuid.New().String(),
+		ReceptionUUID:      uuid.NewString(),
 		ReceptionStartTime: time.Now().Round(time.Second),
 		TruckUUID:          postReception.TruckUuid.String(),
-		VineyardUUID:       postReception.VineyardkUuid.String(),
+		VineyardUUID:       postReception.VineyardUuid.String(),
 		GrapeTypeUUID:      postReception.GrapeTypeUuid.String(),
 		Weight:             postReception.Weight,
 		Sugar:              postReception.Sugar,
 	}
 
-	err := h.app.UseCases.RegisterReception.Handle(c, uc)
-	if err != nil {
+	if err := h.app.UseCases.RegisterReception.Handle(c, uc); err != nil {
 		c.Writer.WriteHeader(http.StatusInternalServerError)
 		return
 	}

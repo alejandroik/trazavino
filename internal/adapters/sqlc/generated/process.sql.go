@@ -110,11 +110,11 @@ func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([
 
 const updateProcess = `-- name: UpdateProcess :exec
 UPDATE process
-SET updated_at  = $2,
-    end_time    = $3,
-    previous_id = $4,
-    hash        = $5,
-    transaction = $6
+SET updated_at  = COALESCE($2, updated_at),
+    end_time    = COALESCE($3, end_time),
+    previous_id = COALESCE($4, previous_id),
+    hash        = COALESCE($5, hash),
+    transaction = COALESCE($6, transaction)
 WHERE id = $1
 `
 
