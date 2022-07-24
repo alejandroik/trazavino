@@ -28,10 +28,6 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	if err != nil {
 		return err
 	}
-	wineryUuid, err := uuid.Parse(rc.WineryUUID())
-	if err != nil {
-		return err
-	}
 	truckUuid, err := uuid.Parse(rc.TruckUUID())
 	if err != nil {
 		return err
@@ -41,6 +37,10 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 		return err
 	}
 	gtUuid, err := uuid.Parse(rc.GrapeTypeUUID())
+	if err != nil {
+		return err
+	}
+	wineryUuid, err := uuid.Parse(rc.WineryUUID())
 	if err != nil {
 		return err
 	}
@@ -56,9 +56,9 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	if err = q.AddProcess(ctx, generated.AddProcessParams{
 		ID:        processUuid,
 		CreatedAt: now,
-		WineryID:  wineryUuid,
 		StartTime: rc.StartTime(),
 		PType:     process_type.Reception.String(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err

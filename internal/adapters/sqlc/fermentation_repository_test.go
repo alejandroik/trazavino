@@ -48,13 +48,13 @@ func TestFermentationRepository_AddFermentation(t *testing.T) {
 	err = recRepo.AddReception(ctx, rec)
 	require.NoError(t, err)
 
-	wh, err := entity.NewWarehouse(uuid.NewString(), "AAA#4322", true)
+	wh, err := entity.NewWarehouse(uuid.NewString(), "AAA#4322", true, wn.ID())
 	require.NoError(t, err)
 	whRepo := NewWarehouseRepository(db)
 	err = whRepo.AddWarehouse(ctx, wh)
 	require.NoError(t, err)
 
-	mc, err := entity.NewMaceration(uuid.NewString(), time.Now(), rec.UUID(), wh.ID())
+	mc, err := entity.NewMaceration(uuid.NewString(), time.Now(), wn.ID(), rec.UUID(), wh.ID())
 	require.NoError(t, err)
 	mcRepo := NewMacerationRepository(db)
 	err = mcRepo.AddMaceration(ctx, mc)

@@ -37,6 +37,10 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(m.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -70,6 +74,7 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		StartTime:  m.StartTime(),
 		PType:      process_type.Maceration.String(),
 		PreviousID: uuid.NullUUID{UUID: recUuid, Valid: true},
+		WineryID:   wineryUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err

@@ -28,6 +28,10 @@ func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(warehouse.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	q := generated.New(r.db)
 
@@ -36,6 +40,7 @@ func (r WarehouseRepository) AddWarehouse(ctx context.Context, warehouse *entity
 		CreatedAt: time.Now(),
 		Name:      warehouse.Name(),
 		IsEmpty:   true,
+		WineryID:  wineryUuid,
 	}); err != nil {
 		return err
 	}
@@ -134,5 +139,5 @@ func (r WarehouseRepository) UpdateWarehouse(
 }
 
 func unmarshalWarehouse(wm generated.Warehouse) (*entity.Warehouse, error) {
-	return entity.UnmarshalWarehouseFromDatabase(wm.ID.String(), wm.Name, wm.IsEmpty)
+	return entity.UnmarshalWarehouseFromDatabase(wm.ID.String(), wm.Name, wm.IsEmpty, wm.WineryID.String())
 }

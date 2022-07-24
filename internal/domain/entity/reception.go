@@ -34,11 +34,11 @@ func NewReception(
 	if uuid == "" {
 		return nil, errors.New("empty reception uuid")
 	}
-	if wineryUUID == "" {
-		return nil, errors.New("empty winery uuid")
-	}
 	if startTime.IsZero() {
 		return nil, errors.New("zero reception start time")
+	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
 	}
 	if truckUUID == "" {
 		return nil, errors.New("empty truck uuid")

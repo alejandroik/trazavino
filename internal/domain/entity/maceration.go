@@ -7,26 +7,19 @@ import (
 )
 
 type Maceration struct {
-	uuid string
-
-	startTime time.Time
+	Process
 
 	receptionUUID      string
 	receptionStartTime time.Time
 
 	warehouseUUID string
 	warehouseName string
-
-	endTime      time.Time
-	previousUUID string
-
-	hash        string
-	transaction string
 }
 
 func NewMaceration(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
 	receptionUUID string,
 	warehouseUUID string,
 ) (*Maceration, error) {
@@ -36,6 +29,9 @@ func NewMaceration(
 	if startTime.IsZero() {
 		return nil, errors.New("zero maceration time")
 	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
+	}
 	if receptionUUID == "" {
 		return nil, errors.New("empty reception uuid")
 	}
@@ -44,19 +40,14 @@ func NewMaceration(
 	}
 
 	return &Maceration{
-		uuid:          uuid,
-		startTime:     startTime,
+		Process: Process{
+			uuid:       uuid,
+			wineryUUID: wineryUUID,
+			startTime:  startTime,
+		},
 		receptionUUID: receptionUUID,
 		warehouseUUID: warehouseUUID,
 	}, nil
-}
-
-func (m Maceration) UUID() string {
-	return m.uuid
-}
-
-func (m Maceration) StartTime() time.Time {
-	return m.startTime
 }
 
 func (m Maceration) ReceptionUUID() string {
@@ -75,49 +66,11 @@ func (m Maceration) WarehouseName() string {
 	return m.warehouseName
 }
 
-func (m Maceration) EndTime() time.Time {
-	return m.endTime
-}
-
-func (m Maceration) PreviousUUID() string {
-	return m.previousUUID
-}
-
-func (m Maceration) Hash() string {
-	return m.hash
-}
-
-func (m Maceration) Transaction() string {
-	return m.transaction
-}
-
-func (m *Maceration) UpdatePreviousUUID(pv string) error {
-	m.previousUUID = pv
-
-	return nil
-}
-
-func (m *Maceration) UpdateEndTime(t time.Time) error {
-	m.endTime = t
-
-	return nil
-}
-
-func (m *Maceration) UpdateHash(hash string) error {
-	m.hash = hash
-
-	return nil
-}
-
-func (m *Maceration) UpdateTransaction(tr string) error {
-	m.transaction = tr
-
-	return nil
-}
-
 func UnmarshalMacerationFromDatabase(
 	uuid string,
-	time time.Time,
+	startTime time.Time,
+	wineryUUID string,
+	wineryName string,
 	receptionUUID string,
 	receptionStartTime time.Time,
 	warehouseUUID string,
@@ -126,11 +79,12 @@ func UnmarshalMacerationFromDatabase(
 	previousUUID string,
 	hash string,
 	transaction string) (*Maceration, error) {
-	m, err := NewMaceration(uuid, time, receptionUUID, warehouseUUID)
+	m, err := NewMaceration(uuid, startTime, wineryUUID, receptionUUID, warehouseUUID)
 	if err != nil {
 		return nil, err
 	}
 
+	m.wineryName = wineryName
 	m.receptionStartTime = receptionStartTime
 	m.warehouseName = warehouseName
 
