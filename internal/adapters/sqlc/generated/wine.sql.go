@@ -30,7 +30,7 @@ func (q *Queries) AddWine(ctx context.Context, arg AddWineParams) error {
 }
 
 const getWine = `-- name: GetWine :one
-SELECT id, created_at, updated_at, deleted_at, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM wine
 WHERE id = $1
 LIMIT 1
@@ -44,13 +44,14 @@ func (q *Queries) GetWine(ctx context.Context, id uuid.UUID) (Wine, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.Name,
 	)
 	return i, err
 }
 
 const listWines = `-- name: ListWines :many
-SELECT id, created_at, updated_at, deleted_at, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM wine
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -75,6 +76,7 @@ func (q *Queries) ListWines(ctx context.Context, arg ListWinesParams) ([]Wine, e
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.Name,
 		); err != nil {
 			return nil, err

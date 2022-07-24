@@ -38,7 +38,7 @@ func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) error {
 }
 
 const getProcess = `-- name: GetProcess :one
-SELECT id, created_at, updated_at, deleted_at, start_time, end_time, hash, p_type, transaction, previous_id
+SELECT id, created_at, updated_at, deleted_at, winery_id, start_time, end_time, hash, p_type, transaction, previous_id
 FROM process
 WHERE id = $1
 LIMIT 1
@@ -52,6 +52,7 @@ func (q *Queries) GetProcess(ctx context.Context, id uuid.UUID) (Process, error)
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.StartTime,
 		&i.EndTime,
 		&i.Hash,
@@ -63,7 +64,7 @@ func (q *Queries) GetProcess(ctx context.Context, id uuid.UUID) (Process, error)
 }
 
 const listProcesses = `-- name: ListProcesses :many
-SELECT id, created_at, updated_at, deleted_at, start_time, end_time, hash, p_type, transaction, previous_id
+SELECT id, created_at, updated_at, deleted_at, winery_id, start_time, end_time, hash, p_type, transaction, previous_id
 FROM process
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -88,6 +89,7 @@ func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.StartTime,
 			&i.EndTime,
 			&i.Hash,

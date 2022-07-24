@@ -36,7 +36,7 @@ func (q *Queries) AddTank(ctx context.Context, arg AddTankParams) error {
 }
 
 const getTank = `-- name: GetTank :one
-SELECT id, created_at, updated_at, deleted_at, name, is_empty
+SELECT id, created_at, updated_at, deleted_at, winery_id, name, is_empty
 FROM tank
 WHERE id = $1
 LIMIT 1
@@ -50,6 +50,7 @@ func (q *Queries) GetTank(ctx context.Context, id uuid.UUID) (Tank, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.Name,
 		&i.IsEmpty,
 	)
@@ -57,7 +58,7 @@ func (q *Queries) GetTank(ctx context.Context, id uuid.UUID) (Tank, error) {
 }
 
 const listTanks = `-- name: ListTanks :many
-SELECT id, created_at, updated_at, deleted_at, name, is_empty
+SELECT id, created_at, updated_at, deleted_at, winery_id, name, is_empty
 FROM tank
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -82,6 +83,7 @@ func (q *Queries) ListTanks(ctx context.Context, arg ListTanksParams) ([]Tank, e
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.Name,
 			&i.IsEmpty,
 		); err != nil {

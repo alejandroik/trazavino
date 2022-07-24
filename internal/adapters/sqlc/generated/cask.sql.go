@@ -38,7 +38,7 @@ func (q *Queries) AddCask(ctx context.Context, arg AddCaskParams) error {
 }
 
 const getCask = `-- name: GetCask :one
-SELECT id, created_at, updated_at, deleted_at, name, c_type, is_empty
+SELECT id, created_at, updated_at, deleted_at, winery_id, name, c_type, is_empty
 FROM cask
 WHERE id = $1
 LIMIT 1
@@ -52,6 +52,7 @@ func (q *Queries) GetCask(ctx context.Context, id uuid.UUID) (Cask, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.Name,
 		&i.CType,
 		&i.IsEmpty,
@@ -60,7 +61,7 @@ func (q *Queries) GetCask(ctx context.Context, id uuid.UUID) (Cask, error) {
 }
 
 const listCasks = `-- name: ListCasks :many
-SELECT id, created_at, updated_at, deleted_at, name, c_type, is_empty
+SELECT id, created_at, updated_at, deleted_at, winery_id, name, c_type, is_empty
 FROM cask
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -85,6 +86,7 @@ func (q *Queries) ListCasks(ctx context.Context, arg ListCasksParams) ([]Cask, e
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.Name,
 			&i.CType,
 			&i.IsEmpty,
