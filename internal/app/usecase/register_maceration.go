@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/domain/entity"
@@ -24,18 +25,25 @@ type RegisterMacerationHandler decorator.Handler[RegisterMaceration]
 
 type registerMacerationHandler struct {
 	macerationRepository repository.MacerationRepository
+	warehouseRepository  repository.WarehouseRepository
 }
 
 func NewRegisterMacerationHandler(
 	macerationRepository repository.MacerationRepository,
+	warehouseRepository repository.WarehouseRepository,
 	log logger.Interface,
 ) RegisterMacerationHandler {
 	if macerationRepository == nil {
 		panic("nil macerationRepository")
 	}
+	if warehouseRepository == nil {
+		panic("nil warehouseRepository")
+	}
 
 	return decorator.ApplyDecorators[RegisterMaceration](
-		registerMacerationHandler{macerationRepository: macerationRepository},
+		registerMacerationHandler{
+			macerationRepository: macerationRepository,
+			warehouseRepository:  warehouseRepository},
 		log,
 	)
 }
@@ -49,6 +57,15 @@ func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMacer
 	)
 	if err != nil {
 		return err
+	}
+
+	wh, err := h.warehouseRepository.GetWarehouse(ctx, mc.WarehouseUUID())
+	if err != nil {
+		return err
+	}
+
+	if !wh.IsEmpty() {
+		return errors.New("warehouse is not empty")
 	}
 
 	if err = h.macerationRepository.AddMaceration(ctx, mc); err != nil {

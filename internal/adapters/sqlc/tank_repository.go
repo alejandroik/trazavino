@@ -49,12 +49,12 @@ func (r TankRepository) GetTank(ctx context.Context, tankId string) (*entity.Tan
 	}
 
 	q := generated.New(r.db)
-	wm, err := q.GetTank(ctx, tkUuid)
+	tm, err := q.GetTank(ctx, tkUuid)
 	if err != nil {
 		return nil, err
 	}
 
-	tank, err := unmarshalTank(wm)
+	tank, err := unmarshalTank(tm)
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +93,6 @@ func (r TankRepository) UpdateTank(
 	return nil
 }
 
-func unmarshalTank(wm generated.Tank) (*entity.Tank, error) {
+func unmarshalTank(t generated.Tank) (*entity.Tank, error) {
 	return nil, nil
 }

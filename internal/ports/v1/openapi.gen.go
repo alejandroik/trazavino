@@ -19,8 +19,8 @@ const (
 
 // Ageing defines model for Ageing.
 type Ageing struct {
-	Cellar       string              `json:"cellar"`
-	CellarUuid   openapi_types.UUID  `json:"cellarUuid"`
+	Cask         string              `json:"cask"`
+	CaskUuid     openapi_types.UUID  `json:"caskUuid"`
 	EndTime      *time.Time          `json:"endTime,omitempty"`
 	Hash         *string             `json:"hash,omitempty"`
 	Humidty      *int32              `json:"humidty,omitempty"`
@@ -40,8 +40,8 @@ type Ageings struct {
 // Bottling defines model for Bottling.
 type Bottling struct {
 	BottleQty    int32               `json:"bottleQty"`
-	Cellar       string              `json:"cellar"`
-	CellarUuid   openapi_types.UUID  `json:"cellarUuid"`
+	Cask         string              `json:"cask"`
+	CaskUuid     openapi_types.UUID  `json:"caskUuid"`
 	EndTime      *time.Time          `json:"endTime,omitempty"`
 	Hash         *string             `json:"hash,omitempty"`
 	PreviousUuid *openapi_types.UUID `json:"previousUuid,omitempty"`
@@ -103,16 +103,16 @@ type Macerations struct {
 
 // PostAgeing defines model for PostAgeing.
 type PostAgeing struct {
-	CellarUuid openapi_types.UUID `json:"cellarUuid"`
-	Humidty    *int32             `json:"humidty,omitempty"`
-	TankUuid   openapi_types.UUID `json:"tankUuid"`
+	CaskUuid openapi_types.UUID `json:"caskUuid"`
+	Humidty  *int32             `json:"humidty,omitempty"`
+	TankUuid openapi_types.UUID `json:"tankUuid"`
 }
 
 // PostBottling defines model for PostBottling.
 type PostBottling struct {
-	BottleQty  int32              `json:"bottleQty"`
-	CellarUuid openapi_types.UUID `json:"cellarUuid"`
-	WineUuid   openapi_types.UUID `json:"wineUuid"`
+	BottleQty int32              `json:"bottleQty"`
+	CaskUuid  openapi_types.UUID `json:"caskUuid"`
+	WineUuid  openapi_types.UUID `json:"wineUuid"`
 }
 
 // PostFermentation defines model for PostFermentation.

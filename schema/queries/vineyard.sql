@@ -16,6 +16,6 @@ VALUES ($1, $2, $3);
 
 -- name: UpdateVineyard :exec
 UPDATE vineyard
-SET name       = $2,
-    updated_at = $3
+SET name       = COALESCE($2, name),
+    updated_at = COALESCE($3, updated_at)
 WHERE id = $1;

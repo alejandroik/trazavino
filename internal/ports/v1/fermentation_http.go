@@ -22,7 +22,7 @@ func (h HttpServer) RegisterFermentation(c *gin.Context) {
 
 	uc := usecase.RegisterFermentation{
 		FermentationUUID:      uuid.NewString(),
-		FermentationStartTime: time.Now().Round(time.Second),
+		FermentationStartTime: time.Now(),
 		WarehouseUUID:         postFermentation.WarehouseUuid.String(),
 		TankUUID:              postFermentation.TankUuid.String(),
 	}
@@ -38,4 +38,3 @@ func (h HttpServer) RegisterFermentation(c *gin.Context) {
 func (h HttpServer) GetFermentation(c *gin.Context, fermentationUUID openapi_types.UUID) {
 
 }
-

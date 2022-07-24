@@ -23,6 +23,7 @@ func newApplication(ctx context.Context, log logger.Interface) app.Application {
 			RegisterReception:    usecase.NewRegisterReceptionHandler(r.ReceptionRepository, log),
 			RegisterMaceration:   usecase.NewRegisterMacerationHandler(r.MacerationRepository, log),
 			RegisterFermentation: usecase.NewRegisterFermentationHandler(r.FermentationRepository, log),
+			RegisterAgeing:       usecase.NewRegisterAgeingHandler(r.AgeingRepository, log),
 		},
 	}
 }

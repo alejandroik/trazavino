@@ -7,8 +7,8 @@ type Bottling struct {
 
 	startTime time.Time
 
-	cellarUUID string
-	cellarName string
+	caskUUID string
+	caskName string
 
 	wineUUID string
 	wineName string

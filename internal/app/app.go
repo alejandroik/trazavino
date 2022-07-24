@@ -12,4 +12,5 @@ type UseCases struct {
 	RegisterReception    usecase.RegisterReceptionHandler
 	RegisterMaceration   usecase.RegisterMacerationHandler
 	RegisterFermentation usecase.RegisterFermentationHandler
+	RegisterAgeing       usecase.RegisterAgeingHandler
 }
