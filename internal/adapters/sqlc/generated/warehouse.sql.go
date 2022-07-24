@@ -14,13 +14,14 @@ import (
 )
 
 const addWarehouse = `-- name: AddWarehouse :exec
-INSERT INTO warehouse (id, created_at, name, is_empty)
-VALUES ($1, $2, $3, $4)
+INSERT INTO warehouse (id, created_at, winery_id, name, is_empty)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddWarehouseParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
+	WineryID  uuid.UUID
 	Name      string
 	IsEmpty   bool
 }
@@ -29,6 +30,7 @@ func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) erro
 	_, err := q.db.ExecContext(ctx, addWarehouse,
 		arg.ID,
 		arg.CreatedAt,
+		arg.WineryID,
 		arg.Name,
 		arg.IsEmpty,
 	)

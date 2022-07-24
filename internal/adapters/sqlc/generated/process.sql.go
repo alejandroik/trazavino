@@ -14,13 +14,14 @@ import (
 )
 
 const addProcess = `-- name: AddProcess :exec
-INSERT INTO process (id, created_at, start_time, p_type, previous_id)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO process (id, created_at, winery_id, start_time, p_type, previous_id)
+VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type AddProcessParams struct {
 	ID         uuid.UUID
 	CreatedAt  time.Time
+	WineryID   uuid.UUID
 	StartTime  time.Time
 	PType      string
 	PreviousID uuid.NullUUID
@@ -30,6 +31,7 @@ func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) error {
 	_, err := q.db.ExecContext(ctx, addProcess,
 		arg.ID,
 		arg.CreatedAt,
+		arg.WineryID,
 		arg.StartTime,
 		arg.PType,
 		arg.PreviousID,

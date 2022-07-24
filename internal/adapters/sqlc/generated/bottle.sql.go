@@ -14,18 +14,24 @@ import (
 )
 
 const addBottle = `-- name: AddBottle :exec
-INSERT INTO bottle (id, created_at, name)
-VALUES ($1, $2, $3)
+INSERT INTO bottle (id, created_at, name, bottling_id)
+VALUES ($1, $2, $3, $4)
 `
 
 type AddBottleParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	Name      string
+	ID         uuid.UUID
+	CreatedAt  time.Time
+	Name       string
+	BottlingID uuid.UUID
 }
 
 func (q *Queries) AddBottle(ctx context.Context, arg AddBottleParams) error {
-	_, err := q.db.ExecContext(ctx, addBottle, arg.ID, arg.CreatedAt, arg.Name)
+	_, err := q.db.ExecContext(ctx, addBottle,
+		arg.ID,
+		arg.CreatedAt,
+		arg.Name,
+		arg.BottlingID,
+	)
 	return err
 }
 

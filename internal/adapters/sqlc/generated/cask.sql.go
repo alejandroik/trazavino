@@ -14,13 +14,14 @@ import (
 )
 
 const addCask = `-- name: AddCask :exec
-INSERT INTO cask (id, created_at, name, c_type, is_empty)
-VALUES ($1, $2, $3, $4, $5)
+INSERT INTO cask (id, created_at, winery_id, name, c_type, is_empty)
+VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type AddCaskParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
+	WineryID  uuid.UUID
 	Name      string
 	CType     string
 	IsEmpty   bool
@@ -30,6 +31,7 @@ func (q *Queries) AddCask(ctx context.Context, arg AddCaskParams) error {
 	_, err := q.db.ExecContext(ctx, addCask,
 		arg.ID,
 		arg.CreatedAt,
+		arg.WineryID,
 		arg.Name,
 		arg.CType,
 		arg.IsEmpty,

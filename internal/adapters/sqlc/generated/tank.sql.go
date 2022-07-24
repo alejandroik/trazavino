@@ -14,13 +14,14 @@ import (
 )
 
 const addTank = `-- name: AddTank :exec
-INSERT INTO tank (id, created_at, name, is_empty)
-VALUES ($1, $2, $3, $4)
+INSERT INTO tank (id, created_at, winery_id, name, is_empty)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddTankParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
+	WineryID  uuid.UUID
 	Name      string
 	IsEmpty   bool
 }
@@ -29,6 +30,7 @@ func (q *Queries) AddTank(ctx context.Context, arg AddTankParams) error {
 	_, err := q.db.ExecContext(ctx, addTank,
 		arg.ID,
 		arg.CreatedAt,
+		arg.WineryID,
 		arg.Name,
 		arg.IsEmpty,
 	)
