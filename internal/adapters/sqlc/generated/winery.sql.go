@@ -49,7 +49,7 @@ func (q *Queries) GetWinery(ctx context.Context, id uuid.UUID) (Winery, error) {
 	return i, err
 }
 
-const listWinerys = `-- name: ListWinerys :many
+const listWinerys = `-- name: LIstWineries :many
 SELECT id, created_at, updated_at, deleted_at, name
 FROM winery
 ORDER BY created_at DESC
