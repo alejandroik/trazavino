@@ -11,7 +11,7 @@ ORDER BY created_at DESC
     OFFSET $1 LIMIT $2;
 
 -- name: AddBottle :exec
-INSERT INTO bottle (id, created_at, name, bottling_id)
+INSERT INTO bottle (id, created_at, winery_id, name)
 VALUES ($1, $2, $3, $4);
 
 -- name: UpdateBottle :exec

@@ -11,9 +11,10 @@ import (
 )
 
 type RegisterReception struct {
-	ReceptionUUID string
-
+	ReceptionUUID      string
 	ReceptionStartTime time.Time
+
+	WineryUUID string
 
 	TruckUUID string
 
@@ -49,6 +50,7 @@ func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterRecept
 	rc, err := entity.NewReception(
 		cmd.ReceptionUUID,
 		cmd.ReceptionStartTime,
+		cmd.WineryUUID,
 		cmd.TruckUUID,
 		cmd.VineyardUUID,
 		cmd.GrapeTypeUUID,

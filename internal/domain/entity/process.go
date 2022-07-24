@@ -9,9 +9,11 @@ import (
 type Process struct {
 	uuid string
 
-	startTime time.Time
+	wineryUUID string
+	wineryName string
 
-	pType string
+	startTime time.Time
+	pType     string
 
 	endTime      time.Time
 	previousUUID string
@@ -22,11 +24,15 @@ type Process struct {
 
 func NewProcess(
 	uuid string,
+	wineryUUID string,
 	startTime time.Time,
 	pType string,
 ) (*Process, error) {
 	if uuid == "" {
 		return nil, errors.New("empty process uuid")
+	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
 	}
 	if startTime.IsZero() {
 		return nil, errors.New("zero process start time")
@@ -36,14 +42,23 @@ func NewProcess(
 	}
 
 	return &Process{
-		uuid:      uuid,
-		startTime: startTime,
-		pType:     pType,
+		uuid:       uuid,
+		wineryUUID: wineryUUID,
+		startTime:  startTime,
+		pType:      pType,
 	}, nil
 }
 
 func (p Process) UUID() string {
 	return p.uuid
+}
+
+func (p Process) WineryUUID() string {
+	return p.wineryUUID
+}
+
+func (p Process) WineryName() string {
+	return p.wineryName
 }
 
 func (p Process) StartTime() time.Time {
@@ -96,6 +111,7 @@ func (p *Process) UpdateTransaction(transaction string) error {
 
 func UnmarshalProcessFromDatabase(
 	uuid string,
+	wineryUUID string,
 	startTime time.Time,
 	ptype string,
 	endTime time.Time,
@@ -103,7 +119,7 @@ func UnmarshalProcessFromDatabase(
 	hash string,
 	transaction string,
 ) (*Process, error) {
-	p, err := NewProcess(uuid, startTime, ptype)
+	p, err := NewProcess(uuid, wineryUUID, startTime, ptype)
 	if err != nil {
 		return nil, err
 	}

@@ -21,12 +21,12 @@ type Ageing struct {
 }
 
 type Bottle struct {
-	ID         uuid.UUID
-	CreatedAt  time.Time
-	UpdatedAt  sql.NullTime
-	DeletedAt  sql.NullTime
-	BottlingID uuid.UUID
-	Name       string
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
+	Name      string
 }
 
 type Bottling struct {
@@ -37,6 +37,11 @@ type Bottling struct {
 	CaskID    uuid.UUID
 	BottleQty int32
 	WineID    uuid.UUID
+}
+
+type BottlingBottle struct {
+	BottlingID uuid.UUID
+	BottleID   uuid.UUID
 }
 
 type Cask struct {
@@ -64,6 +69,7 @@ type GrapeType struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 }
 

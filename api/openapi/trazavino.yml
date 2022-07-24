@@ -339,11 +339,17 @@ components:
   schemas:
     Reception:
       type: object
-      required: [uuid, startTime, truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
+      required: [uuid, winery, wineryUuid, startTime, truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
       properties:
         uuid:
           type: string
           format: uuid
+        winery:
+          type: string
+          example: "Budeger"
+        wineryUuid:
+            type: string
+            format: uuid
         startTime:
           type: string
           format: date-time
@@ -394,8 +400,11 @@ components:
 
     PostReception:
       type: object
-      required: [truckUuid, vineyardUuid, grapeTypeUuid, weight, sugar]
+      required: [wineryUuid, truckUuid, vineyardUuid, grapeTypeUuid, weight, sugar]
       properties:
+        wineryUuid:
+          type: string
+          format: uuid
         truckUuid:
           type: string
           format: uuid

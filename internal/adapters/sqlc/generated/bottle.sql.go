@@ -14,29 +14,29 @@ import (
 )
 
 const addBottle = `-- name: AddBottle :exec
-INSERT INTO bottle (id, created_at, name, bottling_id)
+INSERT INTO bottle (id, created_at, winery_id, name)
 VALUES ($1, $2, $3, $4)
 `
 
 type AddBottleParams struct {
-	ID         uuid.UUID
-	CreatedAt  time.Time
-	Name       string
-	BottlingID uuid.UUID
+	ID        uuid.UUID
+	CreatedAt time.Time
+	WineryID  uuid.UUID
+	Name      string
 }
 
 func (q *Queries) AddBottle(ctx context.Context, arg AddBottleParams) error {
 	_, err := q.db.ExecContext(ctx, addBottle,
 		arg.ID,
 		arg.CreatedAt,
+		arg.WineryID,
 		arg.Name,
-		arg.BottlingID,
 	)
 	return err
 }
 
 const getBottle = `-- name: GetBottle :one
-SELECT id, created_at, updated_at, deleted_at, bottling_id, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM bottle
 WHERE id = $1
 LIMIT 1
@@ -50,14 +50,14 @@ func (q *Queries) GetBottle(ctx context.Context, id uuid.UUID) (Bottle, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
-		&i.BottlingID,
+		&i.WineryID,
 		&i.Name,
 	)
 	return i, err
 }
 
 const listBottles = `-- name: ListBottles :many
-SELECT id, created_at, updated_at, deleted_at, bottling_id, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM bottle
 ORDER BY created_at DESC
     OFFSET $1 LIMIT $2
@@ -82,7 +82,7 @@ func (q *Queries) ListBottles(ctx context.Context, arg ListBottlesParams) ([]Bot
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
-			&i.BottlingID,
+			&i.WineryID,
 			&i.Name,
 		); err != nil {
 			return nil, err

@@ -132,6 +132,7 @@ type PostReception struct {
 	TruckUuid     openapi_types.UUID `json:"truckUuid"`
 	VineyardUuid  openapi_types.UUID `json:"vineyardUuid"`
 	Weight        int32              `json:"weight"`
+	WineryUuid    openapi_types.UUID `json:"wineryUuid"`
 }
 
 // Reception defines model for Reception.
@@ -149,6 +150,8 @@ type Reception struct {
 	Vineyard      string             `json:"vineyard"`
 	VineyardUuid  openapi_types.UUID `json:"vineyardUuid"`
 	Weight        int32              `json:"weight"`
+	Winery        string             `json:"winery"`
+	WineryUuid    openapi_types.UUID `json:"wineryUuid"`
 }
 
 // Receptions defines model for Receptions.
