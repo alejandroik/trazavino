@@ -1,8 +1,9 @@
 package entity
 
 import (
-	"github.com/pkg/errors"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type Ageing struct {
@@ -126,18 +127,18 @@ func UnmarshalAgeingFromDatabase(
 	hash string,
 	transaction string,
 ) (*Ageing, error) {
-	f, err := NewAgeing(uuid, startTime, tankUUID, caskUUID)
+	a, err := NewAgeing(uuid, startTime, tankUUID, caskUUID)
 	if err != nil {
 		return nil, err
 	}
 
-	f.tankName = tankName
-	f.caskName = caskName
+	a.tankName = tankName
+	a.caskName = caskName
 
-	f.endTime = endTime
-	f.previousUUID = previousUUID
-	f.hash = hash
-	f.transaction = transaction
+	a.endTime = endTime
+	a.previousUUID = previousUUID
+	a.hash = hash
+	a.transaction = transaction
 
-	return f, nil
+	return a, nil
 }
