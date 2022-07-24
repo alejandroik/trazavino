@@ -16,8 +16,6 @@ type Ageing struct {
 	caskUUID string
 	caskName string
 
-	humidity int32
-
 	endTime      time.Time
 	previousUUID string
 

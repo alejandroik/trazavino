@@ -23,7 +23,6 @@ type Ageing struct {
 	CaskUuid     openapi_types.UUID  `json:"caskUuid"`
 	EndTime      *time.Time          `json:"endTime,omitempty"`
 	Hash         *string             `json:"hash,omitempty"`
-	Humidty      *int32              `json:"humidty,omitempty"`
 	PreviousUuid *openapi_types.UUID `json:"previousUuid,omitempty"`
 	StartTime    time.Time           `json:"startTime"`
 	Tank         string              `json:"tank"`
@@ -104,7 +103,6 @@ type Macerations struct {
 // PostAgeing defines model for PostAgeing.
 type PostAgeing struct {
 	CaskUuid openapi_types.UUID `json:"caskUuid"`
-	Humidty  *int32             `json:"humidty,omitempty"`
 	TankUuid openapi_types.UUID `json:"tankUuid"`
 }
 

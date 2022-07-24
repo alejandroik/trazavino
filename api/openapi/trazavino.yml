@@ -526,7 +526,7 @@ components:
 
     Ageing:
       type: object
-      required: [uuid, startTime, tank, tankUuid, cask, caskUuid, humidity]
+      required: [uuid, startTime, tank, tankUuid, cask, caskUuid]
       properties:
         uuid:
           type: string
@@ -546,10 +546,6 @@ components:
         caskUuid:
           type: string
           format: uuid
-        humidty:
-          type: integer
-          format: int32
-          example: 5
         endTime:
           type: string
           format: date-time
@@ -574,7 +570,7 @@ components:
 
     PostAgeing:
       type: object
-      required: [tankUuid, caskUuid, humidity]
+      required: [tankUuid, caskUuid]
       properties:
         tankUuid:
           type: string
@@ -582,10 +578,6 @@ components:
         caskUuid:
           type: string
           format: uuid
-        humidty:
-          type: integer
-          format: int32
-          example: 5
 
     Bottling:
       type: object
