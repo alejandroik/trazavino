@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"github.com/pkg/errors"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/domain/entity"
@@ -24,18 +25,25 @@ type RegisterFermentationHandler decorator.Handler[RegisterFermentation]
 
 type registerFermentationHandler struct {
 	fermentationRepository repository.FermentationRepository
+	tankRepository         repository.TankRepository
 }
 
 func NewRegisterFermentationHandler(
 	fermentationRepository repository.FermentationRepository,
+	tankRepository repository.TankRepository,
 	log logger.Interface,
 ) RegisterFermentationHandler {
 	if fermentationRepository == nil {
 		panic("nil fermentationRepository")
 	}
+	if tankRepository == nil {
+		panic("nil tankRepository")
+	}
 
 	return decorator.ApplyDecorators[RegisterFermentation](
-		registerFermentationHandler{fermentationRepository: fermentationRepository},
+		registerFermentationHandler{
+			fermentationRepository: fermentationRepository,
+			tankRepository:         tankRepository},
 		log,
 	)
 }
@@ -49,6 +57,15 @@ func (h registerFermentationHandler) Handle(ctx context.Context, cmd RegisterFer
 	)
 	if err != nil {
 		return err
+	}
+
+	tk, err := h.tankRepository.GetTank(ctx, mc.TankUUID())
+	if err != nil {
+		return err
+	}
+
+	if !tk.IsEmpty() {
+		return errors.New("tank is not empty")
 	}
 
 	if err = h.fermentationRepository.AddFermentation(ctx, mc); err != nil {

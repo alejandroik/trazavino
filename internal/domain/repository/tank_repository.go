@@ -13,6 +13,6 @@ type TankRepository interface {
 	UpdateTank(
 		ctx context.Context,
 		tankId string,
-		updateFn func(ctx context.Context, wh *entity.Tank) (*entity.Tank, error),
+		updateFn func(ctx context.Context, t *entity.Tank) (*entity.Tank, error),
 	) error
 }

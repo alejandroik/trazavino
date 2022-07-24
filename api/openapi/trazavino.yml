@@ -526,7 +526,7 @@ components:
 
     Ageing:
       type: object
-      required: [uuid, startTime, tank, tankUuid, cellar, cellarUuid, humidity]
+      required: [uuid, startTime, tank, tankUuid, cask, caskUuid, humidity]
       properties:
         uuid:
           type: string
@@ -540,10 +540,10 @@ components:
         tankUuid:
           type: string
           format: uuid
-        cellar:
+        cask:
           type: string
           example: E#245987F
-        cellarUuid:
+        caskUuid:
           type: string
           format: uuid
         humidty:
@@ -574,12 +574,12 @@ components:
 
     PostAgeing:
       type: object
-      required: [tankUuid, cellarUuid, humidity]
+      required: [tankUuid, caskUuid, humidity]
       properties:
         tankUuid:
           type: string
           format: uuid
-        cellarUuid:
+        caskUuid:
           type: string
           format: uuid
         humidty:
@@ -589,7 +589,7 @@ components:
 
     Bottling:
       type: object
-      required: [uuid, startTime, cellar, cellarUuid, wine, wineUuid, bottleQty]
+      required: [uuid, startTime, cask, caskUuid, wine, wineUuid, bottleQty]
       properties:
         uuid:
           type: string
@@ -597,10 +597,10 @@ components:
         startTime:
           type: string
           format: date-time
-        cellar:
+        cask:
           type: string
           example: E#245987F
-        cellarUuid:
+        caskUuid:
           type: string
           format: uuid
         wine:
@@ -637,9 +637,9 @@ components:
 
     PostBottling:
       type: object
-      required: [cellarUuid, wineUuid, bottleQty]
+      required: [caskUuid, wineUuid, bottleQty]
       properties:
-        cellarUuid:
+        caskUuid:
           type: string
           format: uuid
         wineUuid:

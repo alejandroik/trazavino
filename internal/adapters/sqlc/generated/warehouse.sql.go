@@ -100,9 +100,9 @@ func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) 
 
 const updateWarehouse = `-- name: UpdateWarehouse :exec
 UPDATE warehouse
-SET name       = $2,
-    updated_at = $3,
-    is_empty   = $4
+SET name       = COALESCE($2, name),
+    updated_at = COALESCE($3, updated_at),
+    is_empty   = COALESCE($4, is_empty)
 WHERE id = $1
 `
 

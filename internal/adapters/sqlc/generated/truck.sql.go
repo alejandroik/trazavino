@@ -92,8 +92,8 @@ func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck
 
 const updateTruck = `-- name: UpdateTruck :exec
 UPDATE truck
-SET name       = $2,
-    updated_at = $3
+SET name       = COALESCE($2, name),
+    updated_at = COALESCE($3, updated_at)
 WHERE id = $1
 `
 

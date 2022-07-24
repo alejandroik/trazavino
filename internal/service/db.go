@@ -13,6 +13,7 @@ type repositories struct {
 	ReceptionRepository    repository.ReceptionRepository
 	MacerationRepository   repository.MacerationRepository
 	FermentationRepository repository.FermentationRepository
+	AgeingRepository       repository.AgeingRepository
 }
 
 func getRepositories(ctx context.Context) (*repositories, error) {
@@ -33,6 +34,7 @@ func getRepositories(ctx context.Context) (*repositories, error) {
 		r.ReceptionRepository = sqlc.NewReceptionRepository(db)
 		r.MacerationRepository = sqlc.NewMacerationRepository(db)
 		r.FermentationRepository = sqlc.NewFermentationRepository(db)
+		r.AgeingRepository = sqlc.NewAgeingRepository(db)
 
 	case "dynamodb":
 		db, err := dynamodb.NewDynamoDbClient(ctx)

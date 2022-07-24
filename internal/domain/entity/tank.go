@@ -12,20 +12,20 @@ func NewTank(id string, name string, isEmpty bool) (*Tank, error) {
 	}, nil
 }
 
-func (w Tank) ID() string {
-	return w.uuid
+func (t Tank) ID() string {
+	return t.uuid
 }
 
-func (w Tank) Name() string {
-	return w.name
+func (t Tank) Name() string {
+	return t.name
 }
 
-func (w Tank) IsEmpty() bool {
-	return w.isEmpty
+func (t Tank) IsEmpty() bool {
+	return t.isEmpty
 }
 
-func (w *Tank) UpdateIsEmpty(v bool) error {
-	w.isEmpty = v
+func (t *Tank) UpdateIsEmpty(v bool) error {
+	t.isEmpty = v
 
 	return nil
 }

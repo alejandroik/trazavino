@@ -28,19 +28,19 @@ type RegisterReception struct {
 type RegisterReceptionHandler decorator.Handler[RegisterReception]
 
 type registerReceptionHandler struct {
-	receptionRepository repository.ReceptionRepository
+	repository repository.ReceptionRepository
 }
 
 func NewRegisterReceptionHandler(
-	receptionRepository repository.ReceptionRepository,
+	repository repository.ReceptionRepository,
 	log logger.Interface,
 ) RegisterReceptionHandler {
-	if receptionRepository == nil {
-		panic("nil receptionRepository")
+	if repository == nil {
+		panic("nil repository")
 	}
 
 	return decorator.ApplyDecorators[RegisterReception](
-		registerReceptionHandler{receptionRepository: receptionRepository},
+		registerReceptionHandler{repository: repository},
 		log,
 	)
 }
@@ -58,7 +58,7 @@ func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterRecept
 		return err
 	}
 
-	if err = h.receptionRepository.AddReception(ctx, rc); err != nil {
+	if err = h.repository.AddReception(ctx, rc); err != nil {
 		return err
 	}
 
