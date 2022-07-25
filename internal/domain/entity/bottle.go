@@ -1,21 +1,13 @@
 package entity
 
 type Bottle struct {
-	baseEntity
+	ownedEntity
 }
 
-func NewBottle(id string, name string) (*Bottle, error) {
-	return &Bottle{baseEntity{uuid: id, name: name}}, nil
+func NewBottle(id string, name string, wineryUUID string) (*Bottle, error) {
+	return &Bottle{ownedEntity{baseEntity{uuid: id, name: name}, wineryUUID}}, nil
 }
 
-func (b Bottle) ID() string {
-	return b.uuid
-}
-
-func (b Bottle) Name() string {
-	return b.name
-}
-
-func UnmarshalBottleFromDatabase(id string, name string) (*Bottle, error) {
-	return NewBottle(id, name)
+func UnmarshalBottleFromDatabase(id string, name string, wineryUUID string) (*Bottle, error) {
+	return NewBottle(id, name, wineryUUID)
 }

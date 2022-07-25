@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-func TestAgeingRepository_AddAgeing(t *testing.T) {
+func TestAddBottling(t *testing.T) {
 	connStr := "user=postgres password=password dbname=trazavino sslmode=disable"
 	db, err := sqlx.Connect("postgres", connStr)
 	require.NoError(t, err)
@@ -81,5 +81,17 @@ func TestAgeingRepository_AddAgeing(t *testing.T) {
 	require.NoError(t, err)
 	ageRepo := NewAgeingRepository(db)
 	err = ageRepo.AddAgeing(ctx, age)
+	require.NoError(t, err)
+
+	wine, err := entity.NewWine(uuid.NewString(), "4000 Black", winery.ID())
+	require.NoError(t, err)
+	wineRepo := NewWineRepository(db)
+	err = wineRepo.AddWine(ctx, wine)
+	require.NoError(t, err)
+
+	bot, err := entity.NewBottling(uuid.NewString(), time.Now(), winery.ID(), ck.ID(), wine.ID(), 100)
+	require.NoError(t, err)
+	botRepo := NewBottlingRepository(db)
+	err = botRepo.AddBottling(ctx, bot)
 	require.NoError(t, err)
 }

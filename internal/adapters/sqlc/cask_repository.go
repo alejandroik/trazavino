@@ -70,7 +70,7 @@ func (r CaskRepository) GetCask(ctx context.Context, caskId string) (*entity.Cas
 
 func (r CaskRepository) ListCasks(ctx context.Context, offset int32, limit int32) ([]*entity.Cask, error) {
 	q := generated.New(r.db)
-	wms, err := q.ListCasks(ctx, generated.ListCasksParams{
+	cms, err := q.ListCasks(ctx, generated.ListCasksParams{
 		Offset: offset,
 		Limit:  limit,
 	})
@@ -79,8 +79,8 @@ func (r CaskRepository) ListCasks(ctx context.Context, offset int32, limit int32
 	}
 
 	var casks []*entity.Cask
-	for _, wm := range wms {
-		cask, err := unmarshalCask(wm)
+	for _, cm := range cms {
+		cask, err := unmarshalCask(cm)
 		if err != nil {
 			return nil, err
 		}

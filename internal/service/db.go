@@ -14,6 +14,7 @@ type repositories struct {
 	MacerationRepository   repository.MacerationRepository
 	FermentationRepository repository.FermentationRepository
 	AgeingRepository       repository.AgeingRepository
+	BottlingRepository     repository.BottlingRepository
 
 	WarehouseRepository repository.WarehouseRepository
 	TankRepository      repository.TankRepository
@@ -39,6 +40,7 @@ func getRepositories(ctx context.Context) (*repositories, error) {
 		r.MacerationRepository = sqlc.NewMacerationRepository(db)
 		r.FermentationRepository = sqlc.NewFermentationRepository(db)
 		r.AgeingRepository = sqlc.NewAgeingRepository(db)
+		r.BottlingRepository = sqlc.NewBottlingRepository(db)
 
 		r.WarehouseRepository = sqlc.NewWarehouseRepository(db)
 		r.TankRepository = sqlc.NewTankRepository(db)

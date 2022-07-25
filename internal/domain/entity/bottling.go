@@ -7,9 +7,7 @@ import (
 )
 
 type Bottling struct {
-	uuid string
-
-	startTime time.Time
+	Process
 
 	caskUUID string
 	caskName string
@@ -18,17 +16,12 @@ type Bottling struct {
 	wineName string
 
 	bottleQty int32
-
-	endTime      time.Time
-	previousUUID string
-
-	hash        string
-	transaction string
 }
 
 func NewBottling(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
 	caskUUID string,
 	wineUUID string,
 	bottleQty int32,
@@ -38,6 +31,9 @@ func NewBottling(
 	}
 	if startTime.IsZero() {
 		return nil, errors.New("zero Bottling time")
+	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
 	}
 	if caskUUID == "" {
 		return nil, errors.New("empty cask uuid")
@@ -50,20 +46,15 @@ func NewBottling(
 	}
 
 	return &Bottling{
-		uuid:      uuid,
-		startTime: startTime,
+		Process: Process{
+			uuid:       uuid,
+			wineryUUID: wineryUUID,
+			startTime:  startTime,
+		},
 		caskUUID:  caskUUID,
 		wineUUID:  wineUUID,
 		bottleQty: bottleQty,
 	}, nil
-}
-
-func (a Bottling) UUID() string {
-	return a.uuid
-}
-
-func (a Bottling) StartTime() time.Time {
-	return a.startTime
 }
 
 func (a Bottling) CaskUUID() string {
@@ -86,49 +77,11 @@ func (a Bottling) BottleQty() int32 {
 	return a.bottleQty
 }
 
-func (a Bottling) EndTime() time.Time {
-	return a.endTime
-}
-
-func (a Bottling) PreviousUUID() string {
-	return a.previousUUID
-}
-
-func (a Bottling) Hash() string {
-	return a.hash
-}
-
-func (a Bottling) Transaction() string {
-	return a.transaction
-}
-
-func (a *Bottling) UpdatePreviousUUID(pv string) error {
-	a.previousUUID = pv
-
-	return nil
-}
-
-func (a *Bottling) UpdateEndTime(t time.Time) error {
-	a.endTime = t
-
-	return nil
-}
-
-func (a *Bottling) UpdateHash(hash string) error {
-	a.hash = hash
-
-	return nil
-}
-
-func (a *Bottling) UpdateTransaction(tr string) error {
-	a.transaction = tr
-
-	return nil
-}
-
 func UnmarshalBottlingFromDatabase(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
+	wineryName string,
 	caskUUID string,
 	caskName string,
 	wineUUID string,
@@ -139,11 +92,12 @@ func UnmarshalBottlingFromDatabase(
 	hash string,
 	transaction string,
 ) (*Bottling, error) {
-	b, err := NewBottling(uuid, startTime, caskUUID, wineUUID, bottleQty)
+	b, err := NewBottling(uuid, startTime, wineryUUID, caskUUID, wineUUID, bottleQty)
 	if err != nil {
 		return nil, err
 	}
 
+	b.wineryName = wineryName
 	b.caskName = caskName
 	b.wineName = wineName
 

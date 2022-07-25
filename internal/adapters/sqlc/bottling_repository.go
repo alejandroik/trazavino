@@ -37,6 +37,10 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(a.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -76,6 +80,7 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		StartTime:  a.StartTime(),
 		PType:      process_type.Bottling.String(),
 		PreviousID: uuid.NullUUID{UUID: age.ID, Valid: true},
+		WineryID:   wineryUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err
