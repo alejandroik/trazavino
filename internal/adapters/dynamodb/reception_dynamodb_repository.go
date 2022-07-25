@@ -17,6 +17,9 @@ type ReceptionModel struct {
 
 	StartTime time.Time `dynamodbav:"StartTime"`
 
+	WineryUUID string `dynamodbav:"WineryUUID"`
+	Winery     string `dynamodbav:"Winery"`
+
 	TruckUUID string `dynamodbav:"TruckUUID"`
 	Truck     string `dynamodbav:"Truck"`
 
@@ -194,6 +197,8 @@ func (r ReceptionDynamoDbRepository) unmarshalReception(av document) (*entity.Re
 	return entity.UnmarshalReceptionFromDatabase(
 		rm.UUID,
 		rm.StartTime,
+		rm.WineryUUID,
+		rm.Winery,
 		rm.TruckUUID,
 		rm.Truck,
 		rm.VineyardUUID,

@@ -14,23 +14,29 @@ import (
 )
 
 const addGrapeType = `-- name: AddGrapeType :exec
-INSERT INTO grape_type (id, created_at, name)
-VALUES ($1, $2, $3)
+INSERT INTO grape_type (id, created_at, winery_id, name)
+VALUES ($1, $2, $3, $4)
 `
 
 type AddGrapeTypeParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
+	WineryID  uuid.UUID
 	Name      string
 }
 
 func (q *Queries) AddGrapeType(ctx context.Context, arg AddGrapeTypeParams) error {
-	_, err := q.db.ExecContext(ctx, addGrapeType, arg.ID, arg.CreatedAt, arg.Name)
+	_, err := q.db.ExecContext(ctx, addGrapeType,
+		arg.ID,
+		arg.CreatedAt,
+		arg.WineryID,
+		arg.Name,
+	)
 	return err
 }
 
 const getGrapeType = `-- name: GetGrapeType :one
-SELECT id, created_at, updated_at, deleted_at, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM grape_type
 WHERE id = $1
 LIMIT 1
@@ -44,13 +50,14 @@ func (q *Queries) GetGrapeType(ctx context.Context, id uuid.UUID) (GrapeType, er
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.Name,
 	)
 	return i, err
 }
 
 const listGrapeTypes = `-- name: ListGrapeTypes :many
-SELECT id, created_at, updated_at, deleted_at, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM grape_type
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -75,6 +82,7 @@ func (q *Queries) ListGrapeTypes(ctx context.Context, arg ListGrapeTypesParams) 
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.Name,
 		); err != nil {
 			return nil, err

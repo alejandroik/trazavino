@@ -28,6 +28,7 @@ func (h HttpServer) RegisterReception(c *gin.Context) {
 	uc := usecase.RegisterReception{
 		ReceptionUUID:      uuid.NewString(),
 		ReceptionStartTime: time.Now(),
+		WineryUUID:         postReception.WineryUuid.String(),
 		TruckUUID:          postReception.TruckUuid.String(),
 		VineyardUUID:       postReception.VineyardUuid.String(),
 		GrapeTypeUUID:      postReception.GrapeTypeUuid.String(),

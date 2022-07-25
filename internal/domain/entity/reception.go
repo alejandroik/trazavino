@@ -7,9 +7,7 @@ import (
 )
 
 type Reception struct {
-	uuid string
-
-	startTime time.Time
+	Process
 
 	truckUUID    string
 	truckLicense string
@@ -22,15 +20,12 @@ type Reception struct {
 
 	weight int32
 	sugar  int32
-
-	endTime     time.Time
-	hash        string
-	transaction string
 }
 
 func NewReception(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
 	truckUUID string,
 	vineyardUUID string,
 	grapeTypeUUID string,
@@ -42,6 +37,9 @@ func NewReception(
 	if startTime.IsZero() {
 		return nil, errors.New("zero reception start time")
 	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
+	}
 	if truckUUID == "" {
 		return nil, errors.New("empty truck uuid")
 	}
@@ -51,24 +49,25 @@ func NewReception(
 	if grapeTypeUUID == "" {
 		return nil, errors.New("empty grape type uuid")
 	}
+	if weight == 0 {
+		return nil, errors.New("empty weight")
+	}
+	if sugar == 0 {
+		return nil, errors.New("empty sugar")
+	}
 
 	return &Reception{
-		uuid:          uuid,
-		startTime:     startTime,
+		Process: Process{
+			uuid:       uuid,
+			wineryUUID: wineryUUID,
+			startTime:  startTime,
+		},
 		truckUUID:     truckUUID,
 		vineyardUUID:  vineyardUUID,
 		grapeTypeUUID: grapeTypeUUID,
 		weight:        weight,
 		sugar:         sugar,
 	}, nil
-}
-
-func (r Reception) UUID() string {
-	return r.uuid
-}
-
-func (r Reception) StartTime() time.Time {
-	return r.startTime
 }
 
 func (r Reception) TruckUUID() string {
@@ -103,39 +102,11 @@ func (r Reception) Sugar() int32 {
 	return r.sugar
 }
 
-func (r Reception) EndTime() time.Time {
-	return r.endTime
-}
-
-func (r Reception) Hash() string {
-	return r.hash
-}
-
-func (r Reception) Transaction() string {
-	return r.transaction
-}
-
-func (r *Reception) UpdateEndTime(t time.Time) error {
-	r.endTime = t
-
-	return nil
-}
-
-func (r *Reception) UpdateHash(hash string) error {
-	r.hash = hash
-
-	return nil
-}
-
-func (r *Reception) UpdateTransaction(tr string) error {
-	r.transaction = tr
-
-	return nil
-}
-
 func UnmarshalReceptionFromDatabase(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
+	wineryName string,
 	truckUUID string,
 	truckLicense string,
 	vineyardUUID string,
@@ -150,6 +121,7 @@ func UnmarshalReceptionFromDatabase(
 	r, err := NewReception(
 		uuid,
 		startTime,
+		wineryUUID,
 		truckUUID,
 		vineyardUUID,
 		grapeTypeUUID,
@@ -159,6 +131,7 @@ func UnmarshalReceptionFromDatabase(
 		return nil, err
 	}
 
+	r.wineryName = wineryName
 	r.truckLicense = truckLicense
 	r.vineyardName = vineyardName
 	r.grapeTypeName = grapeTypeName

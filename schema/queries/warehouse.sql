@@ -11,8 +11,8 @@ ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
 -- name: AddWarehouse :exec
-INSERT INTO warehouse (id, created_at, name, is_empty)
-VALUES ($1, $2, $3, $4);
+INSERT INTO warehouse (id, created_at, winery_id, name, is_empty)
+VALUES ($1, $2, $3, $4, $5);
 
 -- name: UpdateWarehouse :exec
 UPDATE warehouse

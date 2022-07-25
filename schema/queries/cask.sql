@@ -11,8 +11,8 @@ ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
 -- name: AddCask :exec
-INSERT INTO cask (id, created_at, name, c_type, is_empty)
-VALUES ($1, $2, $3, $4, $5);
+INSERT INTO cask (id, created_at, winery_id, name, c_type, is_empty)
+VALUES ($1, $2, $3, $4, $5, $6);
 
 -- name: UpdateCask :exec
 UPDATE cask

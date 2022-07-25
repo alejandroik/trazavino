@@ -27,6 +27,10 @@ func (r VineyardRepository) AddVineyard(ctx context.Context, vineyard *entity.Vi
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(vineyard.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	q := generated.New(r.db)
 
@@ -34,6 +38,7 @@ func (r VineyardRepository) AddVineyard(ctx context.Context, vineyard *entity.Vi
 		ID:        vyUuid,
 		CreatedAt: time.Now(),
 		Name:      vineyard.Name(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		return err
 	}

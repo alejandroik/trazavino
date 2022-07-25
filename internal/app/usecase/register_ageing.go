@@ -12,9 +12,10 @@ import (
 )
 
 type RegisterAgeing struct {
-	AgeingUUID string
-
+	AgeingUUID      string
 	AgeingStartTime time.Time
+
+	WineryUUID string
 
 	TankUUID string
 
@@ -48,12 +49,13 @@ func NewRegisterAgeingHandler(
 	)
 }
 
-func (h registerAgeingHandler) Handle(ctx context.Context, cmd RegisterAgeing) (err error) {
+func (h registerAgeingHandler) Handle(ctx context.Context, uc RegisterAgeing) (err error) {
 	mc, err := entity.NewAgeing(
-		cmd.AgeingUUID,
-		cmd.AgeingStartTime,
-		cmd.TankUUID,
-		cmd.CaskUUID,
+		uc.AgeingUUID,
+		uc.AgeingStartTime,
+		uc.WineryUUID,
+		uc.TankUUID,
+		uc.CaskUUID,
 	)
 	if err != nil {
 		return err

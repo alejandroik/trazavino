@@ -12,9 +12,10 @@ import (
 )
 
 type RegisterMaceration struct {
-	MacerationUUID string
-
+	MacerationUUID      string
 	MacerationStartTime time.Time
+
+	WineryUUID string
 
 	ReceptionUUID string
 
@@ -48,12 +49,13 @@ func NewRegisterMacerationHandler(
 	)
 }
 
-func (h registerMacerationHandler) Handle(ctx context.Context, cmd RegisterMaceration) (err error) {
+func (h registerMacerationHandler) Handle(ctx context.Context, uc RegisterMaceration) (err error) {
 	mc, err := entity.NewMaceration(
-		cmd.MacerationUUID,
-		cmd.MacerationStartTime,
-		cmd.ReceptionUUID,
-		cmd.WarehouseUUID,
+		uc.MacerationUUID,
+		uc.MacerationStartTime,
+		uc.WineryUUID,
+		uc.ReceptionUUID,
+		uc.WarehouseUUID,
 	)
 	if err != nil {
 		return err

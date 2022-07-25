@@ -23,6 +23,7 @@ func (h HttpServer) RegisterAgeing(c *gin.Context) {
 	uc := usecase.RegisterAgeing{
 		AgeingUUID:      uuid.NewString(),
 		AgeingStartTime: time.Now(),
+		WineryUUID:      postAgeing.WineryUuid.String(),
 		TankUUID:        postAgeing.TankUuid.String(),
 		CaskUUID:        postAgeing.CaskUuid.String(),
 	}

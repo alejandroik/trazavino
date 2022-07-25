@@ -27,6 +27,10 @@ func (r GrapeTypeRepository) AddGrapeType(ctx context.Context, grapeType *entity
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(grapeType.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	q := generated.New(r.db)
 
@@ -34,6 +38,7 @@ func (r GrapeTypeRepository) AddGrapeType(ctx context.Context, grapeType *entity
 		ID:        gtUuid,
 		CreatedAt: time.Now(),
 		Name:      grapeType.Name(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		return err
 	}

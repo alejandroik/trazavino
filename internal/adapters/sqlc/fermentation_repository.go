@@ -37,6 +37,10 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(f.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -85,6 +89,7 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		StartTime:  f.StartTime(),
 		PType:      process_type.Fermentation.String(),
 		PreviousID: uuid.NullUUID{UUID: mac.ID, Valid: true},
+		WineryID:   wineryUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err

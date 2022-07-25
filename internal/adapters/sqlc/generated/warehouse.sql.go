@@ -14,13 +14,14 @@ import (
 )
 
 const addWarehouse = `-- name: AddWarehouse :exec
-INSERT INTO warehouse (id, created_at, name, is_empty)
-VALUES ($1, $2, $3, $4)
+INSERT INTO warehouse (id, created_at, winery_id, name, is_empty)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddWarehouseParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
+	WineryID  uuid.UUID
 	Name      string
 	IsEmpty   bool
 }
@@ -29,6 +30,7 @@ func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) erro
 	_, err := q.db.ExecContext(ctx, addWarehouse,
 		arg.ID,
 		arg.CreatedAt,
+		arg.WineryID,
 		arg.Name,
 		arg.IsEmpty,
 	)
@@ -36,7 +38,7 @@ func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) erro
 }
 
 const getWarehouse = `-- name: GetWarehouse :one
-SELECT id, created_at, updated_at, deleted_at, name, is_empty
+SELECT id, created_at, updated_at, deleted_at, winery_id, name, is_empty
 FROM warehouse
 WHERE id = $1
 LIMIT 1
@@ -50,6 +52,7 @@ func (q *Queries) GetWarehouse(ctx context.Context, id uuid.UUID) (Warehouse, er
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.Name,
 		&i.IsEmpty,
 	)
@@ -57,7 +60,7 @@ func (q *Queries) GetWarehouse(ctx context.Context, id uuid.UUID) (Warehouse, er
 }
 
 const listWarehouses = `-- name: ListWarehouses :many
-SELECT id, created_at, updated_at, deleted_at, name, is_empty
+SELECT id, created_at, updated_at, deleted_at, winery_id, name, is_empty
 FROM warehouse
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -82,6 +85,7 @@ func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) 
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.Name,
 			&i.IsEmpty,
 		); err != nil {

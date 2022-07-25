@@ -1,21 +1,25 @@
 package entity
 
+import "github.com/pkg/errors"
+
 type Truck struct {
-	baseEntity
+	ownedEntity
 }
 
-func NewTruck(id string, name string) (*Truck, error) {
-	return &Truck{baseEntity{uuid: id, name: name}}, nil
+func NewTruck(id string, name string, wineryUUID string) (*Truck, error) {
+	if id == "" {
+		return nil, errors.New("empty uuid")
+	}
+	if name == "" {
+		return nil, errors.New("empty name")
+	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
+	}
+
+	return &Truck{ownedEntity{baseEntity{uuid: id, name: name}, wineryUUID}}, nil
 }
 
-func UnmarshalTruckFromDatabase(id string, name string) (*Truck, error) {
-	return NewTruck(id, name)
-}
-
-func (t Truck) ID() string {
-	return t.uuid
-}
-
-func (t Truck) Name() string {
-	return t.name
+func UnmarshalTruckFromDatabase(id string, name string, wineryUUID string) (*Truck, error) {
+	return NewTruck(id, name, wineryUUID)
 }

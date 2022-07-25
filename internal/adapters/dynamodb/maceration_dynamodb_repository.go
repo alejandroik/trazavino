@@ -17,6 +17,9 @@ type MacerationModel struct {
 
 	StartTime time.Time `dynamodbav:"StartTime"`
 
+	WineryUUID string `dynamodbav:"WineryUUID"`
+	Winery     string `dynamodbav:"Winery"`
+
 	ReceptionUUID      string    `dynamodbav:"ReceptionUUID"`
 	ReceptionStartTime time.Time `dynamodbav:"Reception"`
 
@@ -193,6 +196,8 @@ func (r MacerationDynamoDbRepository) unmarshalMaceration(av document) (*entity.
 	return entity.UnmarshalMacerationFromDatabase(
 		mm.UUID,
 		mm.StartTime,
+		mm.WineryUUID,
+		mm.Winery,
 		mm.ReceptionUUID,
 		mm.ReceptionStartTime,
 		mm.WarehouseUUID,

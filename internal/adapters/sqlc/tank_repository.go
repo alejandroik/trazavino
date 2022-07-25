@@ -27,6 +27,10 @@ func (r TankRepository) AddTank(ctx context.Context, tank *entity.Tank) error {
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(tank.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	q := generated.New(r.db)
 
@@ -35,6 +39,7 @@ func (r TankRepository) AddTank(ctx context.Context, tank *entity.Tank) error {
 		CreatedAt: time.Now(),
 		Name:      tank.Name(),
 		IsEmpty:   tank.IsEmpty(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		return err
 	}

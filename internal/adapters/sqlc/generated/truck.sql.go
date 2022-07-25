@@ -14,23 +14,29 @@ import (
 )
 
 const addTruck = `-- name: AddTruck :exec
-INSERT INTO truck (id, created_at, name)
-VALUES ($1, $2, $3)
+INSERT INTO truck (id, created_at, winery_id, name)
+VALUES ($1, $2, $3, $4)
 `
 
 type AddTruckParams struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
+	WineryID  uuid.UUID
 	Name      string
 }
 
 func (q *Queries) AddTruck(ctx context.Context, arg AddTruckParams) error {
-	_, err := q.db.ExecContext(ctx, addTruck, arg.ID, arg.CreatedAt, arg.Name)
+	_, err := q.db.ExecContext(ctx, addTruck,
+		arg.ID,
+		arg.CreatedAt,
+		arg.WineryID,
+		arg.Name,
+	)
 	return err
 }
 
 const getTruck = `-- name: GetTruck :one
-SELECT id, created_at, updated_at, deleted_at, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM truck
 WHERE id = $1
 LIMIT 1
@@ -44,13 +50,14 @@ func (q *Queries) GetTruck(ctx context.Context, id uuid.UUID) (Truck, error) {
 		&i.CreatedAt,
 		&i.UpdatedAt,
 		&i.DeletedAt,
+		&i.WineryID,
 		&i.Name,
 	)
 	return i, err
 }
 
 const listTrucks = `-- name: ListTrucks :many
-SELECT id, created_at, updated_at, deleted_at, name
+SELECT id, created_at, updated_at, deleted_at, winery_id, name
 FROM truck
 ORDER BY created_at DESC
 OFFSET $1 LIMIT $2
@@ -75,6 +82,7 @@ func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck
 			&i.CreatedAt,
 			&i.UpdatedAt,
 			&i.DeletedAt,
+			&i.WineryID,
 			&i.Name,
 		); err != nil {
 			return nil, err

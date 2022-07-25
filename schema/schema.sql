@@ -1,4 +1,4 @@
-CREATE TABLE cellar
+CREATE TABLE winery
 (
     id         uuid PRIMARY KEY,
     created_at timestamp   NOT NULL,
@@ -10,103 +10,75 @@ CREATE TABLE cellar
 CREATE TABLE bottle
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL
 );
 
 CREATE TABLE cask
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL,
-    c_type     varchar(20) NOT NULL,
-    is_empty   bool        NOT NULL
-);
-
-CREATE TABLE cellar_cask
-(
-    cellar_id uuid references cellar (id),
-    cask_id   uuid references cask (id),
-    PRIMARY KEY (cellar_id, cask_id)
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL,
+    c_type     varchar(20)                 NOT NULL,
+    is_empty   bool                        NOT NULL
 );
 
 CREATE TABLE truck
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL
-);
-
-CREATE TABLE cellar_truck
-(
-    cellar_id uuid references cellar (id),
-    truck_id  uuid references truck (id),
-    PRIMARY KEY (cellar_id, truck_id)
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL
 );
 
 CREATE TABLE warehouse
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL,
-    is_empty   bool        NOT NULL
-);
-
-CREATE TABLE cellar_warehouse
-(
-    cellar_id    uuid references cellar (id),
-    warehouse_id uuid references warehouse (id),
-    PRIMARY KEY (cellar_id, warehouse_id)
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL,
+    is_empty   bool                        NOT NULL
 );
 
 CREATE TABLE tank
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL,
-    is_empty   bool        NOT NULL
-);
-
-CREATE TABLE cellar_tank
-(
-    cellar_id uuid references cellar (id),
-    tank_id   uuid references tank (id),
-    PRIMARY KEY (cellar_id, tank_id)
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL,
+    is_empty   bool                        NOT NULL
 );
 
 CREATE TABLE grape_type
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL
 );
 
 CREATE TABLE vineyard
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL
-);
-
-CREATE TABLE cellar_vineyard
-(
-    cellar_id   uuid references cellar (id),
-    vineyard_id uuid references vineyard (id),
-    PRIMARY KEY (cellar_id, vineyard_id)
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL
 );
 
 CREATE TABLE vineyard_grape_type
@@ -119,29 +91,24 @@ CREATE TABLE vineyard_grape_type
 CREATE TABLE wine
 (
     id         uuid PRIMARY KEY,
-    created_at timestamp   NOT NULL,
+    created_at timestamp                   NOT NULL,
     updated_at timestamp,
     deleted_at timestamp,
-    name       varchar(20) NOT NULL
-);
-
-CREATE TABLE cellar_wine
-(
-    cellar_id uuid references cellar (id),
-    wine_id   uuid references wine (id),
-    PRIMARY KEY (cellar_id, wine_id)
+    winery_id  uuid references winery (id) NOT NULL,
+    name       varchar(20)                 NOT NULL
 );
 
 CREATE TABLE process
 (
     id          uuid PRIMARY KEY,
-    created_at  timestamp   NOT NULL,
+    created_at  timestamp                   NOT NULL,
     updated_at  timestamp,
     deleted_at  timestamp,
-    start_time  timestamp   NOT NULL,
+    winery_id   uuid references winery (id) NOT NULL,
+    start_time  timestamp                   NOT NULL,
     end_time    timestamp,
     hash        varchar(100) UNIQUE,
-    p_type      varchar(20) NOT NULL,
+    p_type      varchar(20)                 NOT NULL,
     transaction varchar(100),
     previous_id uuid references process (id)
 );

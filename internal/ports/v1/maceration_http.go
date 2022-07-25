@@ -28,6 +28,7 @@ func (h HttpServer) RegisterMaceration(c *gin.Context) {
 	uc := usecase.RegisterMaceration{
 		MacerationUUID:      uuid.NewString(),
 		MacerationStartTime: time.Now(),
+		WineryUUID:          postMaceration.WineryUuid.String(),
 		ReceptionUUID:       postMaceration.ReceptionUuid.String(),
 		WarehouseUUID:       postMaceration.WarehouseUuid.String(),
 	}

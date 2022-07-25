@@ -1,21 +1,25 @@
 package entity
 
+import "github.com/pkg/errors"
+
 type Vineyard struct {
-	baseEntity
+	ownedEntity
 }
 
-func NewVineyard(id string, name string) (*Vineyard, error) {
-	return &Vineyard{baseEntity{uuid: id, name: name}}, nil
+func NewVineyard(id string, name string, wineryUUID string) (*Vineyard, error) {
+	if id == "" {
+		return nil, errors.New("empty uuid")
+	}
+	if name == "" {
+		return nil, errors.New("empty name")
+	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
+	}
+
+	return &Vineyard{ownedEntity{baseEntity{uuid: id, name: name}, wineryUUID}}, nil
 }
 
-func UnmarshalVineyardFromDatabase(id string, name string) (*Vineyard, error) {
-	return NewVineyard(id, name)
-}
-
-func (v Vineyard) ID() string {
-	return v.uuid
-}
-
-func (v Vineyard) Name() string {
-	return v.name
+func UnmarshalVineyardFromDatabase(id string, name string, wineryUUID string) (*Vineyard, error) {
+	return NewVineyard(id, name, wineryUUID)
 }

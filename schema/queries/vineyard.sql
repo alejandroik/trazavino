@@ -11,8 +11,8 @@ ORDER BY created_at DESC
 OFFSET $1 LIMIT $2;
 
 -- name: AddVineyard :exec
-INSERT INTO vineyard (id, created_at, name)
-VALUES ($1, $2, $3);
+INSERT INTO vineyard (id, created_at, winery_id, name)
+VALUES ($1, $2, $3, $4);
 
 -- name: UpdateVineyard :exec
 UPDATE vineyard

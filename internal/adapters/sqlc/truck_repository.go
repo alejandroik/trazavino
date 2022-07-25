@@ -27,6 +27,10 @@ func (r TruckRepository) AddTruck(ctx context.Context, truck *entity.Truck) erro
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(truck.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	q := generated.New(r.db)
 
@@ -34,6 +38,7 @@ func (r TruckRepository) AddTruck(ctx context.Context, truck *entity.Truck) erro
 		ID:        truckUuid,
 		CreatedAt: time.Now(),
 		Name:      truck.Name(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		return err
 	}

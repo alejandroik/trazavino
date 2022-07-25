@@ -25,6 +25,7 @@ type Bottle struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 }
 
@@ -48,47 +49,10 @@ type Cask struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 	CType     string
 	IsEmpty   bool
-}
-
-type Cellar struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	Name      string
-}
-
-type CellarCask struct {
-	CellarID uuid.UUID
-	CaskID   uuid.UUID
-}
-
-type CellarTank struct {
-	CellarID uuid.UUID
-	TankID   uuid.UUID
-}
-
-type CellarTruck struct {
-	CellarID uuid.UUID
-	TruckID  uuid.UUID
-}
-
-type CellarVineyard struct {
-	CellarID   uuid.UUID
-	VineyardID uuid.UUID
-}
-
-type CellarWarehouse struct {
-	CellarID    uuid.UUID
-	WarehouseID uuid.UUID
-}
-
-type CellarWine struct {
-	CellarID uuid.UUID
-	WineID   uuid.UUID
 }
 
 type Fermentation struct {
@@ -105,6 +69,7 @@ type GrapeType struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 }
 
@@ -122,6 +87,7 @@ type Process struct {
 	CreatedAt   time.Time
 	UpdatedAt   sql.NullTime
 	DeletedAt   sql.NullTime
+	WineryID    uuid.UUID
 	StartTime   time.Time
 	EndTime     sql.NullTime
 	Hash        sql.NullString
@@ -147,6 +113,7 @@ type Tank struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 	IsEmpty   bool
 }
@@ -156,6 +123,7 @@ type Truck struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 }
 
@@ -164,6 +132,7 @@ type Vineyard struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 }
 
@@ -177,11 +146,21 @@ type Warehouse struct {
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime
 	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
 	Name      string
 	IsEmpty   bool
 }
 
 type Wine struct {
+	ID        uuid.UUID
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	DeletedAt sql.NullTime
+	WineryID  uuid.UUID
+	Name      string
+}
+
+type Winery struct {
 	ID        uuid.UUID
 	CreatedAt time.Time
 	UpdatedAt sql.NullTime

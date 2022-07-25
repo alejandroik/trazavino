@@ -40,6 +40,10 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(rc.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -54,6 +58,7 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 		CreatedAt: now,
 		StartTime: rc.StartTime(),
 		PType:     process_type.Reception.String(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err

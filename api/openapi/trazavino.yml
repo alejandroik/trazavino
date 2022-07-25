@@ -339,7 +339,7 @@ components:
   schemas:
     Reception:
       type: object
-      required: [uuid, startTime, truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
+      required: [uuid, startTime, winery, wineryUuid, truck, truckUuid, vineyard, vineyardUuid, grapeType, grapeTypeUuid, weight, sugar]
       properties:
         uuid:
           type: string
@@ -347,6 +347,12 @@ components:
         startTime:
           type: string
           format: date-time
+        winery:
+          type: string
+          example: "Budeger"
+        wineryUuid:
+          type: string
+          format: uuid
         truck:
           type: string
           example: AA-00-33-BF24
@@ -394,8 +400,11 @@ components:
 
     PostReception:
       type: object
-      required: [truckUuid, vineyardUuid, grapeTypeUuid, weight, sugar]
+      required: [wineryUuid, truckUuid, vineyardUuid, grapeTypeUuid, weight, sugar]
       properties:
+        wineryUuid:
+          type: string
+          format: uuid
         truckUuid:
           type: string
           format: uuid
@@ -416,7 +425,7 @@ components:
 
     Maceration:
       type: object
-      required: [uuid, startTime, reception, receptionUuid, warehouse, warehouseUuid]
+      required: [uuid, startTime, winery, wineryUuid, reception, receptionUuid, warehouse, warehouseUuid]
       properties:
         uuid:
           type: string
@@ -424,6 +433,12 @@ components:
         startTime:
           type: string
           format: date-time
+        winery:
+          type: string
+          example: "Budeger"
+        wineryUuid:
+          type: string
+          format: uuid
         reception:
           type: string
           format: date-time
@@ -460,8 +475,11 @@ components:
 
     PostMaceration:
       type: object
-      required: [receptionUuid, warehouseUuid]
+      required: [wineryUuid, receptionUuid, warehouseUuid]
       properties:
+        wineryUuid:
+          type: string
+          format: uuid
         receptionUuid:
           type: string
           format: uuid
@@ -471,7 +489,7 @@ components:
 
     Fermentation:
       type: object
-      required: [uuid, startTime, warehouse, warehouseUuid, tank, tankUuid]
+      required: [uuid, startTime, winery, wineryUuid, warehouse, warehouseUuid, tank, tankUuid]
       properties:
         uuid:
           type: string
@@ -479,6 +497,12 @@ components:
         startTime:
           type: string
           format: date-time
+        winery:
+          type: string
+          example: "Budeger"
+        wineryUuid:
+          type: string
+          format: uuid
         warehouse:
           type: string
           example: E#245987F
@@ -515,8 +539,11 @@ components:
 
     PostFermentation:
       type: object
-      required: [warehouseUuid, tankUuid]
+      required: [wineryUuid, warehouseUuid, tankUuid]
       properties:
+        wineryUuid:
+          type: string
+          format: uuid
         warehouseUuid:
           type: string
           format: uuid
@@ -526,7 +553,7 @@ components:
 
     Ageing:
       type: object
-      required: [uuid, startTime, tank, tankUuid, cask, caskUuid, humidity]
+      required: [uuid, startTime, winery, wineryUuid, tank, tankUuid, cask, caskUuid]
       properties:
         uuid:
           type: string
@@ -534,6 +561,12 @@ components:
         startTime:
           type: string
           format: date-time
+        winery:
+          type: string
+          example: "Budeger"
+        wineryUuid:
+          type: string
+          format: uuid
         tank:
           type: string
           example: E#245987F
@@ -546,10 +579,6 @@ components:
         caskUuid:
           type: string
           format: uuid
-        humidty:
-          type: integer
-          format: int32
-          example: 5
         endTime:
           type: string
           format: date-time
@@ -574,22 +603,21 @@ components:
 
     PostAgeing:
       type: object
-      required: [tankUuid, caskUuid, humidity]
+      required: [wineryUuid, tankUuid, caskUuid]
       properties:
+        wineryUuid:
+          type: string
+          format: uuid
         tankUuid:
           type: string
           format: uuid
         caskUuid:
           type: string
           format: uuid
-        humidty:
-          type: integer
-          format: int32
-          example: 5
 
     Bottling:
       type: object
-      required: [uuid, startTime, cask, caskUuid, wine, wineUuid, bottleQty]
+      required: [uuid, startTime, winery, wineryUuid, cask, caskUuid, wine, wineUuid, bottleQty]
       properties:
         uuid:
           type: string
@@ -597,6 +625,12 @@ components:
         startTime:
           type: string
           format: date-time
+        winery:
+          type: string
+          example: "Budeger"
+        wineryUuid:
+          type: string
+          format: uuid
         cask:
           type: string
           example: E#245987F
@@ -637,8 +671,11 @@ components:
 
     PostBottling:
       type: object
-      required: [caskUuid, wineUuid, bottleQty]
+      required: [wineryUuid, caskUuid, wineUuid, bottleQty]
       properties:
+        wineryUuid:
+          type: string
+          format: uuid
         caskUuid:
           type: string
           format: uuid

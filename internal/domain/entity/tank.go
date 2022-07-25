@@ -1,23 +1,15 @@
 package entity
 
 type Tank struct {
-	baseEntity
+	ownedEntity
 	isEmpty bool
 }
 
-func NewTank(id string, name string, isEmpty bool) (*Tank, error) {
+func NewTank(id string, name string, isEmpty bool, wineryUUID string) (*Tank, error) {
 	return &Tank{
-		baseEntity: baseEntity{uuid: id, name: name},
-		isEmpty:    isEmpty,
+		ownedEntity: ownedEntity{baseEntity{uuid: id, name: name}, wineryUUID},
+		isEmpty:     isEmpty,
 	}, nil
-}
-
-func (t Tank) ID() string {
-	return t.uuid
-}
-
-func (t Tank) Name() string {
-	return t.name
 }
 
 func (t Tank) IsEmpty() bool {
@@ -30,6 +22,6 @@ func (t *Tank) UpdateIsEmpty(v bool) error {
 	return nil
 }
 
-func UnmarshalTankFromDatabase(id string, name string, isEmpty bool) (*Tank, error) {
-	return NewTank(id, name, isEmpty)
+func UnmarshalTankFromDatabase(id string, name string, isEmpty bool, wineryUUID string) (*Tank, error) {
+	return NewTank(id, name, isEmpty, wineryUUID)
 }

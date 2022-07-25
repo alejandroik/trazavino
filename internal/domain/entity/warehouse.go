@@ -1,23 +1,15 @@
 package entity
 
 type Warehouse struct {
-	baseEntity
+	ownedEntity
 	isEmpty bool
 }
 
-func NewWarehouse(id string, name string, isEmpty bool) (*Warehouse, error) {
+func NewWarehouse(id string, name string, isEmpty bool, wineryUUID string) (*Warehouse, error) {
 	return &Warehouse{
-		baseEntity: baseEntity{uuid: id, name: name},
-		isEmpty:    isEmpty,
+		ownedEntity: ownedEntity{baseEntity{uuid: id, name: name}, wineryUUID},
+		isEmpty:     isEmpty,
 	}, nil
-}
-
-func (w Warehouse) ID() string {
-	return w.uuid
-}
-
-func (w Warehouse) Name() string {
-	return w.name
 }
 
 func (w Warehouse) IsEmpty() bool {
@@ -30,6 +22,6 @@ func (w *Warehouse) UpdateIsEmpty(v bool) error {
 	return nil
 }
 
-func UnmarshalWarehouseFromDatabase(id string, name string, isEmpty bool) (*Warehouse, error) {
-	return NewWarehouse(id, name, isEmpty)
+func UnmarshalWarehouseFromDatabase(id string, name string, isEmpty bool, wineryUUID string) (*Warehouse, error) {
+	return NewWarehouse(id, name, isEmpty, wineryUUID)
 }
