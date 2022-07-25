@@ -29,6 +29,8 @@ type Ageing struct {
 	TankUuid     openapi_types.UUID  `json:"tankUuid"`
 	Transaction  *string             `json:"transaction,omitempty"`
 	Uuid         openapi_types.UUID  `json:"uuid"`
+	Winery       string              `json:"winery"`
+	WineryUuid   openapi_types.UUID  `json:"wineryUuid"`
 }
 
 // Ageings defines model for Ageings.
@@ -49,6 +51,8 @@ type Bottling struct {
 	Uuid         openapi_types.UUID  `json:"uuid"`
 	Wine         string              `json:"wine"`
 	WineUuid     openapi_types.UUID  `json:"wineUuid"`
+	Winery       string              `json:"winery"`
+	WineryUuid   openapi_types.UUID  `json:"wineryUuid"`
 }
 
 // Bottlings defines model for Bottlings.
@@ -74,6 +78,8 @@ type Fermentation struct {
 	Uuid          openapi_types.UUID  `json:"uuid"`
 	Warehouse     string              `json:"warehouse"`
 	WarehouseUuid openapi_types.UUID  `json:"warehouseUuid"`
+	Winery        string              `json:"winery"`
+	WineryUuid    openapi_types.UUID  `json:"wineryUuid"`
 }
 
 // Fermentations defines model for Fermentations.
@@ -93,6 +99,8 @@ type Maceration struct {
 	Uuid          openapi_types.UUID  `json:"uuid"`
 	Warehouse     string              `json:"warehouse"`
 	WarehouseUuid openapi_types.UUID  `json:"warehouseUuid"`
+	Winery        string              `json:"winery"`
+	WineryUuid    openapi_types.UUID  `json:"wineryUuid"`
 }
 
 // Macerations defines model for Macerations.
@@ -102,27 +110,31 @@ type Macerations struct {
 
 // PostAgeing defines model for PostAgeing.
 type PostAgeing struct {
-	CaskUuid openapi_types.UUID `json:"caskUuid"`
-	TankUuid openapi_types.UUID `json:"tankUuid"`
+	CaskUuid   openapi_types.UUID `json:"caskUuid"`
+	TankUuid   openapi_types.UUID `json:"tankUuid"`
+	WineryUuid openapi_types.UUID `json:"wineryUuid"`
 }
 
 // PostBottling defines model for PostBottling.
 type PostBottling struct {
-	BottleQty int32              `json:"bottleQty"`
-	CaskUuid  openapi_types.UUID `json:"caskUuid"`
-	WineUuid  openapi_types.UUID `json:"wineUuid"`
+	BottleQty  int32              `json:"bottleQty"`
+	CaskUuid   openapi_types.UUID `json:"caskUuid"`
+	WineUuid   openapi_types.UUID `json:"wineUuid"`
+	WineryUuid openapi_types.UUID `json:"wineryUuid"`
 }
 
 // PostFermentation defines model for PostFermentation.
 type PostFermentation struct {
 	TankUuid      openapi_types.UUID `json:"tankUuid"`
 	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
+	WineryUuid    openapi_types.UUID `json:"wineryUuid"`
 }
 
 // PostMaceration defines model for PostMaceration.
 type PostMaceration struct {
 	ReceptionUuid openapi_types.UUID `json:"receptionUuid"`
 	WarehouseUuid openapi_types.UUID `json:"warehouseUuid"`
+	WineryUuid    openapi_types.UUID `json:"wineryUuid"`
 }
 
 // PostReception defines model for PostReception.

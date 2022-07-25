@@ -12,9 +12,10 @@ import (
 )
 
 type RegisterFermentation struct {
-	FermentationUUID string
-
+	FermentationUUID      string
 	FermentationStartTime time.Time
+
+	WineryUUID string
 
 	WarehouseUUID string
 
@@ -48,12 +49,13 @@ func NewRegisterFermentationHandler(
 	)
 }
 
-func (h registerFermentationHandler) Handle(ctx context.Context, cmd RegisterFermentation) (err error) {
+func (h registerFermentationHandler) Handle(ctx context.Context, uc RegisterFermentation) (err error) {
 	mc, err := entity.NewFermentation(
-		cmd.FermentationUUID,
-		cmd.FermentationStartTime,
-		cmd.WarehouseUUID,
-		cmd.TankUUID,
+		uc.FermentationUUID,
+		uc.FermentationStartTime,
+		uc.WineryUUID,
+		uc.WarehouseUUID,
+		uc.TankUUID,
 	)
 	if err != nil {
 		return err

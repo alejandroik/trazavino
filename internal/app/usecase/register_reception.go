@@ -46,16 +46,16 @@ func NewRegisterReceptionHandler(
 	)
 }
 
-func (h registerReceptionHandler) Handle(ctx context.Context, cmd RegisterReception) (err error) {
+func (h registerReceptionHandler) Handle(ctx context.Context, uc RegisterReception) (err error) {
 	rc, err := entity.NewReception(
-		cmd.ReceptionUUID,
-		cmd.ReceptionStartTime,
-		cmd.WineryUUID,
-		cmd.TruckUUID,
-		cmd.VineyardUUID,
-		cmd.GrapeTypeUUID,
-		cmd.Weight,
-		cmd.Sugar)
+		uc.ReceptionUUID,
+		uc.ReceptionStartTime,
+		uc.WineryUUID,
+		uc.TruckUUID,
+		uc.VineyardUUID,
+		uc.GrapeTypeUUID,
+		uc.Weight,
+		uc.Sugar)
 	if err != nil {
 		return err
 	}

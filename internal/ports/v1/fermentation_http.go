@@ -23,6 +23,7 @@ func (h HttpServer) RegisterFermentation(c *gin.Context) {
 	uc := usecase.RegisterFermentation{
 		FermentationUUID:      uuid.NewString(),
 		FermentationStartTime: time.Now(),
+		WineryUUID:            postFermentation.WineryUuid.String(),
 		WarehouseUUID:         postFermentation.WarehouseUuid.String(),
 		TankUUID:              postFermentation.TankUuid.String(),
 	}

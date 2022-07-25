@@ -60,13 +60,13 @@ func TestFermentationRepository_AddFermentation(t *testing.T) {
 	err = mcRepo.AddMaceration(ctx, mc)
 	require.NoError(t, err)
 
-	tk, err := entity.NewTank(uuid.NewString(), "B3224FF", true)
+	tk, err := entity.NewTank(uuid.NewString(), "B3224FF", true, wn.ID())
 	require.NoError(t, err)
 	tkRepo := NewTankRepository(db)
 	err = tkRepo.AddTank(ctx, tk)
 	require.NoError(t, err)
 
-	fr, err := entity.NewFermentation(uuid.NewString(), time.Now(), wh.ID(), tk.ID())
+	fr, err := entity.NewFermentation(uuid.NewString(), time.Now(), wn.ID(), wh.ID(), tk.ID())
 	require.NoError(t, err)
 	frRepo := NewFermentationRepository(db)
 	err = frRepo.AddFermentation(ctx, fr)
