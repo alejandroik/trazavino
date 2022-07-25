@@ -1,25 +1,17 @@
 package entity
 
 type Cask struct {
-	baseEntity
+	ownedEntity
 	cType   string
 	isEmpty bool
 }
 
-func NewCask(id string, name string, cType string, isEmpty bool) (*Cask, error) {
+func NewCask(id string, name string, cType string, isEmpty bool, wineryUUID string) (*Cask, error) {
 	return &Cask{
-		baseEntity: baseEntity{uuid: id, name: name},
-		cType:      cType,
-		isEmpty:    isEmpty,
+		ownedEntity: ownedEntity{baseEntity{uuid: id, name: name}, wineryUUID},
+		cType:       cType,
+		isEmpty:     isEmpty,
 	}, nil
-}
-
-func (c Cask) ID() string {
-	return c.uuid
-}
-
-func (c Cask) Name() string {
-	return c.name
 }
 
 func (c Cask) CType() string {
@@ -36,6 +28,6 @@ func (c *Cask) UpdateIsEmpty(v bool) error {
 	return nil
 }
 
-func UnmarshalCaskFromDatabase(id string, name string, cType string, isEmpty bool) (*Cask, error) {
-	return NewCask(id, name, cType, isEmpty)
+func UnmarshalCaskFromDatabase(id string, name string, cType string, isEmpty bool, wineryUUID string) (*Cask, error) {
+	return NewCask(id, name, cType, isEmpty, wineryUUID)
 }

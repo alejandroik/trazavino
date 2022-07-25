@@ -27,6 +27,10 @@ func (r CaskRepository) AddCask(ctx context.Context, cask *entity.Cask) error {
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(cask.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	q := generated.New(r.db)
 
@@ -36,6 +40,7 @@ func (r CaskRepository) AddCask(ctx context.Context, cask *entity.Cask) error {
 		Name:      cask.Name(),
 		CType:     cask.CType(),
 		IsEmpty:   cask.IsEmpty(),
+		WineryID:  wineryUuid,
 	}); err != nil {
 		return err
 	}

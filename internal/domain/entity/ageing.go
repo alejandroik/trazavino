@@ -7,26 +7,19 @@ import (
 )
 
 type Ageing struct {
-	uuid string
-
-	startTime time.Time
+	Process
 
 	tankUUID string
 	tankName string
 
 	caskUUID string
 	caskName string
-
-	endTime      time.Time
-	previousUUID string
-
-	hash        string
-	transaction string
 }
 
 func NewAgeing(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
 	tankUUID string,
 	caskUUID string,
 ) (*Ageing, error) {
@@ -36,6 +29,9 @@ func NewAgeing(
 	if startTime.IsZero() {
 		return nil, errors.New("zero Ageing time")
 	}
+	if wineryUUID == "" {
+		return nil, errors.New("empty winery uuid")
+	}
 	if tankUUID == "" {
 		return nil, errors.New("empty tank uuid")
 	}
@@ -44,19 +40,14 @@ func NewAgeing(
 	}
 
 	return &Ageing{
-		uuid:      uuid,
-		startTime: startTime,
-		tankUUID:  tankUUID,
-		caskUUID:  caskUUID,
+		Process: Process{
+			uuid:       uuid,
+			wineryUUID: wineryUUID,
+			startTime:  startTime,
+		},
+		tankUUID: tankUUID,
+		caskUUID: caskUUID,
 	}, nil
-}
-
-func (a Ageing) UUID() string {
-	return a.uuid
-}
-
-func (a Ageing) StartTime() time.Time {
-	return a.startTime
 }
 
 func (a Ageing) TankUUID() string {
@@ -75,49 +66,11 @@ func (a Ageing) CaskName() string {
 	return a.caskName
 }
 
-func (a Ageing) EndTime() time.Time {
-	return a.endTime
-}
-
-func (a Ageing) PreviousUUID() string {
-	return a.previousUUID
-}
-
-func (a Ageing) Hash() string {
-	return a.hash
-}
-
-func (a Ageing) Transaction() string {
-	return a.transaction
-}
-
-func (a *Ageing) UpdatePreviousUUID(pv string) error {
-	a.previousUUID = pv
-
-	return nil
-}
-
-func (a *Ageing) UpdateEndTime(t time.Time) error {
-	a.endTime = t
-
-	return nil
-}
-
-func (a *Ageing) UpdateHash(hash string) error {
-	a.hash = hash
-
-	return nil
-}
-
-func (a *Ageing) UpdateTransaction(tr string) error {
-	a.transaction = tr
-
-	return nil
-}
-
 func UnmarshalAgeingFromDatabase(
 	uuid string,
 	startTime time.Time,
+	wineryUUID string,
+	wineryName string,
 	tankUUID string,
 	tankName string,
 	caskUUID string,
@@ -127,11 +80,12 @@ func UnmarshalAgeingFromDatabase(
 	hash string,
 	transaction string,
 ) (*Ageing, error) {
-	a, err := NewAgeing(uuid, startTime, tankUUID, caskUUID)
+	a, err := NewAgeing(uuid, startTime, wineryUUID, tankUUID, caskUUID)
 	if err != nil {
 		return nil, err
 	}
 
+	a.wineryName = wineryName
 	a.tankName = tankName
 	a.caskName = caskName
 

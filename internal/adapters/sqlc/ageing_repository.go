@@ -37,6 +37,10 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 	if err != nil {
 		return err
 	}
+	wineryUuid, err := uuid.Parse(a.WineryUUID())
+	if err != nil {
+		return err
+	}
 
 	tx, err := r.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -85,6 +89,7 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		StartTime:  a.StartTime(),
 		PType:      process_type.Ageing.String(),
 		PreviousID: uuid.NullUUID{UUID: fer.ID, Valid: true},
+		WineryID:   wineryUuid,
 	}); err != nil {
 		tx.Rollback()
 		return err
