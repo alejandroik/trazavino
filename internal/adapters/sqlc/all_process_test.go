@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// TODO use testcontainers
 func TestAddBottling(t *testing.T) {
 	connStr := "user=postgres password=password dbname=trazavino sslmode=disable"
 	db, err := sqlx.Connect("postgres", connStr)
