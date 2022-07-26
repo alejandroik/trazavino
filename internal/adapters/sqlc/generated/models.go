@@ -12,158 +12,158 @@ import (
 )
 
 type Ageing struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	TankID    uuid.UUID
-	CaskID    uuid.UUID
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	TankID    uuid.UUID    `db:"tank_id"`
+	CaskID    uuid.UUID    `db:"cask_id"`
 }
 
 type Bottle struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
 }
 
 type Bottling struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	CaskID    uuid.UUID
-	BottleQty int32
-	WineID    uuid.UUID
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	CaskID    uuid.UUID    `db:"cask_id"`
+	BottleQty int32        `db:"bottle_qty"`
+	WineID    uuid.UUID    `db:"wine_id"`
 }
 
 type BottlingBottle struct {
-	BottlingID uuid.UUID
-	BottleID   uuid.UUID
+	BottlingID uuid.UUID `db:"bottling_id"`
+	BottleID   uuid.UUID `db:"bottle_id"`
 }
 
 type Cask struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
-	CType     string
-	IsEmpty   bool
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
+	CType     string       `db:"c_type"`
+	IsEmpty   bool         `db:"is_empty"`
 }
 
 type Fermentation struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   sql.NullTime
-	DeletedAt   sql.NullTime
-	WarehouseID uuid.UUID
-	TankID      uuid.UUID
+	ID          uuid.UUID    `db:"id"`
+	CreatedAt   time.Time    `db:"created_at"`
+	UpdatedAt   sql.NullTime `db:"updated_at"`
+	DeletedAt   sql.NullTime `db:"deleted_at"`
+	WarehouseID uuid.UUID    `db:"warehouse_id"`
+	TankID      uuid.UUID    `db:"tank_id"`
 }
 
 type GrapeType struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
 }
 
 type Maceration struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   sql.NullTime
-	DeletedAt   sql.NullTime
-	ReceptionID uuid.UUID
-	WarehouseID uuid.UUID
+	ID          uuid.UUID    `db:"id"`
+	CreatedAt   time.Time    `db:"created_at"`
+	UpdatedAt   sql.NullTime `db:"updated_at"`
+	DeletedAt   sql.NullTime `db:"deleted_at"`
+	ReceptionID uuid.UUID    `db:"reception_id"`
+	WarehouseID uuid.UUID    `db:"warehouse_id"`
 }
 
 type Process struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   sql.NullTime
-	DeletedAt   sql.NullTime
-	WineryID    uuid.UUID
-	StartTime   time.Time
-	EndTime     sql.NullTime
-	Hash        sql.NullString
-	PType       string
-	Transaction sql.NullString
-	PreviousID  uuid.NullUUID
+	ID          uuid.UUID      `db:"id"`
+	CreatedAt   time.Time      `db:"created_at"`
+	UpdatedAt   sql.NullTime   `db:"updated_at"`
+	DeletedAt   sql.NullTime   `db:"deleted_at"`
+	WineryID    uuid.UUID      `db:"winery_id"`
+	StartTime   time.Time      `db:"start_time"`
+	EndTime     sql.NullTime   `db:"end_time"`
+	Hash        sql.NullString `db:"hash"`
+	PType       string         `db:"p_type"`
+	Transaction sql.NullString `db:"transaction"`
+	PreviousID  uuid.NullUUID  `db:"previous_id"`
 }
 
 type Reception struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	UpdatedAt   sql.NullTime
-	DeletedAt   sql.NullTime
-	Weight      int32
-	Sugar       int32
-	TruckID     uuid.UUID
-	VineyardID  uuid.UUID
-	GrapeTypeID uuid.UUID
+	ID          uuid.UUID    `db:"id"`
+	CreatedAt   time.Time    `db:"created_at"`
+	UpdatedAt   sql.NullTime `db:"updated_at"`
+	DeletedAt   sql.NullTime `db:"deleted_at"`
+	Weight      int32        `db:"weight"`
+	Sugar       int32        `db:"sugar"`
+	TruckID     uuid.UUID    `db:"truck_id"`
+	VineyardID  uuid.UUID    `db:"vineyard_id"`
+	GrapeTypeID uuid.UUID    `db:"grape_type_id"`
 }
 
 type Tank struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
-	IsEmpty   bool
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
+	IsEmpty   bool         `db:"is_empty"`
 }
 
 type Truck struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
 }
 
 type Vineyard struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
 }
 
 type VineyardGrapeType struct {
-	VineyardID  uuid.UUID
-	GrapeTypeID uuid.UUID
+	VineyardID  uuid.UUID `db:"vineyard_id"`
+	GrapeTypeID uuid.UUID `db:"grape_type_id"`
 }
 
 type Warehouse struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
-	IsEmpty   bool
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
+	IsEmpty   bool         `db:"is_empty"`
 }
 
 type Wine struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	WineryID  uuid.UUID    `db:"winery_id"`
+	Name      string       `db:"name"`
 }
 
 type Winery struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	UpdatedAt sql.NullTime
-	DeletedAt sql.NullTime
-	Name      string
+	ID        uuid.UUID    `db:"id"`
+	CreatedAt time.Time    `db:"created_at"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	DeletedAt sql.NullTime `db:"deleted_at"`
+	Name      string       `db:"name"`
 }

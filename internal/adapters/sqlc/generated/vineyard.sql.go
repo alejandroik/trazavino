@@ -19,14 +19,14 @@ VALUES ($1, $2, $3, $4)
 `
 
 type AddVineyardParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	WineryID  uuid.UUID `db:"winery_id"`
+	Name      string    `db:"name"`
 }
 
 func (q *Queries) AddVineyard(ctx context.Context, arg AddVineyardParams) error {
-	_, err := q.db.ExecContext(ctx, addVineyard,
+	_, err := q.db.Exec(ctx, addVineyard,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WineryID,
@@ -43,7 +43,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetVineyard(ctx context.Context, id uuid.UUID) (Vineyard, error) {
-	row := q.db.QueryRowContext(ctx, getVineyard, id)
+	row := q.db.QueryRow(ctx, getVineyard, id)
 	var i Vineyard
 	err := row.Scan(
 		&i.ID,
@@ -64,12 +64,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListVineyardsParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListVineyards(ctx context.Context, arg ListVineyardsParams) ([]Vineyard, error) {
-	rows, err := q.db.QueryContext(ctx, listVineyards, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listVineyards, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -89,9 +89,6 @@ func (q *Queries) ListVineyards(ctx context.Context, arg ListVineyardsParams) ([
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -106,12 +103,12 @@ WHERE id = $1
 `
 
 type UpdateVineyardParams struct {
-	ID        uuid.UUID
-	Name      string
-	UpdatedAt sql.NullTime
+	ID        uuid.UUID    `db:"id"`
+	Name      string       `db:"name"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
 func (q *Queries) UpdateVineyard(ctx context.Context, arg UpdateVineyardParams) error {
-	_, err := q.db.ExecContext(ctx, updateVineyard, arg.ID, arg.Name, arg.UpdatedAt)
+	_, err := q.db.Exec(ctx, updateVineyard, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

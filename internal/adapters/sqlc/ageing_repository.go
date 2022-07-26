@@ -3,20 +3,20 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type AgeingRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewAgeingRepository(db *sqlx.DB) *AgeingRepository {
+func NewAgeingRepository(db *pgx.Conn) *AgeingRepository {
 	if db == nil {
 		panic("missing db")
 	}
@@ -42,17 +42,18 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		return err
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback(ctx)
+
 	q := generated.New(tx)
 
 	now := time.Now()
 
 	fer, err := q.FindFermentation(ctx, tankUuid)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -61,7 +62,6 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		EndTime:   sql.NullTime{Time: a.StartTime(), Valid: true},
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -70,7 +70,6 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   true,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -79,7 +78,6 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -91,7 +89,6 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		PreviousID: uuid.NullUUID{UUID: fer.ID, Valid: true},
 		WineryID:   wineryUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -101,11 +98,10 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		TankID:    tankUuid,
 		CaskID:    caskUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
 func (r AgeingRepository) GetAgeing(ctx context.Context, ageingUUID string) (*entity.Ageing, error) {

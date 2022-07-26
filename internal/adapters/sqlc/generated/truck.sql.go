@@ -19,14 +19,14 @@ VALUES ($1, $2, $3, $4)
 `
 
 type AddTruckParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	WineryID  uuid.UUID `db:"winery_id"`
+	Name      string    `db:"name"`
 }
 
 func (q *Queries) AddTruck(ctx context.Context, arg AddTruckParams) error {
-	_, err := q.db.ExecContext(ctx, addTruck,
+	_, err := q.db.Exec(ctx, addTruck,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WineryID,
@@ -43,7 +43,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetTruck(ctx context.Context, id uuid.UUID) (Truck, error) {
-	row := q.db.QueryRowContext(ctx, getTruck, id)
+	row := q.db.QueryRow(ctx, getTruck, id)
 	var i Truck
 	err := row.Scan(
 		&i.ID,
@@ -64,12 +64,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListTrucksParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck, error) {
-	rows, err := q.db.QueryContext(ctx, listTrucks, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listTrucks, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -89,9 +89,6 @@ func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -106,12 +103,12 @@ WHERE id = $1
 `
 
 type UpdateTruckParams struct {
-	ID        uuid.UUID
-	Name      string
-	UpdatedAt sql.NullTime
+	ID        uuid.UUID    `db:"id"`
+	Name      string       `db:"name"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
 func (q *Queries) UpdateTruck(ctx context.Context, arg UpdateTruckParams) error {
-	_, err := q.db.ExecContext(ctx, updateTruck, arg.ID, arg.Name, arg.UpdatedAt)
+	_, err := q.db.Exec(ctx, updateTruck, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

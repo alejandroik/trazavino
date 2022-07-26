@@ -18,15 +18,15 @@ VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddBottlingParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	CaskID    uuid.UUID
-	WineID    uuid.UUID
-	BottleQty int32
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	CaskID    uuid.UUID `db:"cask_id"`
+	WineID    uuid.UUID `db:"wine_id"`
+	BottleQty int32     `db:"bottle_qty"`
 }
 
 func (q *Queries) AddBottling(ctx context.Context, arg AddBottlingParams) error {
-	_, err := q.db.ExecContext(ctx, addBottling,
+	_, err := q.db.Exec(ctx, addBottling,
 		arg.ID,
 		arg.CreatedAt,
 		arg.CaskID,
@@ -44,7 +44,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetBottling(ctx context.Context, id uuid.UUID) (Bottling, error) {
-	row := q.db.QueryRowContext(ctx, getBottling, id)
+	row := q.db.QueryRow(ctx, getBottling, id)
 	var i Bottling
 	err := row.Scan(
 		&i.ID,
@@ -66,12 +66,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListBottlingsParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListBottlings(ctx context.Context, arg ListBottlingsParams) ([]Bottling, error) {
-	rows, err := q.db.QueryContext(ctx, listBottlings, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listBottlings, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -91,9 +91,6 @@ func (q *Queries) ListBottlings(ctx context.Context, arg ListBottlingsParams) ([
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

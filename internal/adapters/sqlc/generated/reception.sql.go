@@ -18,17 +18,17 @@ VALUES ($1, $2, $3, $4, $5, $6, $7)
 `
 
 type AddReceptionParams struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	Weight      int32
-	Sugar       int32
-	TruckID     uuid.UUID
-	VineyardID  uuid.UUID
-	GrapeTypeID uuid.UUID
+	ID          uuid.UUID `db:"id"`
+	CreatedAt   time.Time `db:"created_at"`
+	Weight      int32     `db:"weight"`
+	Sugar       int32     `db:"sugar"`
+	TruckID     uuid.UUID `db:"truck_id"`
+	VineyardID  uuid.UUID `db:"vineyard_id"`
+	GrapeTypeID uuid.UUID `db:"grape_type_id"`
 }
 
 func (q *Queries) AddReception(ctx context.Context, arg AddReceptionParams) error {
-	_, err := q.db.ExecContext(ctx, addReception,
+	_, err := q.db.Exec(ctx, addReception,
 		arg.ID,
 		arg.CreatedAt,
 		arg.Weight,
@@ -48,7 +48,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetReception(ctx context.Context, id uuid.UUID) (Reception, error) {
-	row := q.db.QueryRowContext(ctx, getReception, id)
+	row := q.db.QueryRow(ctx, getReception, id)
 	var i Reception
 	err := row.Scan(
 		&i.ID,
@@ -72,12 +72,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListReceptionsParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListReceptions(ctx context.Context, arg ListReceptionsParams) ([]Reception, error) {
-	rows, err := q.db.QueryContext(ctx, listReceptions, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listReceptions, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -99,9 +99,6 @@ func (q *Queries) ListReceptions(ctx context.Context, arg ListReceptionsParams) 
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

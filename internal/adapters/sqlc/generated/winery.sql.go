@@ -19,13 +19,13 @@ VALUES ($1, $2, $3)
 `
 
 type AddWineryParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	Name      string
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	Name      string    `db:"name"`
 }
 
 func (q *Queries) AddWinery(ctx context.Context, arg AddWineryParams) error {
-	_, err := q.db.ExecContext(ctx, addWinery, arg.ID, arg.CreatedAt, arg.Name)
+	_, err := q.db.Exec(ctx, addWinery, arg.ID, arg.CreatedAt, arg.Name)
 	return err
 }
 
@@ -37,7 +37,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetWinery(ctx context.Context, id uuid.UUID) (Winery, error) {
-	row := q.db.QueryRowContext(ctx, getWinery, id)
+	row := q.db.QueryRow(ctx, getWinery, id)
 	var i Winery
 	err := row.Scan(
 		&i.ID,
@@ -49,7 +49,7 @@ func (q *Queries) GetWinery(ctx context.Context, id uuid.UUID) (Winery, error) {
 	return i, err
 }
 
-const listWinerys = `-- name: LIstWineries :many
+const listWinerys = `-- name: ListWinerys :many
 SELECT id, created_at, updated_at, deleted_at, name
 FROM winery
 ORDER BY created_at DESC
@@ -57,12 +57,12 @@ ORDER BY created_at DESC
 `
 
 type ListWinerysParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListWinerys(ctx context.Context, arg ListWinerysParams) ([]Winery, error) {
-	rows, err := q.db.QueryContext(ctx, listWinerys, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listWinerys, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -81,9 +81,6 @@ func (q *Queries) ListWinerys(ctx context.Context, arg ListWinerysParams) ([]Win
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -98,12 +95,12 @@ WHERE id = $1
 `
 
 type UpdateWineryParams struct {
-	ID        uuid.UUID
-	Name      string
-	UpdatedAt sql.NullTime
+	ID        uuid.UUID    `db:"id"`
+	Name      string       `db:"name"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
 func (q *Queries) UpdateWinery(ctx context.Context, arg UpdateWineryParams) error {
-	_, err := q.db.ExecContext(ctx, updateWinery, arg.ID, arg.Name, arg.UpdatedAt)
+	_, err := q.db.Exec(ctx, updateWinery, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

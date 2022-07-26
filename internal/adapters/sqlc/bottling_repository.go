@@ -3,20 +3,20 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type BottlingRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewBottlingRepository(db *sqlx.DB) *BottlingRepository {
+func NewBottlingRepository(db *pgx.Conn) *BottlingRepository {
 	if db == nil {
 		panic("missing db")
 	}
@@ -42,17 +42,18 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		return err
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback(ctx)
+
 	q := generated.New(tx)
 
 	now := time.Now()
 
 	age, err := q.FindAgeing(ctx, caskUuid)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -61,7 +62,6 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		EndTime:   sql.NullTime{Time: a.StartTime(), Valid: true},
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -70,7 +70,6 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   true,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -82,7 +81,6 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		PreviousID: uuid.NullUUID{UUID: age.ID, Valid: true},
 		WineryID:   wineryUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -93,11 +91,10 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		WineID:    wineUuid,
 		BottleQty: a.BottleQty(),
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
 func (r BottlingRepository) GetBottling(ctx context.Context, bottlingUUID string) (*entity.Bottling, error) {

@@ -2,19 +2,19 @@ package sqlc
 
 import (
 	"context"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type CaskRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewCaskRepository(db *sqlx.DB) *CaskRepository {
+func NewCaskRepository(db *pgx.Conn) *CaskRepository {
 	if db == nil {
 		panic("missing db")
 	}

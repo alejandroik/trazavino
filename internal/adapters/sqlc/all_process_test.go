@@ -2,21 +2,22 @@ package sqlc
 
 import (
 	"context"
-	"github.com/alejandroik/trazavino/internal/domain/entity"
-	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
+
+	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/google/uuid"
+	"github.com/jackc/pgx/v4"
+	"github.com/stretchr/testify/require"
 )
 
 // TODO use testcontainers
 func TestAddBottling(t *testing.T) {
-	connStr := "user=postgres password=password dbname=trazavino sslmode=disable"
-	db, err := sqlx.Connect("postgres", connStr)
-	require.NoError(t, err)
-
 	ctx := context.Background()
+
+	connStr := "user=postgres password=password host=localhost port=5432 dbname=trazavino sslmode=disable"
+	db, err := pgx.Connect(ctx, connStr)
+	require.NoError(t, err)
 
 	winery, err := entity.NewWinery(uuid.NewString(), "Budeger")
 	require.NoError(t, err)

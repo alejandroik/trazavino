@@ -19,15 +19,15 @@ VALUES ($1, $2, $3, $4, $5)
 `
 
 type AddWarehouseParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	WineryID  uuid.UUID
-	Name      string
-	IsEmpty   bool
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	WineryID  uuid.UUID `db:"winery_id"`
+	Name      string    `db:"name"`
+	IsEmpty   bool      `db:"is_empty"`
 }
 
 func (q *Queries) AddWarehouse(ctx context.Context, arg AddWarehouseParams) error {
-	_, err := q.db.ExecContext(ctx, addWarehouse,
+	_, err := q.db.Exec(ctx, addWarehouse,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WineryID,
@@ -45,7 +45,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetWarehouse(ctx context.Context, id uuid.UUID) (Warehouse, error) {
-	row := q.db.QueryRowContext(ctx, getWarehouse, id)
+	row := q.db.QueryRow(ctx, getWarehouse, id)
 	var i Warehouse
 	err := row.Scan(
 		&i.ID,
@@ -67,12 +67,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListWarehousesParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) ([]Warehouse, error) {
-	rows, err := q.db.QueryContext(ctx, listWarehouses, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listWarehouses, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -93,9 +93,6 @@ func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) 
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -111,14 +108,14 @@ WHERE id = $1
 `
 
 type UpdateWarehouseParams struct {
-	ID        uuid.UUID
-	Name      string
-	UpdatedAt sql.NullTime
-	IsEmpty   bool
+	ID        uuid.UUID    `db:"id"`
+	Name      string       `db:"name"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	IsEmpty   bool         `db:"is_empty"`
 }
 
 func (q *Queries) UpdateWarehouse(ctx context.Context, arg UpdateWarehouseParams) error {
-	_, err := q.db.ExecContext(ctx, updateWarehouse,
+	_, err := q.db.Exec(ctx, updateWarehouse,
 		arg.ID,
 		arg.Name,
 		arg.UpdatedAt,
