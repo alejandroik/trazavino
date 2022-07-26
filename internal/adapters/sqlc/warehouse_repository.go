@@ -3,19 +3,19 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type WarehouseRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewWarehouseRepository(db *sqlx.DB) *WarehouseRepository {
+func NewWarehouseRepository(db *pgx.Conn) *WarehouseRepository {
 	if db == nil {
 		panic("missing db")
 	}
@@ -101,27 +101,26 @@ func (r WarehouseRepository) UpdateWarehouse(
 		return err
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback(ctx)
+
 	q := generated.New(tx)
 
 	wm, err := q.GetWarehouse(ctx, whUuid)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
 	warehouse, err := unmarshalWarehouse(wm)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
 	updatedWarehouse, err := updateFn(ctx, warehouse)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -131,11 +130,10 @@ func (r WarehouseRepository) UpdateWarehouse(
 		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
 		IsEmpty:   updatedWarehouse.IsEmpty(),
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
 func unmarshalWarehouse(wm generated.Warehouse) (*entity.Warehouse, error) {

@@ -19,16 +19,16 @@ VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type AddCaskParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	WineryID  uuid.UUID
-	Name      string
-	CType     string
-	IsEmpty   bool
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	WineryID  uuid.UUID `db:"winery_id"`
+	Name      string    `db:"name"`
+	CType     string    `db:"c_type"`
+	IsEmpty   bool      `db:"is_empty"`
 }
 
 func (q *Queries) AddCask(ctx context.Context, arg AddCaskParams) error {
-	_, err := q.db.ExecContext(ctx, addCask,
+	_, err := q.db.Exec(ctx, addCask,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WineryID,
@@ -47,7 +47,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetCask(ctx context.Context, id uuid.UUID) (Cask, error) {
-	row := q.db.QueryRowContext(ctx, getCask, id)
+	row := q.db.QueryRow(ctx, getCask, id)
 	var i Cask
 	err := row.Scan(
 		&i.ID,
@@ -70,12 +70,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListCasksParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListCasks(ctx context.Context, arg ListCasksParams) ([]Cask, error) {
-	rows, err := q.db.QueryContext(ctx, listCasks, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listCasks, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -97,9 +97,6 @@ func (q *Queries) ListCasks(ctx context.Context, arg ListCasksParams) ([]Cask, e
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -116,15 +113,15 @@ WHERE id = $1
 `
 
 type UpdateCaskParams struct {
-	ID        uuid.UUID
-	Name      string
-	UpdatedAt sql.NullTime
-	CType     string
-	IsEmpty   bool
+	ID        uuid.UUID    `db:"id"`
+	Name      string       `db:"name"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+	CType     string       `db:"c_type"`
+	IsEmpty   bool         `db:"is_empty"`
 }
 
 func (q *Queries) UpdateCask(ctx context.Context, arg UpdateCaskParams) error {
-	_, err := q.db.ExecContext(ctx, updateCask,
+	_, err := q.db.Exec(ctx, updateCask,
 		arg.ID,
 		arg.Name,
 		arg.UpdatedAt,

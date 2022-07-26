@@ -18,14 +18,14 @@ VALUES ($1, $2, $3, $4)
 `
 
 type AddMacerationParams struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	ReceptionID uuid.UUID
-	WarehouseID uuid.UUID
+	ID          uuid.UUID `db:"id"`
+	CreatedAt   time.Time `db:"created_at"`
+	ReceptionID uuid.UUID `db:"reception_id"`
+	WarehouseID uuid.UUID `db:"warehouse_id"`
 }
 
 func (q *Queries) AddMaceration(ctx context.Context, arg AddMacerationParams) error {
-	_, err := q.db.ExecContext(ctx, addMaceration,
+	_, err := q.db.Exec(ctx, addMaceration,
 		arg.ID,
 		arg.CreatedAt,
 		arg.ReceptionID,
@@ -44,7 +44,7 @@ LIMIT 1
 `
 
 func (q *Queries) FindMaceration(ctx context.Context, warehouseID uuid.UUID) (Maceration, error) {
-	row := q.db.QueryRowContext(ctx, findMaceration, warehouseID)
+	row := q.db.QueryRow(ctx, findMaceration, warehouseID)
 	var i Maceration
 	err := row.Scan(
 		&i.ID,
@@ -65,7 +65,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetMaceration(ctx context.Context, id uuid.UUID) (Maceration, error) {
-	row := q.db.QueryRowContext(ctx, getMaceration, id)
+	row := q.db.QueryRow(ctx, getMaceration, id)
 	var i Maceration
 	err := row.Scan(
 		&i.ID,
@@ -86,12 +86,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListMacerationsParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListMacerations(ctx context.Context, arg ListMacerationsParams) ([]Maceration, error) {
-	rows, err := q.db.QueryContext(ctx, listMacerations, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listMacerations, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -110,9 +110,6 @@ func (q *Queries) ListMacerations(ctx context.Context, arg ListMacerationsParams
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

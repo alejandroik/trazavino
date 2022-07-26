@@ -18,14 +18,14 @@ VALUES ($1, $2, $3, $4)
 `
 
 type AddFermentationParams struct {
-	ID          uuid.UUID
-	CreatedAt   time.Time
-	WarehouseID uuid.UUID
-	TankID      uuid.UUID
+	ID          uuid.UUID `db:"id"`
+	CreatedAt   time.Time `db:"created_at"`
+	WarehouseID uuid.UUID `db:"warehouse_id"`
+	TankID      uuid.UUID `db:"tank_id"`
 }
 
 func (q *Queries) AddFermentation(ctx context.Context, arg AddFermentationParams) error {
-	_, err := q.db.ExecContext(ctx, addFermentation,
+	_, err := q.db.Exec(ctx, addFermentation,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WarehouseID,
@@ -44,7 +44,7 @@ LIMIT 1
 `
 
 func (q *Queries) FindFermentation(ctx context.Context, tankID uuid.UUID) (Fermentation, error) {
-	row := q.db.QueryRowContext(ctx, findFermentation, tankID)
+	row := q.db.QueryRow(ctx, findFermentation, tankID)
 	var i Fermentation
 	err := row.Scan(
 		&i.ID,
@@ -65,7 +65,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetFermentation(ctx context.Context, id uuid.UUID) (Fermentation, error) {
-	row := q.db.QueryRowContext(ctx, getFermentation, id)
+	row := q.db.QueryRow(ctx, getFermentation, id)
 	var i Fermentation
 	err := row.Scan(
 		&i.ID,
@@ -86,12 +86,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListFermentationsParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListFermentations(ctx context.Context, arg ListFermentationsParams) ([]Fermentation, error) {
-	rows, err := q.db.QueryContext(ctx, listFermentations, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listFermentations, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -110,9 +110,6 @@ func (q *Queries) ListFermentations(ctx context.Context, arg ListFermentationsPa
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

@@ -3,20 +3,20 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type MacerationRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewMacerationRepository(db *sqlx.DB) *MacerationRepository {
+func NewMacerationRepository(db *pgx.Conn) *MacerationRepository {
 	if db == nil {
 		panic("missing db")
 	}
@@ -42,10 +42,12 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		return err
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback(ctx)
+
 	q := generated.New(tx)
 
 	now := time.Now()
@@ -55,7 +57,6 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		EndTime:   sql.NullTime{Time: m.StartTime(), Valid: true},
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -64,7 +65,6 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -76,7 +76,6 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		PreviousID: uuid.NullUUID{UUID: recUuid, Valid: true},
 		WineryID:   wineryUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -86,11 +85,10 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		ReceptionID: recUuid,
 		WarehouseID: whUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
 func (r MacerationRepository) GetMaceration(ctx context.Context, macerationId string) (*entity.Maceration, error) {

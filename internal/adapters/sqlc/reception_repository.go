@@ -2,20 +2,20 @@ package sqlc
 
 import (
 	"context"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type ReceptionRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewReceptionRepository(db *sqlx.DB) *ReceptionRepository {
+func NewReceptionRepository(db *pgx.Conn) *ReceptionRepository {
 	if db == nil {
 		panic("missing db")
 	}
@@ -45,10 +45,12 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 		return err
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback(ctx)
+
 	q := generated.New(tx)
 
 	now := time.Now()
@@ -60,7 +62,6 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 		PType:     process_type.Reception.String(),
 		WineryID:  wineryUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -73,11 +74,10 @@ func (r ReceptionRepository) AddReception(ctx context.Context, rc *entity.Recept
 		VineyardID:  vyUuid,
 		GrapeTypeID: gtUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
 func (r ReceptionRepository) GetReception(ctx context.Context, id string) (*entity.Reception, error) {

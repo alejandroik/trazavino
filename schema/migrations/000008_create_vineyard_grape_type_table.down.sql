@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS vineyard_grape_type;

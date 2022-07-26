@@ -18,14 +18,14 @@ VALUES ($1, $2, $3, $4)
 `
 
 type AddAgeingParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	TankID    uuid.UUID
-	CaskID    uuid.UUID
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	TankID    uuid.UUID `db:"tank_id"`
+	CaskID    uuid.UUID `db:"cask_id"`
 }
 
 func (q *Queries) AddAgeing(ctx context.Context, arg AddAgeingParams) error {
-	_, err := q.db.ExecContext(ctx, addAgeing,
+	_, err := q.db.Exec(ctx, addAgeing,
 		arg.ID,
 		arg.CreatedAt,
 		arg.TankID,
@@ -44,7 +44,7 @@ LIMIT 1
 `
 
 func (q *Queries) FindAgeing(ctx context.Context, caskID uuid.UUID) (Ageing, error) {
-	row := q.db.QueryRowContext(ctx, findAgeing, caskID)
+	row := q.db.QueryRow(ctx, findAgeing, caskID)
 	var i Ageing
 	err := row.Scan(
 		&i.ID,
@@ -65,7 +65,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetAgeing(ctx context.Context, id uuid.UUID) (Ageing, error) {
-	row := q.db.QueryRowContext(ctx, getAgeing, id)
+	row := q.db.QueryRow(ctx, getAgeing, id)
 	var i Ageing
 	err := row.Scan(
 		&i.ID,
@@ -86,12 +86,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListAgeingsParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListAgeings(ctx context.Context, arg ListAgeingsParams) ([]Ageing, error) {
-	rows, err := q.db.QueryContext(ctx, listAgeings, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listAgeings, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -110,9 +110,6 @@ func (q *Queries) ListAgeings(ctx context.Context, arg ListAgeingsParams) ([]Age
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err

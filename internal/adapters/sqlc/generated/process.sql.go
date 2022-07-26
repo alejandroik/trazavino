@@ -19,16 +19,16 @@ VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type AddProcessParams struct {
-	ID         uuid.UUID
-	CreatedAt  time.Time
-	WineryID   uuid.UUID
-	StartTime  time.Time
-	PType      string
-	PreviousID uuid.NullUUID
+	ID         uuid.UUID     `db:"id"`
+	CreatedAt  time.Time     `db:"created_at"`
+	WineryID   uuid.UUID     `db:"winery_id"`
+	StartTime  time.Time     `db:"start_time"`
+	PType      string        `db:"p_type"`
+	PreviousID uuid.NullUUID `db:"previous_id"`
 }
 
 func (q *Queries) AddProcess(ctx context.Context, arg AddProcessParams) error {
-	_, err := q.db.ExecContext(ctx, addProcess,
+	_, err := q.db.Exec(ctx, addProcess,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WineryID,
@@ -47,7 +47,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetProcess(ctx context.Context, id uuid.UUID) (Process, error) {
-	row := q.db.QueryRowContext(ctx, getProcess, id)
+	row := q.db.QueryRow(ctx, getProcess, id)
 	var i Process
 	err := row.Scan(
 		&i.ID,
@@ -73,12 +73,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListProcessesParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([]Process, error) {
-	rows, err := q.db.QueryContext(ctx, listProcesses, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listProcesses, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -103,9 +103,6 @@ func (q *Queries) ListProcesses(ctx context.Context, arg ListProcessesParams) ([
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -123,16 +120,16 @@ WHERE id = $1
 `
 
 type UpdateProcessParams struct {
-	ID          uuid.UUID
-	UpdatedAt   sql.NullTime
-	EndTime     sql.NullTime
-	PreviousID  uuid.NullUUID
-	Hash        sql.NullString
-	Transaction sql.NullString
+	ID          uuid.UUID      `db:"id"`
+	UpdatedAt   sql.NullTime   `db:"updated_at"`
+	EndTime     sql.NullTime   `db:"end_time"`
+	PreviousID  uuid.NullUUID  `db:"previous_id"`
+	Hash        sql.NullString `db:"hash"`
+	Transaction sql.NullString `db:"transaction"`
 }
 
 func (q *Queries) UpdateProcess(ctx context.Context, arg UpdateProcessParams) error {
-	_, err := q.db.ExecContext(ctx, updateProcess,
+	_, err := q.db.Exec(ctx, updateProcess,
 		arg.ID,
 		arg.UpdatedAt,
 		arg.EndTime,

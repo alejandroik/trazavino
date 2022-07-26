@@ -19,14 +19,14 @@ VALUES ($1, $2, $3, $4)
 `
 
 type AddGrapeTypeParams struct {
-	ID        uuid.UUID
-	CreatedAt time.Time
-	WineryID  uuid.UUID
-	Name      string
+	ID        uuid.UUID `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	WineryID  uuid.UUID `db:"winery_id"`
+	Name      string    `db:"name"`
 }
 
 func (q *Queries) AddGrapeType(ctx context.Context, arg AddGrapeTypeParams) error {
-	_, err := q.db.ExecContext(ctx, addGrapeType,
+	_, err := q.db.Exec(ctx, addGrapeType,
 		arg.ID,
 		arg.CreatedAt,
 		arg.WineryID,
@@ -43,7 +43,7 @@ LIMIT 1
 `
 
 func (q *Queries) GetGrapeType(ctx context.Context, id uuid.UUID) (GrapeType, error) {
-	row := q.db.QueryRowContext(ctx, getGrapeType, id)
+	row := q.db.QueryRow(ctx, getGrapeType, id)
 	var i GrapeType
 	err := row.Scan(
 		&i.ID,
@@ -64,12 +64,12 @@ OFFSET $1 LIMIT $2
 `
 
 type ListGrapeTypesParams struct {
-	Offset int32
-	Limit  int32
+	Offset int32 `db:"offset"`
+	Limit  int32 `db:"limit"`
 }
 
 func (q *Queries) ListGrapeTypes(ctx context.Context, arg ListGrapeTypesParams) ([]GrapeType, error) {
-	rows, err := q.db.QueryContext(ctx, listGrapeTypes, arg.Offset, arg.Limit)
+	rows, err := q.db.Query(ctx, listGrapeTypes, arg.Offset, arg.Limit)
 	if err != nil {
 		return nil, err
 	}
@@ -89,9 +89,6 @@ func (q *Queries) ListGrapeTypes(ctx context.Context, arg ListGrapeTypesParams) 
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -106,12 +103,12 @@ WHERE id = $1
 `
 
 type UpdateGrapeTypeParams struct {
-	ID        uuid.UUID
-	Name      string
-	UpdatedAt sql.NullTime
+	ID        uuid.UUID    `db:"id"`
+	Name      string       `db:"name"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
 func (q *Queries) UpdateGrapeType(ctx context.Context, arg UpdateGrapeTypeParams) error {
-	_, err := q.db.ExecContext(ctx, updateGrapeType, arg.ID, arg.Name, arg.UpdatedAt)
+	_, err := q.db.Exec(ctx, updateGrapeType, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

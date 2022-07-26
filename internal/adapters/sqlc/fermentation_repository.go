@@ -3,20 +3,20 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type FermentationRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewFermentationRepository(db *sqlx.DB) *FermentationRepository {
+func NewFermentationRepository(db *pgx.Conn) *FermentationRepository {
 	if db == nil {
 		panic("missing db")
 	}
@@ -42,17 +42,18 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		return err
 	}
 
-	tx, err := r.db.BeginTx(ctx, nil)
+	tx, err := r.db.Begin(ctx)
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback(ctx)
+
 	q := generated.New(tx)
 
 	now := time.Now()
 
 	mac, err := q.FindMaceration(ctx, whUuid)
 	if err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -61,7 +62,6 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		EndTime:   sql.NullTime{Time: f.StartTime(), Valid: true},
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -70,7 +70,6 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   true,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -79,7 +78,6 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -91,7 +89,6 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		PreviousID: uuid.NullUUID{UUID: mac.ID, Valid: true},
 		WineryID:   wineryUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
@@ -101,11 +98,10 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		WarehouseID: whUuid,
 		TankID:      tankUuid,
 	}); err != nil {
-		tx.Rollback()
 		return err
 	}
 
-	return tx.Commit()
+	return tx.Commit(ctx)
 }
 
 func (r FermentationRepository) GetFermentation(ctx context.Context, fermentationUUID string) (*entity.Fermentation, error) {

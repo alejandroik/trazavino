@@ -31,7 +31,7 @@ func getRepositories(ctx context.Context) (*repositories, error) {
 
 	switch dbAdapter {
 	case "postgres":
-		db, err := sqlc.NewPostgresConnection()
+		db, err := sqlc.NewPostgresConnection(ctx)
 		if err != nil {
 			return nil, err
 		}

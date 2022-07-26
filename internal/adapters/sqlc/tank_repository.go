@@ -2,19 +2,19 @@ package sqlc
 
 import (
 	"context"
+	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/google/uuid"
-	"github.com/jmoiron/sqlx"
 )
 
 type TankRepository struct {
-	db *sqlx.DB
+	db *pgx.Conn
 }
 
-func NewTankRepository(db *sqlx.DB) *TankRepository {
+func NewTankRepository(db *pgx.Conn) *TankRepository {
 	if db == nil {
 		panic("missing db")
 	}
