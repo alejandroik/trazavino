@@ -15,10 +15,7 @@ func RunMigrations() error {
 		return errors.Wrap(err, "error while running migrations")
 	}
 
-	if err = m.Up(); err != nil {
-		if err == migrate.ErrNoChange {
-			return nil
-		}
+	if err = m.Up(); err != nil && err != migrate.ErrNoChange {
 		return errors.Wrap(err, "error while running migrations")
 	}
 

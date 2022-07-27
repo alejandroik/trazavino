@@ -10,7 +10,11 @@ import (
 )
 
 func RunHTTPServer(app app.Application, log logger.Interface) {
-	RunHTTPServerOnAddr(":"+os.Getenv("SERVER_PORT"), app, log)
+	port := os.Getenv("SERVER_PORT")
+	if port == "" {
+		port = "8080"
+	}
+	RunHTTPServerOnAddr(":"+port, app, log)
 }
 
 func RunHTTPServerOnAddr(addr string, app app.Application, log logger.Interface) {
