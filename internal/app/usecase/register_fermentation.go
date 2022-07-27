@@ -2,13 +2,13 @@ package usecase
 
 import (
 	"context"
-	"github.com/pkg/errors"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/repository"
 	"github.com/alejandroik/trazavino/pkg/decorator"
 	"github.com/alejandroik/trazavino/pkg/logger"
+	"github.com/pkg/errors"
 )
 
 type RegisterFermentation struct {

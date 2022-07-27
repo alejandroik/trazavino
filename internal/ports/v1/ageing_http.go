@@ -1,12 +1,13 @@
 package v1
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/alejandroik/trazavino/internal/app/usecase"
 	openapi_types "github.com/deepmap/oapi-codegen/pkg/types"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"net/http"
-	"time"
 )
 
 func (h HttpServer) GetAgeings(c *gin.Context) {

@@ -2,13 +2,13 @@ package sqlc
 
 import (
 	"context"
-	"github.com/jackc/pgx/v4"
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/adapters/sqlc/generated"
 	"github.com/alejandroik/trazavino/internal/domain/entity"
 	"github.com/alejandroik/trazavino/internal/domain/entity/enum/process_type"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v4"
 )
 
 type ReceptionRepository struct {
