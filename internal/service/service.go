@@ -13,7 +13,7 @@ func NewApplication(ctx context.Context, log logger.Interface) app.Application {
 }
 
 func newApplication(ctx context.Context, log logger.Interface) app.Application {
-	r, err := getRepositories(ctx)
+	r, err := initRepositories(ctx)
 	if err != nil {
 		panic(err)
 	}

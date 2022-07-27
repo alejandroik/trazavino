@@ -1,8 +1,7 @@
-package sqlc
+package adapters
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	"github.com/jackc/pgx/v4"
@@ -10,14 +9,11 @@ import (
 )
 
 func NewPostgresConnection(ctx context.Context) (*pgx.Conn, error) {
-	connStr := fmt.Sprintf("host=%s port=%s user=%s "+
-		"password=%s dbname=%s sslmode=disable",
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_NAME"),
-	)
+	connStr := os.Getenv("DB_URL")
+	if connStr == "" {
+		return nil, errors.New("empty db url")
+	}
+
 	db, err := pgx.Connect(ctx, connStr)
 	if err != nil {
 		return nil, errors.Wrap(err, "cannot connect to db")
