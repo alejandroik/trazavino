@@ -65,7 +65,7 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		return err
 	}
 
-	if err = q.UpdateTank(ctx, generated.UpdateTankParams{
+	if err = q.UpdateTankUsage(ctx, generated.UpdateTankUsageParams{
 		ID:        tankUuid,
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   true,
@@ -73,7 +73,7 @@ func (r AgeingRepository) AddAgeing(ctx context.Context, a *entity.Ageing) error
 		return err
 	}
 
-	if err = q.UpdateCask(ctx, generated.UpdateCaskParams{
+	if err = q.UpdateCaskUsage(ctx, generated.UpdateCaskUsageParams{
 		ID:        caskUuid,
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,

@@ -65,7 +65,7 @@ func (r BottlingRepository) AddBottling(ctx context.Context, a *entity.Bottling)
 		return err
 	}
 
-	if err = q.UpdateCask(ctx, generated.UpdateCaskParams{
+	if err = q.UpdateCaskUsage(ctx, generated.UpdateCaskUsageParams{
 		ID:        caskUuid,
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   true,

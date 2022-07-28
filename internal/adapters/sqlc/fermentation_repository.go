@@ -65,7 +65,7 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		return err
 	}
 
-	if err = q.UpdateWarehouse(ctx, generated.UpdateWarehouseParams{
+	if err = q.UpdateWarehouseUsage(ctx, generated.UpdateWarehouseUsageParams{
 		ID:        whUuid,
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   true,
@@ -73,7 +73,7 @@ func (r FermentationRepository) AddFermentation(ctx context.Context, f *entity.F
 		return err
 	}
 
-	if err = q.UpdateTank(ctx, generated.UpdateTankParams{
+	if err = q.UpdateTankUsage(ctx, generated.UpdateTankUsageParams{
 		ID:        tankUuid,
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,

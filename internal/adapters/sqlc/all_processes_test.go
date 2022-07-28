@@ -6,13 +6,14 @@ import (
 	"time"
 
 	"github.com/alejandroik/trazavino/internal/domain/entity"
+	"github.com/alejandroik/trazavino/internal/domain/entity/enum/cask_type"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4"
 	"github.com/stretchr/testify/require"
 )
 
 // TODO use testcontainers
-func TestAddBottling(t *testing.T) {
+func TestAllProcesses(t *testing.T) {
 	ctx := context.Background()
 
 	connStr := "user=postgres password=password host=localhost port=5432 dbname=trazavino sslmode=disable"
@@ -73,7 +74,7 @@ func TestAddBottling(t *testing.T) {
 	err = frRepo.AddFermentation(ctx, fr)
 	require.NoError(t, err)
 
-	ck, err := entity.NewCask(uuid.NewString(), "C#4432", "Roble", true, winery.ID())
+	ck, err := entity.NewCask(uuid.NewString(), "C#4432", cask_type.FrenchOak.String(), true, winery.ID())
 	require.NoError(t, err)
 	ckRepo := NewCaskRepository(db)
 	err = ckRepo.AddCask(ctx, ck)

@@ -103,30 +103,45 @@ func (q *Queries) ListCasks(ctx context.Context, arg ListCasksParams) ([]Cask, e
 	return items, nil
 }
 
-const updateCask = `-- name: UpdateCask :exec
+const updateCaskData = `-- name: UpdateCaskData :exec
 UPDATE cask
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at),
-    c_type     = COALESCE($4, c_type),
-    is_empty   = COALESCE($5, is_empty)
+SET name       = $2,
+    c_type     = $3,
+    updated_at = $4
 WHERE id = $1
 `
 
-type UpdateCaskParams struct {
+type UpdateCaskDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
-	UpdatedAt sql.NullTime `db:"updated_at"`
 	CType     string       `db:"c_type"`
-	IsEmpty   bool         `db:"is_empty"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
-func (q *Queries) UpdateCask(ctx context.Context, arg UpdateCaskParams) error {
-	_, err := q.db.Exec(ctx, updateCask,
+func (q *Queries) UpdateCaskData(ctx context.Context, arg UpdateCaskDataParams) error {
+	_, err := q.db.Exec(ctx, updateCaskData,
 		arg.ID,
 		arg.Name,
-		arg.UpdatedAt,
 		arg.CType,
-		arg.IsEmpty,
+		arg.UpdatedAt,
 	)
+	return err
+}
+
+const updateCaskUsage = `-- name: UpdateCaskUsage :exec
+UPDATE cask
+SET is_empty   = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateCaskUsageParams struct {
+	ID        uuid.UUID    `db:"id"`
+	IsEmpty   bool         `db:"is_empty"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+}
+
+func (q *Queries) UpdateCaskUsage(ctx context.Context, arg UpdateCaskUsageParams) error {
+	_, err := q.db.Exec(ctx, updateCaskUsage, arg.ID, arg.IsEmpty, arg.UpdatedAt)
 	return err
 }

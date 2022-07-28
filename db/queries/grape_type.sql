@@ -14,8 +14,8 @@ OFFSET $1 LIMIT $2;
 INSERT INTO grape_type (id, created_at, winery_id, name)
 VALUES ($1, $2, $3, $4);
 
--- name: UpdateGrapeType :exec
+-- name: UpdateGrapeTypeData :exec
 UPDATE grape_type
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1;

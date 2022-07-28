@@ -95,20 +95,20 @@ func (q *Queries) ListWines(ctx context.Context, arg ListWinesParams) ([]Wine, e
 	return items, nil
 }
 
-const updateWine = `-- name: UpdateWine :exec
+const updateWineData = `-- name: UpdateWineData :exec
 UPDATE wine
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1
 `
 
-type UpdateWineParams struct {
+type UpdateWineDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
-func (q *Queries) UpdateWine(ctx context.Context, arg UpdateWineParams) error {
-	_, err := q.db.Exec(ctx, updateWine, arg.ID, arg.Name, arg.UpdatedAt)
+func (q *Queries) UpdateWineData(ctx context.Context, arg UpdateWineDataParams) error {
+	_, err := q.db.Exec(ctx, updateWineData, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

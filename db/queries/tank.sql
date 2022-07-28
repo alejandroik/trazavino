@@ -14,9 +14,14 @@ OFFSET $1 LIMIT $2;
 INSERT INTO tank (id, created_at, winery_id, name, is_empty)
 VALUES ($1, $2, $3, $4, $5);
 
--- name: UpdateTank :exec
+-- name: UpdateTankUsage :exec
 UPDATE tank
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at),
-    is_empty   = COALESCE($4, is_empty)
+SET is_empty   = $2,
+    updated_at = $3
+WHERE id = $1;
+
+-- name: UpdateTankData :exec
+UPDATE tank
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1;

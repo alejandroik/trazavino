@@ -99,27 +99,38 @@ func (q *Queries) ListWarehouses(ctx context.Context, arg ListWarehousesParams) 
 	return items, nil
 }
 
-const updateWarehouse = `-- name: UpdateWarehouse :exec
+const updateWarehouseData = `-- name: UpdateWarehouseData :exec
 UPDATE warehouse
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at),
-    is_empty   = COALESCE($4, is_empty)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1
 `
 
-type UpdateWarehouseParams struct {
+type UpdateWarehouseDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
-	IsEmpty   bool         `db:"is_empty"`
 }
 
-func (q *Queries) UpdateWarehouse(ctx context.Context, arg UpdateWarehouseParams) error {
-	_, err := q.db.Exec(ctx, updateWarehouse,
-		arg.ID,
-		arg.Name,
-		arg.UpdatedAt,
-		arg.IsEmpty,
-	)
+func (q *Queries) UpdateWarehouseData(ctx context.Context, arg UpdateWarehouseDataParams) error {
+	_, err := q.db.Exec(ctx, updateWarehouseData, arg.ID, arg.Name, arg.UpdatedAt)
+	return err
+}
+
+const updateWarehouseUsage = `-- name: UpdateWarehouseUsage :exec
+UPDATE warehouse
+SET is_empty   = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateWarehouseUsageParams struct {
+	ID        uuid.UUID    `db:"id"`
+	IsEmpty   bool         `db:"is_empty"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+}
+
+func (q *Queries) UpdateWarehouseUsage(ctx context.Context, arg UpdateWarehouseUsageParams) error {
+	_, err := q.db.Exec(ctx, updateWarehouseUsage, arg.ID, arg.IsEmpty, arg.UpdatedAt)
 	return err
 }

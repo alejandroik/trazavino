@@ -14,8 +14,8 @@ ORDER BY created_at DESC
 INSERT INTO winery (id, created_at, name)
 VALUES ($1, $2, $3);
 
--- name: UpdateWinery :exec
+-- name: UpdateWineryData :exec
 UPDATE winery
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1;

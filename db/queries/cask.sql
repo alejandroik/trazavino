@@ -14,10 +14,15 @@ OFFSET $1 LIMIT $2;
 INSERT INTO cask (id, created_at, winery_id, name, c_type, is_empty)
 VALUES ($1, $2, $3, $4, $5, $6);
 
--- name: UpdateCask :exec
+-- name: UpdateCaskUsage :exec
 UPDATE cask
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at),
-    c_type     = COALESCE($4, c_type),
-    is_empty   = COALESCE($5, is_empty)
+SET is_empty   = $2,
+    updated_at = $3
+WHERE id = $1;
+
+-- name: UpdateCaskData :exec
+UPDATE cask
+SET name       = $2,
+    c_type     = $3,
+    updated_at = $4
 WHERE id = $1;

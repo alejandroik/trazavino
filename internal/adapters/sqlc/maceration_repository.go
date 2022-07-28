@@ -60,7 +60,7 @@ func (r MacerationRepository) AddMaceration(ctx context.Context, m *entity.Macer
 		return err
 	}
 
-	if err = q.UpdateWarehouse(ctx, generated.UpdateWarehouseParams{
+	if err = q.UpdateWarehouseUsage(ctx, generated.UpdateWarehouseUsageParams{
 		ID:        whUuid,
 		UpdatedAt: sql.NullTime{Time: now, Valid: true},
 		IsEmpty:   false,

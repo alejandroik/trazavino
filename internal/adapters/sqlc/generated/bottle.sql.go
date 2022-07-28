@@ -95,20 +95,20 @@ func (q *Queries) ListBottles(ctx context.Context, arg ListBottlesParams) ([]Bot
 	return items, nil
 }
 
-const updateBottle = `-- name: UpdateBottle :exec
+const updateBottleData = `-- name: UpdateBottleData :exec
 UPDATE bottle
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1
 `
 
-type UpdateBottleParams struct {
+type UpdateBottleDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
-func (q *Queries) UpdateBottle(ctx context.Context, arg UpdateBottleParams) error {
-	_, err := q.db.Exec(ctx, updateBottle, arg.ID, arg.Name, arg.UpdatedAt)
+func (q *Queries) UpdateBottleData(ctx context.Context, arg UpdateBottleDataParams) error {
+	_, err := q.db.Exec(ctx, updateBottleData, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

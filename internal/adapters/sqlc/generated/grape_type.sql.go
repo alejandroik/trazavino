@@ -95,20 +95,20 @@ func (q *Queries) ListGrapeTypes(ctx context.Context, arg ListGrapeTypesParams) 
 	return items, nil
 }
 
-const updateGrapeType = `-- name: UpdateGrapeType :exec
+const updateGrapeTypeData = `-- name: UpdateGrapeTypeData :exec
 UPDATE grape_type
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1
 `
 
-type UpdateGrapeTypeParams struct {
+type UpdateGrapeTypeDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
-func (q *Queries) UpdateGrapeType(ctx context.Context, arg UpdateGrapeTypeParams) error {
-	_, err := q.db.Exec(ctx, updateGrapeType, arg.ID, arg.Name, arg.UpdatedAt)
+func (q *Queries) UpdateGrapeTypeData(ctx context.Context, arg UpdateGrapeTypeDataParams) error {
+	_, err := q.db.Exec(ctx, updateGrapeTypeData, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

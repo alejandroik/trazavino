@@ -99,27 +99,38 @@ func (q *Queries) ListTanks(ctx context.Context, arg ListTanksParams) ([]Tank, e
 	return items, nil
 }
 
-const updateTank = `-- name: UpdateTank :exec
+const updateTankData = `-- name: UpdateTankData :exec
 UPDATE tank
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at),
-    is_empty   = COALESCE($4, is_empty)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1
 `
 
-type UpdateTankParams struct {
+type UpdateTankDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
-	IsEmpty   bool         `db:"is_empty"`
 }
 
-func (q *Queries) UpdateTank(ctx context.Context, arg UpdateTankParams) error {
-	_, err := q.db.Exec(ctx, updateTank,
-		arg.ID,
-		arg.Name,
-		arg.UpdatedAt,
-		arg.IsEmpty,
-	)
+func (q *Queries) UpdateTankData(ctx context.Context, arg UpdateTankDataParams) error {
+	_, err := q.db.Exec(ctx, updateTankData, arg.ID, arg.Name, arg.UpdatedAt)
+	return err
+}
+
+const updateTankUsage = `-- name: UpdateTankUsage :exec
+UPDATE tank
+SET is_empty   = $2,
+    updated_at = $3
+WHERE id = $1
+`
+
+type UpdateTankUsageParams struct {
+	ID        uuid.UUID    `db:"id"`
+	IsEmpty   bool         `db:"is_empty"`
+	UpdatedAt sql.NullTime `db:"updated_at"`
+}
+
+func (q *Queries) UpdateTankUsage(ctx context.Context, arg UpdateTankUsageParams) error {
+	_, err := q.db.Exec(ctx, updateTankUsage, arg.ID, arg.IsEmpty, arg.UpdatedAt)
 	return err
 }

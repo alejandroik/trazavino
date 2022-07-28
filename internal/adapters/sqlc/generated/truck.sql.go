@@ -95,20 +95,20 @@ func (q *Queries) ListTrucks(ctx context.Context, arg ListTrucksParams) ([]Truck
 	return items, nil
 }
 
-const updateTruck = `-- name: UpdateTruck :exec
+const updateTruckData = `-- name: UpdateTruckData :exec
 UPDATE truck
-SET name       = COALESCE($2, name),
-    updated_at = COALESCE($3, updated_at)
+SET name       = $2,
+    updated_at = $3
 WHERE id = $1
 `
 
-type UpdateTruckParams struct {
+type UpdateTruckDataParams struct {
 	ID        uuid.UUID    `db:"id"`
 	Name      string       `db:"name"`
 	UpdatedAt sql.NullTime `db:"updated_at"`
 }
 
-func (q *Queries) UpdateTruck(ctx context.Context, arg UpdateTruckParams) error {
-	_, err := q.db.Exec(ctx, updateTruck, arg.ID, arg.Name, arg.UpdatedAt)
+func (q *Queries) UpdateTruckData(ctx context.Context, arg UpdateTruckDataParams) error {
+	_, err := q.db.Exec(ctx, updateTruckData, arg.ID, arg.Name, arg.UpdatedAt)
 	return err
 }

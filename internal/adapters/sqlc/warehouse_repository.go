@@ -124,11 +124,10 @@ func (r WarehouseRepository) UpdateWarehouse(
 		return err
 	}
 
-	if err = q.UpdateWarehouse(ctx, generated.UpdateWarehouseParams{
+	if err = q.UpdateWarehouseData(ctx, generated.UpdateWarehouseDataParams{
 		ID:        whUuid,
 		Name:      updatedWarehouse.Name(),
 		UpdatedAt: sql.NullTime{Time: time.Now(), Valid: true},
-		IsEmpty:   updatedWarehouse.IsEmpty(),
 	}); err != nil {
 		return err
 	}
