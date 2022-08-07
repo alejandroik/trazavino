@@ -1,12 +1,7 @@
-<a href="https://aimeos.org/">
-    <img src="docs/img/logo.png" alt="logo" title="logo" align="right" height="60" />
-</a>
+<img width="px" src="docs/img/header.png" alt="Trazavino">
 
-# Trazavino
-Wine Supply Chain Traceability System based on Blockchain
+# Trazavino - Wine Supply Chain Traceability System
+Traceability system for the wine supply chain, using ethereum blockchain to provide data integrity and immutability. Written in Go implementing DDD and clean architecture.
 
 ## Table of content
 TBD
-
-## Resources
-Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a>
