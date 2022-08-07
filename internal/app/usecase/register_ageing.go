@@ -32,7 +32,7 @@ type registerAgeingHandler struct {
 func NewRegisterAgeingHandler(
 	ageingRepository repository.AgeingRepository,
 	caskRepository repository.CaskRepository,
-	log logger.Interface,
+	log logger.Logger,
 ) RegisterAgeingHandler {
 	if ageingRepository == nil {
 		panic("nil ageingRepository")

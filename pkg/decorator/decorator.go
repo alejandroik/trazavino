@@ -6,7 +6,7 @@ import (
 	"github.com/alejandroik/trazavino/pkg/logger"
 )
 
-func ApplyDecorators[H any](handler Handler[H], log logger.Interface) Handler[H] {
+func ApplyDecorators[H any](handler Handler[H], log logger.Logger) Handler[H] {
 	return loggingDecorator[H]{
 		base: handler,
 		log:  log,

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	log := logger.New()
+	log := logger.NewZapLogger()
 
 	ctx := context.Background()
 

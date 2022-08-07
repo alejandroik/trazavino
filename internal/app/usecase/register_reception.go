@@ -34,7 +34,7 @@ type registerReceptionHandler struct {
 
 func NewRegisterReceptionHandler(
 	repository repository.ReceptionRepository,
-	log logger.Interface,
+	log logger.Logger,
 ) RegisterReceptionHandler {
 	if repository == nil {
 		panic("nil repository")

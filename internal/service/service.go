@@ -8,11 +8,11 @@ import (
 	"github.com/alejandroik/trazavino/pkg/logger"
 )
 
-func NewApplication(ctx context.Context, log logger.Interface) app.Application {
+func NewApplication(ctx context.Context, log logger.Logger) app.Application {
 	return newApplication(ctx, log)
 }
 
-func newApplication(ctx context.Context, log logger.Interface) app.Application {
+func newApplication(ctx context.Context, log logger.Logger) app.Application {
 	r, err := initRepositories(ctx)
 	if err != nil {
 		panic(err)

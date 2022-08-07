@@ -32,7 +32,7 @@ type registerMacerationHandler struct {
 func NewRegisterMacerationHandler(
 	macerationRepository repository.MacerationRepository,
 	warehouseRepository repository.WarehouseRepository,
-	log logger.Interface,
+	log logger.Logger,
 ) RegisterMacerationHandler {
 	if macerationRepository == nil {
 		panic("nil macerationRepository")

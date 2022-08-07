@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RunHTTPServer(app app.Application, log logger.Interface) {
+func RunHTTPServer(app app.Application, log logger.Logger) {
 	port := os.Getenv("SERVER_PORT")
 	if port == "" {
 		port = "8080"
@@ -17,7 +17,7 @@ func RunHTTPServer(app app.Application, log logger.Interface) {
 	RunHTTPServerOnAddr(":"+port, app, log)
 }
 
-func RunHTTPServerOnAddr(addr string, app app.Application, log logger.Interface) {
+func RunHTTPServerOnAddr(addr string, app app.Application, log logger.Logger) {
 	router := gin.Default()
 
 	v1.RegisterHandlersWithOptions(router, v1.NewHttpServer(app), v1.GinServerOptions{BaseURL: "/v1"})

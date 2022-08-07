@@ -10,7 +10,7 @@ import (
 
 type loggingDecorator[C any] struct {
 	base Handler[C]
-	log  logger.Interface
+	log  logger.Logger
 }
 
 func (d loggingDecorator[C]) Handle(ctx context.Context, uc C) (err error) {

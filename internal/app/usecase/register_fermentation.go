@@ -32,7 +32,7 @@ type registerFermentationHandler struct {
 func NewRegisterFermentationHandler(
 	fermentationRepository repository.FermentationRepository,
 	tankRepository repository.TankRepository,
-	log logger.Interface,
+	log logger.Logger,
 ) RegisterFermentationHandler {
 	if fermentationRepository == nil {
 		panic("nil fermentationRepository")

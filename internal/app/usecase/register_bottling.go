@@ -31,7 +31,7 @@ type registerBottlingHandler struct {
 
 func NewRegisterBottlingHandler(
 	bottlingRepository repository.BottlingRepository,
-	log logger.Interface,
+	log logger.Logger,
 ) RegisterBottlingHandler {
 	if bottlingRepository == nil {
 		panic("nil bottlingRepository")
